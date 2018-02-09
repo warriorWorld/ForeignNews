@@ -300,12 +300,12 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
                 webTopBar.setProgress(newProgress);
             }
 
-            if (!TextUtils.isEmpty(getUrl()) && !getUrl().equals(lastURL) && newProgress > 40) {
+            if (!TextUtils.isEmpty(getUrl()) && !getUrl().equals(lastURL) && newProgress > 30) {
                 //不用等全部读取完就可以注入了
                 lastURL = getUrl();
                 JSinject();
             }
-            if (!TextUtils.isEmpty(getUrl()) && !getUrl().equals(lastURL1) && newProgress <= 40) {
+            if (!TextUtils.isEmpty(getUrl()) && !getUrl().equals(lastURL1) && newProgress <= 30) {
                 //告诉用户已经注入完成
                 lastURL1 = getUrl();
                 webTopBar.setTitleTextColor(getResources().getColor(R.color.text_color));

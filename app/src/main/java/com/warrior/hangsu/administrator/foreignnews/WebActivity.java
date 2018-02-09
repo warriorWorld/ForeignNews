@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.ClipboardManager;
 import android.view.View;
 import android.widget.Toast;
@@ -136,7 +137,17 @@ public class WebActivity extends BaseActivity
             @Override
             public void seletedWord(String word) {
                 translation(word);
-                translateWebView.clearFocus();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        /**
+                         *要执行的操作
+                         */
+                        translateWebView.clearFocus();
+                    }
+                }, 200);//n秒后执行Runnable中的run方法
+
             }
         });
         translateWebView.setOnWebViewLongClickListener(new TranslateWebView.OnWebViewLongClickListener() {
