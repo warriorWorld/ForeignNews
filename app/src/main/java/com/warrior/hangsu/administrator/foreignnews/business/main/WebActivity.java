@@ -146,7 +146,7 @@ public class WebActivity extends BaseActivity
                          */
                         translateWebView.clearFocus();
                     }
-                }, 200);//n秒后执行Runnable中的run方法
+                }, 50);//n秒后执行Runnable中的run方法
 
             }
         });
