@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.warrior.hangsu.administrator.foreignnews.webview;
+package com.warrior.hangsu.administrator.foreignnews.widget.webview;
 
 /**
  * Text Selection Listener Interface

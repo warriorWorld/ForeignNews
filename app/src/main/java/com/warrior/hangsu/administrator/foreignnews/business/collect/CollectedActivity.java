@@ -1,4 +1,4 @@
-package com.warrior.hangsu.administrator.foreignnews.collect;
+package com.warrior.hangsu.administrator.foreignnews.business.collect;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.WebActivity;
+import com.warrior.hangsu.administrator.foreignnews.bean.CollectBean;
 import com.warrior.hangsu.administrator.foreignnews.db.DbAdapter;
 import com.warrior.hangsu.administrator.foreignnews.utils.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.utils.Globle;

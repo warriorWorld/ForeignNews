@@ -1,10 +1,11 @@
-package com.warrior.hangsu.administrator.foreignnews;
+package com.warrior.hangsu.administrator.foreignnews.business.main;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.ClipboardManager;
 import android.view.View;
 import android.widget.Toast;
@@ -17,27 +18,27 @@ import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
-import com.warrior.hangsu.administrator.foreignnews.bottombar.WebBottomBar;
-import com.warrior.hangsu.administrator.foreignnews.collect.CollectedActivity;
+import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
+import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.db.DbAdapter;
-import com.warrior.hangsu.administrator.foreignnews.read.YoudaoResponse;
-import com.warrior.hangsu.administrator.foreignnews.topbar.WebTopBar;
+import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.utils.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.Globle;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
-import com.warrior.hangsu.administrator.foreignnews.webview.FindWebView;
-import com.warrior.hangsu.administrator.foreignnews.webview.TextSelectionListener;
-import com.warrior.hangsu.administrator.foreignnews.webview.TranslateWebView;
+import com.warrior.hangsu.administrator.foreignnews.widget.webview.TextSelectionListener;
+import com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class WebActivity2 extends BaseActivity
+public class WebActivity extends BaseActivity
         implements View.OnClickListener {
-    private FindWebView translateWebView;
+    private TranslateWebView translateWebView;
     private WebTopBar webTopBar;
     private WebBottomBar webBottomBar;
     private AlertDialog dialog;
@@ -54,11 +55,11 @@ public class WebActivity2 extends BaseActivity
         initUI();
         initDialog();
 //        initUmeng();
-        image = new UMImage(WebActivity2.this, R.drawable.icon_garbage);//资源文件
+        image = new UMImage(WebActivity.this, R.drawable.icon_garbage);//资源文件
     }
 
     private void initUmeng() {
-        UMShareAPI mShareAPI = UMShareAPI.get(WebActivity2.this);
+        UMShareAPI mShareAPI = UMShareAPI.get(WebActivity.this);
         UMAuthListener umAuthListener = new UMAuthListener() {
             @Override
             public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
@@ -77,12 +78,12 @@ public class WebActivity2 extends BaseActivity
             }
         };
 
-        mShareAPI.doOauthVerify(WebActivity2.this, SHARE_MEDIA.QQ, umAuthListener);
-        mShareAPI.doOauthVerify(WebActivity2.this, SHARE_MEDIA.WEIXIN, umAuthListener);
+        mShareAPI.doOauthVerify(WebActivity.this, SHARE_MEDIA.QQ, umAuthListener);
+        mShareAPI.doOauthVerify(WebActivity.this, SHARE_MEDIA.WEIXIN, umAuthListener);
     }
 
     private void initUI() {
-        translateWebView = (FindWebView) findViewById(R.id.translate_webview);
+        translateWebView = (TranslateWebView) findViewById(R.id.translate_webview);
         webTopBar = (WebTopBar) findViewById(R.id.top_bar);
         webBottomBar = (WebBottomBar) findViewById(R.id.bottom_bar);
         webBottomBar.setOnWebBottomBarLogoutClickListener(this);
@@ -96,18 +97,18 @@ public class WebActivity2 extends BaseActivity
             @Override
             public void onCollectClick() {
                 db.insertCollectTableTb(translateWebView.getTitle(), translateWebView.getUrl(), "");
-                ToastUtil.tipShort(WebActivity2.this, "添加到收藏成功");
+                ToastUtil.tipShort(WebActivity.this, "添加到收藏成功");
             }
 
             @Override
             public void onCollectedClick() {
-                Intent intent = new Intent(WebActivity2.this, CollectedActivity.class);
+                Intent intent = new Intent(WebActivity.this, CollectedActivity.class);
                 startActivityForResult(intent, 33);
             }
 
             @Override
             public void onShareClick() {
-                new ShareAction(WebActivity2.this).withTitle("来自垃圾浏览器的分享")
+                new ShareAction(WebActivity.this).withTitle("来自垃圾浏览器的分享")
                         .withText(translateWebView.getTitle())
                         .withMedia(image)
                         .withTargetUrl(translateWebView.getUrl())
@@ -115,19 +116,45 @@ public class WebActivity2 extends BaseActivity
                         .setCallback(new UMShareListener() {
                             @Override
                             public void onResult(SHARE_MEDIA share_media) {
-                                ToastUtil.tipShort(WebActivity2.this, "分享成功");
+                                ToastUtil.tipShort(WebActivity.this, "分享成功");
                             }
 
                             @Override
                             public void onError(SHARE_MEDIA share_media, Throwable throwable) {
-                                ToastUtil.tipShort(WebActivity2.this, "分享失败");
+                                ToastUtil.tipShort(WebActivity.this, "分享失败");
                             }
 
                             @Override
                             public void onCancel(SHARE_MEDIA share_media) {
-                                ToastUtil.tipShort(WebActivity2.this, "分享取消");
+                                ToastUtil.tipShort(WebActivity.this, "分享取消");
                             }
                         }).open();
+            }
+        });
+        translateWebView.setWebTopBar(webTopBar);
+        translateWebView.setWebBottomBar(webBottomBar);
+        translateWebView.setTextSelectionListener(new TextSelectionListener() {
+            @Override
+            public void seletedWord(String word) {
+                translation(word);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        /**
+                         *要执行的操作
+                         */
+                        translateWebView.clearFocus();
+                    }
+                }, 200);//n秒后执行Runnable中的run方法
+
+            }
+        });
+        translateWebView.setOnWebViewLongClickListener(new TranslateWebView.OnWebViewLongClickListener() {
+            @Override
+            public void onImgLongClick(String imgUrl) {
+                showSaveImgDialog(imgUrl);
+
             }
         });
 
@@ -178,20 +205,20 @@ public class WebActivity2 extends BaseActivity
                         showOnlyOkDialog(word, result.getQuery() + " [" + item.getPhonetic() +
                                 "]: " + "\n" + t);
                     } else {
-                        ToastUtil.tipShort(WebActivity2.this, "没查到该词");
+                        ToastUtil.tipShort(WebActivity.this, "没查到该词");
                     }
                 } else {
-                    ToastUtil.tipShort(WebActivity2.this, "网络连接失败");
+                    ToastUtil.tipShort(WebActivity.this, "网络连接失败");
                 }
             }
 
             @Override
             public void loadFailed(VolleyError error) {
-                ToastUtil.tipShort(WebActivity2.this, "error" + error);
+                ToastUtil.tipShort(WebActivity.this, "error" + error);
             }
         };
         VolleyTool.getInstance(this).requestData(Request.Method.GET,
-                WebActivity2.this, url, params,
+                WebActivity.this, url, params,
                 YoudaoResponse.class, callback);
     }
 
@@ -207,8 +234,8 @@ public class WebActivity2 extends BaseActivity
         builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                DownLoadUtil.downloadImg(WebActivity2.this, imgUrl);
-                ToastUtil.tipShort(WebActivity2.this, "如果成功保存了,那就会保存在\n" + "garbage/img文件夹中");
+                DownLoadUtil.downloadImg(WebActivity.this, imgUrl);
+                ToastUtil.tipShort(WebActivity.this, "如果成功保存了,那就会保存在\n" + "garbage/img文件夹中");
             }
         });
         builder.setNegativeButton("否", new DialogInterface.OnClickListener() {

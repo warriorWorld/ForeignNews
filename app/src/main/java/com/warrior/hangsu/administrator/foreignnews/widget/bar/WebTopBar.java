@@ -1,4 +1,4 @@
-package com.warrior.hangsu.administrator.foreignnews.topbar;
+package com.warrior.hangsu.administrator.foreignnews.widget.bar;
 
 import android.content.Context;
 import android.text.TextUtils;

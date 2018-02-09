@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.warrior.hangsu.administrator.foreignnews.bottombar.WebBottomBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 
 public class BaseActivity extends FragmentActivity implements WebBottomBar.OnWebBottomBarLogoutClickListener {
 

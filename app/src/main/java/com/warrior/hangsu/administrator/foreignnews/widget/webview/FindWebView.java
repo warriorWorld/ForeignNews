@@ -1,9 +1,8 @@
-package com.warrior.hangsu.administrator.foreignnews.webview;
+package com.warrior.hangsu.administrator.foreignnews.widget.webview;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;

@@ -1,4 +1,4 @@
-package com.warrior.hangsu.administrator.foreignnews.bottombar;
+package com.warrior.hangsu.administrator.foreignnews.widget.bar;
 
 import android.content.Context;
 import android.util.AttributeSet;

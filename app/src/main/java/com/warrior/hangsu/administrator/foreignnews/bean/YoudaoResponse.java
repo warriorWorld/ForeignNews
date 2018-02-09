@@ -1,4 +1,4 @@
-package com.warrior.hangsu.administrator.foreignnews.read;
+package com.warrior.hangsu.administrator.foreignnews.bean;
 
 import java.util.List;
 

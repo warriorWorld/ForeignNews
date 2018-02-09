@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.warrior.hangsu.administrator.foreignnews.webview;
+package com.warrior.hangsu.administrator.foreignnews.widget.webview;
 
 import android.content.Context;
 import android.os.Handler;
@@ -32,8 +32,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.bottombar.WebBottomBar;
-import com.warrior.hangsu.administrator.foreignnews.topbar.WebTopBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 
 /**
@@ -175,6 +175,9 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
                 }
             }
         });
+
+        //隐藏缩放按钮
+        getSettings().setDisplayZoomControls(false);
     }
 
     private void JSinject() {

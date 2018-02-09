@@ -1,4 +1,4 @@
-package com.warrior.hangsu.administrator.foreignnews.webview;
+package com.warrior.hangsu.administrator.foreignnews.widget.webview;
 
 import android.content.Context;
 import android.os.Handler;
