@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.warrior.hangsu.administrator.foreignnews.topbar.WebTopBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"></com.warrior.hangsu.administrator.foreignnews.topbar.WebTopBar>
+
+    <com.warrior.hangsu.administrator.foreignnews.webview.TranslateWebView
+        android:id="@+id/translate_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_bar"
+        android:layout_below="@+id/top_bar"></com.warrior.hangsu.administrator.foreignnews.webview.TranslateWebView>
+
+    <com.warrior.hangsu.administrator.foreignnews.bottombar.WebBottomBar
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"></com.warrior.hangsu.administrator.foreignnews.bottombar.WebBottomBar>
+</RelativeLayout>

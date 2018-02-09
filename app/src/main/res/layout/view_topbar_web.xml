@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/top_bar"
+        android:padding="@dimen/topbar_web_padding">
+
+        <RelativeLayout
+            android:id="@+id/topbar_show_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bar_bg"
+            android:paddingLeft="@dimen/topbar_web_padding"
+            android:paddingRight="@dimen/topbar_web_padding"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/web_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="@dimen/topbar_web_padding"
+                android:layout_toLeftOf="@+id/refresh_iv"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="Baidu"
+                android:textSize="@dimen/topbar_web_text_size" />
+
+
+            <ImageView
+                android:id="@+id/refresh_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/topbar_web_padding"
+                android:src="@drawable/refresh" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/topbar_edit_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:paddingLeft="@dimen/topbar_web_padding"
+            android:paddingRight="@dimen/topbar_web_padding"
+            android:visibility="gone">
+
+
+            <EditText
+                android:id="@+id/web_title_et"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="@dimen/topbar_web_padding"
+                android:layout_toLeftOf="@+id/cancel_iv"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="http://www.easyicon.net/1199473-favourite_icon.html"
+                android:textSize="@dimen/topbar_web_text_size"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/cancel_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/topbar_web_padding"
+                android:src="@drawable/cancel" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_below="@+id/title"
+        android:indeterminate="true"
+        android:max="100"
+        android:progress="0" />
+
+</RelativeLayout>

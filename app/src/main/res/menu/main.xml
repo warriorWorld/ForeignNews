@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/live_science"
+        android:orderInCategory="100"
+        android:title="live science"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/cnn"
+        android:orderInCategory="100"
+        android:title="CNN"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/bbc"
+        android:orderInCategory="100"
+        android:title="BBC"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/bored_panda"
+        android:orderInCategory="100"
+        android:title="bored panda"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/quora"
+        android:orderInCategory="100"
+        android:title="quora"
+        app:showAsAction="never" />
+</menu>
