@@ -34,10 +34,11 @@
 
             <ImageView
                 android:id="@+id/refresh_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_alignParentRight="true"
-                android:padding="@dimen/topbar_web_padding"
+                android:layout_centerVertical="true"
+                android:padding="9dp"
                 android:src="@drawable/refresh" />
         </RelativeLayout>
 
@@ -74,15 +75,14 @@
                 android:src="@drawable/cancel" />
         </RelativeLayout>
     </RelativeLayout>
-
     <ProgressBar
         android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
+        style="@style/StyleProgressBarMini"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
+        android:layout_height="4dp"
         android:layout_below="@+id/title"
-        android:indeterminate="true"
+        android:background="@drawable/shape_progressbar_bg"
         android:max="100"
-        android:progress="0" />
-
+        android:progress="33"
+        android:scrollbarStyle="insideOverlay" />
 </RelativeLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparency">#00FF4081</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
@@ -10,7 +11,7 @@
     <color name="text_color">#858787</color>
     <color name="bar_injected_bg">#dce1b1</color>
     <color name="english_browser">#1684ec</color>
-
+    <color name="english_browser_shallow">#5fd7f9</color>
     <color name="umeng_socialize_comments_bg">#F4F4F4</color>
     <color name="umeng_socialize_color_group">#2c3035</color>
     <color name="umeng_socialize_list_item_textcolor">#333333</color>
@@ -24,4 +25,5 @@
     <color name="umeng_socialize_text_ucenter">#595959</color>
     <color name="umeng_socialize_edit_bg">#C4C4C4</color>
     <color name="umeng_socialize_grid_divider_line">#F8F8F8</color>
+    <color name="divide">#f6f6f6</color>
 </resources>

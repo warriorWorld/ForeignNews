@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -28,6 +28,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="StyleProgressBarMini" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:maxHeight">50dip</item>
+        <item name="android:minHeight">10dip</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">
+            @android:drawable/progress_indeterminate_horizontal
+        </item>
+        <item name="android:progressDrawable">@drawable/shape_progressbar_mini</item>
+    </style>
 
 
     <style name="ACPLDialog">
@@ -36,6 +45,7 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+
     <style name="umeng_socialize_action_bar_itemlayout">
         <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_width">fill_parent</item>
@@ -90,8 +100,10 @@
     </style>
 
     <style name="umeng_socialize_shareboard_animation">
-        <item name="android:windowEnterAnimation">@anim/umeng_socialize_shareboard_animation_in</item>
-        <item name="android:windowExitAnimation">@anim/umeng_socialize_shareboard_animation_out</item>
+        <item name="android:windowEnterAnimation">@anim/umeng_socialize_shareboard_animation_in
+        </item>
+        <item name="android:windowExitAnimation">@anim/umeng_socialize_shareboard_animation_out
+        </item>
     </style>
 
     <style name="Theme.UMDialog" parent="android:style/Theme.Dialog">
