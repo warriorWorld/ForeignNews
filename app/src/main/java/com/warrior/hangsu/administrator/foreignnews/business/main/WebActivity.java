@@ -20,10 +20,12 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
+import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.db.DbAdapter;
@@ -31,10 +33,11 @@ import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
-import com.warrior.hangsu.administrator.foreignnews.utils.Globle;
+import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TextSelectionListener;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView;
 
@@ -46,7 +49,7 @@ public class WebActivity extends BaseActivity
     private TranslateWebView translateWebView;
     private WebTopBar webTopBar;
     private WebBottomBar webBottomBar;
-    private AlertDialog dialog;
+    private MangaDialog dialog;
     private ClipboardManager clip;//复制文本用
     private DbAdapter db;
     private UMImage image;
@@ -57,7 +60,6 @@ public class WebActivity extends BaseActivity
         clip = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         db = new DbAdapter(this);
         initUI();
-        initDialog();
 //        initUmeng();
         image = new UMImage(WebActivity.this, R.drawable.icon_garbage);//资源文件
 //        openYoudao();
@@ -101,14 +103,16 @@ public class WebActivity extends BaseActivity
         webBottomBar.setOnWebBottomBarHomeClickListener(new OnWebBottomBarHomeClickListener() {
             @Override
             public void onHomeClick() {
-                translateWebView.loadUrl(Globle.firstPageURL);
+                translateWebView.loadUrl
+                        (SharedPreferencesUtils.getSharedPreferencesData
+                                (WebActivity.this, ShareKeys.MAIN_URL, Globle.DEFAULT_MAIN_URL));
             }
         });
         webBottomBar.setOnWebBottomBarOptionsClickListener(new OnWebBottomBarOptionsClickListener() {
             @Override
             public void onCollectClick() {
                 db.insertCollectTableTb(translateWebView.getTitle(), translateWebView.getUrl(), "");
-                ToastUtil.tipShort(WebActivity.this, "添加到收藏成功");
+                baseToast.showToast("添加到收藏成功");
             }
 
             @Override
@@ -168,7 +172,9 @@ public class WebActivity extends BaseActivity
             }
         });
 
-        translateWebView.loadUrl(Globle.firstPageURL);
+        translateWebView.loadUrl
+                (SharedPreferencesUtils.getSharedPreferencesData
+                        (this, ShareKeys.MAIN_URL, Globle.DEFAULT_MAIN_URL));
     }
 
     @Override
@@ -199,22 +205,12 @@ public class WebActivity extends BaseActivity
         startActivity(intent);
     }
 
-    private void initDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        dialog = builder.create();
-        dialog.setCancelable(true);
-    }
 
     private void translation(final String word) {
         clip.setText(word);
         //记录查过的单词
-        if (Globle.closeQueryWord) {
+        if (SharedPreferencesUtils.getBooleanSharedPreferencesData
+                (this, ShareKeys.CLOSE_TRANSLATE, false)) {
             return;
         }
         String url = Globle.YOUDAO + word;
@@ -233,16 +229,16 @@ public class WebActivity extends BaseActivity
                         showOnlyOkDialog(word, result.getQuery() + " [" + item.getPhonetic() +
                                 "]: " + "\n" + t);
                     } else {
-                        ToastUtil.tipShort(WebActivity.this, "没查到该词");
+                        baseToast.showToast("没查到该词");
                     }
                 } else {
-                    ToastUtil.tipShort(WebActivity.this, "网络连接失败");
+                    baseToast.showToast("网络连接失败");
                 }
             }
 
             @Override
             public void loadFailed(VolleyError error) {
-                ToastUtil.tipShort(WebActivity.this, "error" + error);
+                baseToast.showToast("error" + error);
             }
         };
         VolleyTool.getInstance(this).requestData(Request.Method.GET,
@@ -251,31 +247,34 @@ public class WebActivity extends BaseActivity
     }
 
     private void showOnlyOkDialog(String title, String msg) {
+        if (null == dialog) {
+            dialog = new MangaDialog(this);
+        }
+        dialog.show();
         dialog.setTitle(title);
         dialog.setMessage(msg);
-        dialog.show();
+        dialog.setOkText("确定");
     }
 
     private void showSaveImgDialog(final String imgUrl) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("是否保存图片");
-        builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+        MangaDialog dialog = new MangaDialog(this);
+        dialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onOkClick() {
                 DownLoadUtil.downloadImg(WebActivity.this, imgUrl);
-                ToastUtil.tipShort(WebActivity.this, "如果成功保存了,那就会保存在\n" + "garbage/img文件夹中");
+                baseToast.showToast("如果成功保存了,那就会保存在\n" + "garbage/img文件夹中");
+
             }
-        });
-        builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onCancelClick() {
 
             }
         });
-        AlertDialog dialog = builder.create();
-        dialog.setCancelable(true);
         dialog.show();
+        dialog.setTitle("是否保存图片");
+        dialog.setOkText("是");
+        dialog.setCancelText("否");
     }
 
     @Override

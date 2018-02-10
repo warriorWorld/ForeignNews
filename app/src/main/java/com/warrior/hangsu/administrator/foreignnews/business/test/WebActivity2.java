@@ -25,7 +25,7 @@
 //import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 //import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 //import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
-//import com.warrior.hangsu.administrator.foreignnews.utils.Globle;
+//import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 //import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 //import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
 //import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;

@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
-import com.warrior.hangsu.administrator.foreignnews.utils.Globle;
+import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 
 /**
@@ -19,16 +19,6 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        String s = SharedPreferencesUtils.getSharedPreferencesData(getApplicationContext(), "closeQueryWord");
-        String url = SharedPreferencesUtils.getSharedPreferencesData(getApplicationContext(), "firstPageURL");
-        if (!TextUtils.isEmpty(url) && url.length() > 1) {
-            Globle.firstPageURL = url;
-        }
-        if ("true".equals(s)) {
-            Globle.closeQueryWord = true;
-        } else {
-            Globle.closeQueryWord = false;
-        }
         /**
          * 友盟
          */

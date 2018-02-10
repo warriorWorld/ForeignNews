@@ -17,10 +17,13 @@ import android.widget.TextView;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.bean.CollectBean;
+import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.db.DbAdapter;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
-import com.warrior.hangsu.administrator.foreignnews.utils.Globle;
+import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnSevenFourteenListDialogListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.ListDialog;
 
 import java.util.ArrayList;
 
@@ -52,12 +55,13 @@ public class CollectedActivity extends BaseActivity
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
-                Globle.closeQueryWord = isChecked;
-                SharedPreferencesUtils.setSharedPreferencesData(
-                        CollectedActivity.this, "closeQueryWord", isChecked + "");
+                SharedPreferencesUtils.setSharedPreferencesData
+                        (CollectedActivity.this, ShareKeys.CLOSE_TRANSLATE, isChecked);
             }
         });
-        closeQueryWordCB.setChecked(Globle.closeQueryWord);
+        closeQueryWordCB.setChecked
+                (SharedPreferencesUtils.getBooleanSharedPreferencesData(CollectedActivity.this,
+                        ShareKeys.CLOSE_TRANSLATE, false));
     }
 
     @Override
@@ -99,23 +103,31 @@ public class CollectedActivity extends BaseActivity
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        CollectBean item = collectList.get(position);
-        showOptionsDialog(item);
+        showOptionsSelectorDialog(position);
         return true;
     }
 
-    private void showOptionsDialog(final CollectBean item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(
-                CollectedActivity.this);
-        builder.setTitle("选项");
-        builder.setItems(optionsList, new DialogInterface.OnClickListener() {
+
+    private void showOptionsSelectorDialog(final int selected) {
+        ListDialog listDialog = new ListDialog(this);
+        listDialog.setOnSevenFourteenListDialogListener(new OnSevenFourteenListDialogListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
+            public void onItemClick(String selectedRes, String selectedCodeRes) {
+
+            }
+
+            @Override
+            public void onItemClick(String selectedRes) {
+
+            }
+
+            @Override
+            public void onItemClick(int position) {
+                CollectBean item = collectList.get(selected);
+                switch (position) {
                     case 0:
-                        Globle.firstPageURL = item.getUrl();
                         SharedPreferencesUtils.setSharedPreferencesData(
-                                CollectedActivity.this, "firstPageURL", Globle.firstPageURL);
+                                CollectedActivity.this, ShareKeys.MAIN_URL, item.getUrl());
                         break;
                     case 1:
                         db.deleteCollect(item.getUrl());
@@ -124,8 +136,8 @@ public class CollectedActivity extends BaseActivity
                 }
             }
         });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        listDialog.show();
+        listDialog.setOptionsList(optionsList);
     }
 
     @Override

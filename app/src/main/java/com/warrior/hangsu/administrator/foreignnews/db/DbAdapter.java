@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.warrior.hangsu.administrator.foreignnews.bean.CollectBean;
-import com.warrior.hangsu.administrator.foreignnews.utils.Globle;
+import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 
 import java.util.ArrayList;
 
