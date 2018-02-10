@@ -123,7 +123,6 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
                 }
                 break;
             case R.id.close_dialog_rl:
-                dismiss();
                 break;
         }
         dismiss();
