@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,6 +21,8 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
+import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
@@ -144,6 +147,26 @@ public class WebActivity extends BaseActivity
                                 ToastUtil.tipShort(WebActivity.this, "分享取消");
                             }
                         }).open();
+            }
+
+            @Override
+            public void onLoginClick() {
+                if (TextUtils.isEmpty(LoginBean.getInstance().getUserName())) {
+                    Intent intent = new Intent(WebActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                } else {
+                    baseToast.showToast("你好!" + LoginBean.getInstance().getUserName() + ".");
+                }
+            }
+
+            @Override
+            public void onOptionsClick() {
+
+            }
+
+            @Override
+            public void onMangaClick() {
+
             }
         });
         translateWebView.setWebTopBar(webTopBar);

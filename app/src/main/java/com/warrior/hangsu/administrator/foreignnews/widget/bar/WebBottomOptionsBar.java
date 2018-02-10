@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
@@ -98,6 +100,11 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
         headLl.setOnClickListener(this);
     }
 
+    public void refreshUI() {
+        if (!TextUtils.isEmpty(LoginBean.getInstance().getUserName())) {
+            setUserName(LoginBean.getInstance().getUserName());
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -122,10 +129,29 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
                     onWebBottomBarLogoutClickListener.onLogoutClick();
                 }
                 break;
+            case R.id.options_ll:
+                if (null != onWebBottomBarOptionsClickListener) {
+                    onWebBottomBarOptionsClickListener.onOptionsClick();
+                }
+                break;
+            case R.id.manga_ll:
+                if (null != onWebBottomBarOptionsClickListener) {
+                    onWebBottomBarOptionsClickListener.onMangaClick();
+                }
+                break;
+            case R.id.head_ll:
+                if (null != onWebBottomBarOptionsClickListener) {
+                    onWebBottomBarOptionsClickListener.onLoginClick();
+                }
+                break;
             case R.id.close_dialog_rl:
                 break;
         }
         dismiss();
+    }
+
+    public void setUserName(String name) {
+        userNameTv.setText(name);
     }
 
     public void setOnWebBottomBarOptionsClickListener(OnWebBottomBarOptionsClickListener onWebBottomBarOptionsClickListener) {

@@ -50,6 +50,7 @@ public class WebBottomBar extends BaseWebBottomBar implements View.OnClickListen
             optionsBar.setCancelable(true);
         }
         optionsBar.show();
+        optionsBar.refreshUI();
     }
 
 

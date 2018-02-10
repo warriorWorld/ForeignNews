@@ -50,4 +50,6 @@ dependencies {
     compile files('libs/umeng_social_viewv6.0.0.jar')
     compile 'org.greenrobot:eventbus:3.0.0'
     implementation files('libs/universal-image-loader-1.9.5.jar')
+    // LeanCloud 基础包
+    compile('cn.leancloud.android:avoscloud-sdk:v4.4.3')
 }

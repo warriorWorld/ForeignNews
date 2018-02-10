@@ -10,4 +10,10 @@ public interface OnWebBottomBarOptionsClickListener {
     void onCollectedClick();
 
     void onShareClick();
+
+    void onLoginClick();
+
+    void onOptionsClick();
+
+    void onMangaClick();
 }
