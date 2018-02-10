@@ -62,6 +62,8 @@ public class CollectedActivity extends BaseActivity
         closeQueryWordCB.setChecked
                 (SharedPreferencesUtils.getBooleanSharedPreferencesData(CollectedActivity.this,
                         ShareKeys.CLOSE_TRANSLATE, false));
+
+        baseTopBar.setTitle("我的收藏");
     }
 
     @Override
@@ -81,6 +83,7 @@ public class CollectedActivity extends BaseActivity
             collectedLv.setOnItemLongClickListener(this);
             collectedLv.setOnItemClickListener(this);
             collectedLv.setEmptyView(emptyView);
+            collectedLv.setDividerHeight(0);
         } else {
             adapter.setList(collectList);
             adapter.notifyDataSetChanged();

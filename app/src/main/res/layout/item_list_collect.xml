@@ -2,8 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:paddingRight="20dp"
+    android:paddingTop="5dp">
 
     <TextView
         android:id="@+id/title_tv"
@@ -28,8 +30,8 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="1px"
         android:layout_below="@+id/url_tv"
-        android:layout_marginTop="5dp"
-        android:background="@color/text_color"></View>
+        android:layout_marginTop="10dp"
+        android:background="@color/divide_line"></View>
 </RelativeLayout>
