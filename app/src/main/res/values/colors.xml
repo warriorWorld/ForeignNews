@@ -26,4 +26,5 @@
     <color name="umeng_socialize_edit_bg">#C4C4C4</color>
     <color name="umeng_socialize_grid_divider_line">#F8F8F8</color>
     <color name="divide">#f6f6f6</color>
+    <color name="divide_line">#e1e1e1</color>
 </resources>
