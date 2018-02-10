@@ -32,6 +32,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
@@ -51,7 +54,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
      * Javascript interface for catching text selection.
      */
     protected TextSelectionJavascriptInterface mTextSelectionJSInterface = null;
-    private WebTopBar webTopBar;
+    private BaseWebTopBar webTopBar;
     private WebBottomBar webBottomBar;
     private String lastURL = "";//用于判断是否已经注入
     private String lastURL1 = "";//用于只设置一遍颜色
@@ -209,15 +212,15 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
         reload();
     }
 
-    public void setWebTopBar(WebTopBar webTopBar) {
+    public void setWebTopBar(BaseWebTopBar webTopBar) {
         this.webTopBar = webTopBar;
-        this.webTopBar.setOnWebTopBarRefreshClickListener(new WebTopBar.OnWebTopBarRefreshClickListener() {
+        this.webTopBar.setOnWebTopBarRefreshClickListener(new OnWebTopBarRefreshClickListener() {
             @Override
             public void onRefreshClick() {
                 refresh();
             }
         });
-        this.webTopBar.setOnWebTopBarSkipToURLListener(new WebTopBar.OnWebTopBarSkipToURLListener() {
+        this.webTopBar.setOnWebTopBarSkipToURLListener(new OnWebTopBarSkipToURLListener() {
             @Override
             public void skipToURL(String url) {
                 if (!url.contains("http://")) {

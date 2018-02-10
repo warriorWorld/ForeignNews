@@ -14,12 +14,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 
 /**
  * Created by Administrator on 2016/10/5.
  */
-public class WebTopBar extends RelativeLayout implements View.OnClickListener {
+public class WebTopBar extends BaseWebTopBar implements View.OnClickListener {
     private Context context;
     private RelativeLayout showRL, editRL;
     private EditText titleET;
@@ -76,6 +78,7 @@ public class WebTopBar extends RelativeLayout implements View.OnClickListener {
         toggleEditAndShow(false);
     }
 
+    @Override
     public void toggleEditAndShow(boolean isEdit) {
         if (isEdit) {
             showRL.setVisibility(View.GONE);
@@ -116,7 +119,7 @@ public class WebTopBar extends RelativeLayout implements View.OnClickListener {
         }
     }
 
-
+    @Override
     public void setProgress(int progress) {
         if (progress == 100) {
             progressBar.setVisibility(View.GONE);
@@ -126,10 +129,12 @@ public class WebTopBar extends RelativeLayout implements View.OnClickListener {
         progressBar.setProgress(progress);
     }
 
+    @Override
     public void setTitle(String title) {
         titleTV.setText(title);
     }
 
+    @Override
     public void setTitleTextColor(int color) {
         titleTV.setTextColor(color);
     }
@@ -138,6 +143,7 @@ public class WebTopBar extends RelativeLayout implements View.OnClickListener {
         return titleTV.getText().toString();
     }
 
+    @Override
     public void setPath(String path) {
         titleET.setText(path);
     }
@@ -146,19 +152,13 @@ public class WebTopBar extends RelativeLayout implements View.OnClickListener {
         return titleET.getText().toString();
     }
 
+    @Override
     public void setOnWebTopBarRefreshClickListener(OnWebTopBarRefreshClickListener onWebTopBarRefreshClickListener) {
         this.onWebTopBarRefreshClickListener = onWebTopBarRefreshClickListener;
     }
 
+    @Override
     public void setOnWebTopBarSkipToURLListener(OnWebTopBarSkipToURLListener onWebTopBarSkipToURLListener) {
         this.onWebTopBarSkipToURLListener = onWebTopBarSkipToURLListener;
-    }
-
-    public interface OnWebTopBarRefreshClickListener {
-        void onRefreshClick();
-    }
-
-    public interface OnWebTopBarSkipToURLListener {
-        void skipToURL(String url);
     }
 }
