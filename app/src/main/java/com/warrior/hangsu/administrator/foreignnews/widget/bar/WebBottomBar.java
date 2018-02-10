@@ -9,11 +9,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarWebNumClickListener;
 
 /**
  * Created by Administrator on 2016/10/5.
  */
-public class WebBottomBar extends RelativeLayout implements View.OnClickListener {
+public class WebBottomBar extends BaseWebBottomBar implements View.OnClickListener {
     private Context context;
     private ImageView backwardIV, forwardIV, homeIV, optionsIV;
     private TextView webNumTV;
@@ -111,53 +116,24 @@ public class WebBottomBar extends RelativeLayout implements View.OnClickListener
     public void setWebNum(int i) {
         webNumTV.setText("" + i);
     }
-
+    @Override
     public void setOnWebBottomBarHomeClickListener(OnWebBottomBarHomeClickListener onWebBottomBarHomeClickListener) {
         this.onWebBottomBarHomeClickListener = onWebBottomBarHomeClickListener;
     }
-
+    @Override
     public void setOnWebBottomBarClickListener(OnWebBottomBarClickListener onWebBottomBarClickListener) {
         this.onWebBottomBarClickListener = onWebBottomBarClickListener;
     }
-
+    @Override
     public void setOnWebBottomBarLogoutClickListener(OnWebBottomBarLogoutClickListener onWebBottomBarLogoutClickListener) {
         this.onWebBottomBarLogoutClickListener = onWebBottomBarLogoutClickListener;
     }
-
+    @Override
     public void setOnWebBottomBarWebNumClickListener(OnWebBottomBarWebNumClickListener onWebBottomBarWebNumClickListener) {
         this.onWebBottomBarWebNumClickListener = onWebBottomBarWebNumClickListener;
     }
-
+    @Override
     public void setOnWebBottomBarOptionsClickListener(OnWebBottomBarOptionsClickListener onWebBottomBarOptionsClickListener) {
         this.onWebBottomBarOptionsClickListener = onWebBottomBarOptionsClickListener;
-    }
-
-    public interface OnWebBottomBarClickListener {
-        void onBackwardClick();
-
-        void onForwardClick();
-
-        void onRefreshClick();
-    }
-
-    public interface OnWebBottomBarOptionsClickListener {
-        void onCollectClick();
-
-        void onCollectedClick();
-
-        void onShareClick();
-
-    }
-
-    public interface OnWebBottomBarLogoutClickListener {
-        void onLogoutClick();
-    }
-
-    public interface OnWebBottomBarHomeClickListener {
-        void onHomeClick();
-    }
-
-    public interface OnWebBottomBarWebNumClickListener {
-        void onWebNumClick();
     }
 }

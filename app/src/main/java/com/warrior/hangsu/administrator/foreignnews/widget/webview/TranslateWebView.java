@@ -32,12 +32,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
+import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
-import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
-import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 
 /**
  * Webview subclass that hijacks web content selection.
@@ -55,7 +56,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
      */
     protected TextSelectionJavascriptInterface mTextSelectionJSInterface = null;
     private BaseWebTopBar webTopBar;
-    private WebBottomBar webBottomBar;
+    private BaseWebBottomBar webBottomBar;
     private String lastURL = "";//用于判断是否已经注入
     private String lastURL1 = "";//用于只设置一遍颜色
     private OnWebViewLongClickListener onWebViewLongClickListener;
@@ -196,7 +197,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
         js += "document.body.appendChild(newscript);";
         loadUrl("javascript:" + js);
         //TODO 提示用户注入完成
-        ToastUtil.tipShort(mContext, "注入完成");
+//        ToastUtil.tipShort(mContext, "注入完成");
         webTopBar.setTitleTextColor(getResources().getColor(R.color.top_bar));
     }
 
@@ -235,7 +236,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
 
     public void setWebBottomBar(final WebBottomBar webBottomBar) {
         this.webBottomBar = webBottomBar;
-        this.webBottomBar.setOnWebBottomBarClickListener(new WebBottomBar.OnWebBottomBarClickListener() {
+        this.webBottomBar.setOnWebBottomBarClickListener(new OnWebBottomBarClickListener() {
             @Override
             public void onBackwardClick() {
                 goBack(); // goBack()表示返回WebView的上一页面

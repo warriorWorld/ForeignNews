@@ -20,6 +20,9 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
@@ -89,19 +92,19 @@ public class WebActivity extends BaseActivity
         translateWebView = (TranslateWebView) findViewById(R.id.translate_webview);
         webTopBar = (WebTopBar) findViewById(R.id.top_bar);
         webBottomBar = (WebBottomBar) findViewById(R.id.bottom_bar);
-        webBottomBar.setOnWebBottomBarLogoutClickListener(new WebBottomBar.OnWebBottomBarLogoutClickListener() {
+        webBottomBar.setOnWebBottomBarLogoutClickListener(new OnWebBottomBarLogoutClickListener() {
             @Override
             public void onLogoutClick() {
                 ActivityPoor.finishAllActivity();
             }
         });
-        webBottomBar.setOnWebBottomBarHomeClickListener(new WebBottomBar.OnWebBottomBarHomeClickListener() {
+        webBottomBar.setOnWebBottomBarHomeClickListener(new OnWebBottomBarHomeClickListener() {
             @Override
             public void onHomeClick() {
                 translateWebView.loadUrl(Globle.firstPageURL);
             }
         });
-        webBottomBar.setOnWebBottomBarOptionsClickListener(new WebBottomBar.OnWebBottomBarOptionsClickListener() {
+        webBottomBar.setOnWebBottomBarOptionsClickListener(new OnWebBottomBarOptionsClickListener() {
             @Override
             public void onCollectClick() {
                 db.insertCollectTableTb(translateWebView.getTitle(), translateWebView.getUrl(), "");

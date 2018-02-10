@@ -14,6 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.DisplayUtil;
 
 /**
@@ -23,9 +26,9 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
     private Context context;
     private RelativeLayout bottomOptionsRL;
     private ImageView collectIV, collectedIV, shareIV, refreshIV, logoutIV;
-    private WebBottomBar.OnWebBottomBarClickListener onWebBottomBarClickListener;
-    private WebBottomBar.OnWebBottomBarOptionsClickListener onWebBottomBarOptionsClickListener;
-    private WebBottomBar.OnWebBottomBarLogoutClickListener onWebBottomBarLogoutClickListener;
+    private OnWebBottomBarClickListener onWebBottomBarClickListener;
+    private OnWebBottomBarOptionsClickListener onWebBottomBarOptionsClickListener;
+    private OnWebBottomBarLogoutClickListener onWebBottomBarLogoutClickListener;
 
     public WebBottomOptionsBar(Context context) {
 //        super(context);
@@ -99,15 +102,15 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
         dismiss();
     }
 
-    public void setOnWebBottomBarOptionsClickListener(WebBottomBar.OnWebBottomBarOptionsClickListener onWebBottomBarOptionsClickListener) {
+    public void setOnWebBottomBarOptionsClickListener(OnWebBottomBarOptionsClickListener onWebBottomBarOptionsClickListener) {
         this.onWebBottomBarOptionsClickListener = onWebBottomBarOptionsClickListener;
     }
 
-    public void setOnWebBottomBarClickListener(WebBottomBar.OnWebBottomBarClickListener onWebBottomBarClickListener) {
+    public void setOnWebBottomBarClickListener(OnWebBottomBarClickListener onWebBottomBarClickListener) {
         this.onWebBottomBarClickListener = onWebBottomBarClickListener;
     }
 
-    public void setOnWebBottomBarLogoutClickListener(WebBottomBar.OnWebBottomBarLogoutClickListener onWebBottomBarLogoutClickListener) {
+    public void setOnWebBottomBarLogoutClickListener(OnWebBottomBarLogoutClickListener onWebBottomBarLogoutClickListener) {
         this.onWebBottomBarLogoutClickListener = onWebBottomBarLogoutClickListener;
     }
 }
