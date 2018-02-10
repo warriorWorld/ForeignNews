@@ -1,6 +1,7 @@
 package com.warrior.hangsu.administrator.foreignnews.business.main;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,6 +57,7 @@ public class WebActivity extends BaseActivity
         initDialog();
 //        initUmeng();
         image = new UMImage(WebActivity.this, R.drawable.icon_garbage);//资源文件
+//        openYoudao();
     }
 
     private void initUmeng() {
@@ -136,7 +138,6 @@ public class WebActivity extends BaseActivity
         translateWebView.setTextSelectionListener(new TextSelectionListener() {
             @Override
             public void seletedWord(String word) {
-                translation(word);
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -147,7 +148,7 @@ public class WebActivity extends BaseActivity
                         translateWebView.clearFocus();
                     }
                 }, 50);//n秒后执行Runnable中的run方法
-
+                translation(word);
             }
         });
         translateWebView.setOnWebViewLongClickListener(new TranslateWebView.OnWebViewLongClickListener() {
@@ -169,6 +170,19 @@ public class WebActivity extends BaseActivity
             String url = data.getStringExtra("url");
             translateWebView.loadUrl(url);
         }
+    }
+
+    private void openYoudao() {
+        // ComponentName（组件名称）是用来打开其他应用程序中的Activity或服务的
+        Intent intent = new Intent();
+//        ComponentName cmp = new ComponentName("com.youdao.dict", "com.youdao.dict.DictDemo");// 包名或者启动页是错的
+        ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");// 报名该有activity
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(cmp);
+
+        startActivity(intent);
     }
 
     private void initDialog() {

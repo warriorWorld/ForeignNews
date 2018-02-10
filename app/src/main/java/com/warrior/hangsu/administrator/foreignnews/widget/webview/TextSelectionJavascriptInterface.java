@@ -95,8 +95,8 @@ public class TextSelectionJavascriptInterface {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(mContext, msg,
-                            Toast.LENGTH_LONG).show();
+//                    Toast.makeText(mContext, msg,
+//                            Toast.LENGTH_LONG).show();
                     
                     textSelectionListener.seletedWord(msg);
                 }
