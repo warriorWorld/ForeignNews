@@ -3,7 +3,6 @@ package com.warrior.hangsu.administrator.foreignnews.widget.webview;
 import android.content.Context;
 import android.os.Handler;
 import android.webkit.JavascriptInterface;
-import android.widget.Toast;
 
 /**
  * This javascript interface allows the page to communicate that text has been

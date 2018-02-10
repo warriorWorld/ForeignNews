@@ -20,12 +20,13 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.db.DbAdapter;
 import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
-import com.warrior.hangsu.administrator.foreignnews.utils.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.Globle;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
@@ -50,7 +51,6 @@ public class WebActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_webview);
         clip = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         db = new DbAdapter(this);
         initUI();
@@ -85,10 +85,16 @@ public class WebActivity extends BaseActivity
     }
 
     private void initUI() {
+        hideBaseTopBar();
         translateWebView = (TranslateWebView) findViewById(R.id.translate_webview);
         webTopBar = (WebTopBar) findViewById(R.id.top_bar);
         webBottomBar = (WebBottomBar) findViewById(R.id.bottom_bar);
-        webBottomBar.setOnWebBottomBarLogoutClickListener(this);
+        webBottomBar.setOnWebBottomBarLogoutClickListener(new WebBottomBar.OnWebBottomBarLogoutClickListener() {
+            @Override
+            public void onLogoutClick() {
+                ActivityPoor.finishAllActivity();
+            }
+        });
         webBottomBar.setOnWebBottomBarHomeClickListener(new WebBottomBar.OnWebBottomBarHomeClickListener() {
             @Override
             public void onHomeClick() {
@@ -160,6 +166,11 @@ public class WebActivity extends BaseActivity
         });
 
         translateWebView.loadUrl(Globle.firstPageURL);
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_webview;
     }
 
     @Override

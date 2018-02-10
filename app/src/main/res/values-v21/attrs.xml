@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="home_top_bar">
+        <attr name="topbar_background" format="reference|color"></attr>
+        <attr name="left_press_background" format="reference|color"></attr>
+        <attr name="left_background" format="reference|color"></attr>
+        <attr name="left_textSize" format="dimension|reference"></attr>
+        <attr name="left_text" format="string|reference"></attr>
+        <attr name="left_textColor" format="color" />
+        <attr name="right_background" format="reference|color"></attr>
+        <attr name="right_textSize" format="dimension|reference"></attr>
+        <attr name="right_text" format="string|reference"></attr>
+        <attr name="right_textColor" format="color" />
+        <attr name="title_text" format="string|reference"></attr>
+        <attr name="title_textSize" format="dimension|reference"></attr>
+        <attr name="title_textColor" format="color" />
+        <attr name="title_src" format="reference|color"></attr>
+    </declare-styleable>
+
+</resources>

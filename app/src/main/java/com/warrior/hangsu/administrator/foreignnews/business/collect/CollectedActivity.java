@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.bean.CollectBean;
 import com.warrior.hangsu.administrator.foreignnews.db.DbAdapter;
-import com.warrior.hangsu.administrator.foreignnews.utils.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.utils.Globle;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 
@@ -37,7 +37,6 @@ public class CollectedActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         db = new DbAdapter(this);
         initUI();
         refresh();
@@ -59,6 +58,11 @@ public class CollectedActivity extends BaseActivity
             }
         });
         closeQueryWordCB.setChecked(Globle.closeQueryWord);
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_main;
     }
 
     private void refresh() {
