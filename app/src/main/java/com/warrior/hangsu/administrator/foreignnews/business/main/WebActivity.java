@@ -83,6 +83,8 @@ public class WebActivity extends BaseActivity
     private AVFile downloadFile;
     private MangaDialog versionDialog;
     private DownloadDialog downloadDialog;
+    //广告主App下载
+    private AVFile adDownloadFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,7 +201,7 @@ public class WebActivity extends BaseActivity
 
             @Override
             public void onMangaClick() {
-
+                doGetADAppInfo();
             }
         });
         translateWebView.setWebTopBar(webTopBar);
@@ -309,6 +311,23 @@ public class WebActivity extends BaseActivity
                         } else {
                             showVersionDialog();
                         }
+                    }
+                }
+            }
+        });
+    }
+
+    private void doGetADAppInfo() {
+        SingleLoadBarUtil.getInstance().showLoadBar(WebActivity.this);
+        AVQuery<AVObject> query = new AVQuery<>("OtherApp");
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                SingleLoadBarUtil.getInstance().dismissLoadBar();
+                if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                    if (null != list && list.size() > 0) {
+                        adDownloadFile = list.get(0).getAVFile("manga_app");
+                        showADAppInfoDialog(list.get(0).getString("title"), list.get(0).getString("message"));
                     }
                 }
             }
@@ -507,12 +526,77 @@ public class WebActivity extends BaseActivity
         }
     }
 
+    @AfterPermissionGranted(111)
+    private void doDownloadADApp() {
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // Already have permission, do the thing
+            // ...
+            showDownLoadDialog();
+            final String filePath = Globle.DOWNLOAD_PATH + "/apk";
+            final File file = new File(filePath);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            adDownloadFile.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] bytes, AVException e) {
+                    // bytes 就是文件的数据流
+                    if (null != downloadDialog && downloadDialog.isShowing()) {
+                        downloadDialog.dismiss();
+                    }
+                    if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                        File apkFile = FileUtil.byte2File(bytes, filePath, "ad_app.apk");
+
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setAction("android.intent.action.VIEW");
+                        intent.addCategory("android.intent.category.DEFAULT");
+                        intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+                        startActivity(intent);
+                    }
+                }
+            }, new ProgressCallback() {
+                @Override
+                public void done(Integer integer) {
+                    // 下载进度数据，integer 介于 0 和 100。
+                    downloadDialog.setProgress(integer);
+                }
+            });
+
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, "我们需要写入/读取权限",
+                    111, perms);
+        }
+    }
+
     private void showDownLoadDialog() {
         if (null == downloadDialog) {
             downloadDialog = new DownloadDialog(this);
         }
         downloadDialog.show();
         downloadDialog.setCancelable(false);
+    }
+
+    private void showADAppInfoDialog(String title, String msg) {
+        MangaDialog dialog = new MangaDialog(this);
+        dialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
+            @Override
+            public void onOkClick() {
+                doDownloadADApp();
+            }
+
+            @Override
+            public void onCancelClick() {
+
+            }
+        });
+        dialog.show();
+        dialog.setTitle(title);
+        dialog.setMessage(msg);
+        dialog.setOkText("马上下载");
+        dialog.setCancelText("稍后再说");
     }
 
     @Override
