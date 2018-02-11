@@ -29,6 +29,7 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnSevenFourteenList
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.ListDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,12 +86,14 @@ public class CollectedActivity extends BaseActivity
             this.finish();
             return;
         }
+        SingleLoadBarUtil.getInstance().showLoadBar(CollectedActivity.this);
         AVQuery<AVObject> query = new AVQuery<>("Collect");
         query.whereEqualTo("owner", LoginBean.getInstance().getUserName());
         query.limit(999);
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
+                SingleLoadBarUtil.getInstance().dismissLoadBar();
                 if (LeanCloundUtil.handleLeanResult(CollectedActivity.this, e)) {
                     collectList = new ArrayList<CollectBean>();
                     if (null != list && list.size() > 0) {
@@ -111,12 +114,14 @@ public class CollectedActivity extends BaseActivity
     }
 
     private void deleteCollected(int position) {
+        SingleLoadBarUtil.getInstance().showLoadBar(CollectedActivity.this);
         // 执行 CQL 语句实现删除一个 Todo 对象
         AVQuery.doCloudQueryInBackground(
                 "delete from Collect where objectId='" + collectList.get(position).getObjectId() + "'"
                 , new CloudQueryCallback<AVCloudQueryResult>() {
                     @Override
                     public void done(AVCloudQueryResult avCloudQueryResult, AVException e) {
+                        SingleLoadBarUtil.getInstance().dismissLoadBar();
                         if (LeanCloundUtil.handleLeanResult(CollectedActivity.this, e)) {
                             doGetData();
                         }

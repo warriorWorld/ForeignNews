@@ -42,6 +42,7 @@ import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TextSelectionListener;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView;
 
@@ -218,7 +219,7 @@ public class WebActivity extends BaseActivity
         if (TextUtils.isEmpty(userName)) {
             return;
         }
-
+        SingleLoadBarUtil.getInstance().showLoadBar(WebActivity.this);
         AVObject object = new AVObject("Collect");
         object.put("owner", userName);
         object.put("collect_title", translateWebView.getTitle());
@@ -226,6 +227,7 @@ public class WebActivity extends BaseActivity
         object.saveInBackground(new SaveCallback() {
             @Override
             public void done(AVException e) {
+                SingleLoadBarUtil.getInstance().dismissLoadBar();
                 if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
                     baseToast.showToast("收藏成功");
                 }

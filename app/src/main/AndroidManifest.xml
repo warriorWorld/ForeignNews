@@ -49,11 +49,11 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".business.login.LoginActivity"
-            android:launchMode="standard"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".business.login.RegisterActivity"
-            android:launchMode="standard"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <!-- 友盟 -->
         <activity

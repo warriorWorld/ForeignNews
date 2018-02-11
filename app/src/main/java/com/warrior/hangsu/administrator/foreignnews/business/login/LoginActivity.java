@@ -16,9 +16,11 @@ import com.avos.avoscloud.LogInCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
+import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
@@ -107,10 +109,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
     private void doLogin() {
+        SingleLoadBarUtil.getInstance().showLoadBar(LoginActivity.this);
         AVUser.logInInBackground(userIdEt.getText().toString(), userPsdEt.getText().toString(),
                 new LogInCallback<AVUser>() {
                     @Override
                     public void done(AVUser avUser, AVException e) {
+                        SingleLoadBarUtil.getInstance().dismissLoadBar();
                         if (e == null) {
                             LoginBean.getInstance().setEmail(LoginActivity.this, avUser.getEmail());
                             LoginBean.getInstance().setUserName(LoginActivity.this, avUser.getUsername());

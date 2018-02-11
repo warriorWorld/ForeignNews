@@ -14,6 +14,7 @@ import com.avos.avoscloud.SignUpCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.utils.MatchStringUtil;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
 
 public class RegisterActivity extends BaseActivity implements View.OnClickListener {
@@ -68,6 +69,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
 
     private void doRegister() {
+        SingleLoadBarUtil.getInstance().showLoadBar(RegisterActivity.this);
         AVUser user = new AVUser();// 新建 AVUser 对象实例
         user.setUsername(userIdEt.getText().toString());// 设置用户名
         user.setPassword(userPsdEt.getText().toString());// 设置密码
@@ -75,6 +77,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         user.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(AVException e) {
+                SingleLoadBarUtil.getInstance().dismissLoadBar();
                 if (e == null) {
                     // 注册成功，把用户对象赋值给当前用户 AVUser.getCurrentUser()
                     doNext();
