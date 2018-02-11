@@ -103,6 +103,8 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
     public void refreshUI() {
         if (!TextUtils.isEmpty(LoginBean.getInstance().getUserName())) {
             setUserName(LoginBean.getInstance().getUserName());
+        } else {
+            setUserName("立即登录");
         }
     }
 
