@@ -276,7 +276,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener,
                 showAuthorDialog();
                 break;
             case R.id.feedback_rl:
-
+                intent = new Intent(AboutActivity.this, FeedbackActivity.class);
                 break;
             case R.id.logout_tv:
                 showLogoutDialog();
