@@ -36,6 +36,7 @@ import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.DownloadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
 import java.io.File;
 import java.util.List;
@@ -130,10 +131,12 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void doGetVersionInfo() {
+        SingleLoadBarUtil.getInstance().showLoadBar(AboutActivity.this);
         AVQuery<AVObject> query = new AVQuery<>("VersionInfo");
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
+                SingleLoadBarUtil.getInstance().dismissLoadBar();
                 if (LeanCloundUtil.handleLeanResult(AboutActivity.this, e)) {
                     if (null != list && list.size() > 0) {
                         versionName = list.get(0).getString("versionName");
