@@ -1,10 +1,9 @@
 package com.warrior.hangsu.administrator.foreignnews.business.collect;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +14,24 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVCloudQueryResult;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.CloudQueryCallback;
+import com.avos.avoscloud.FindCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.bean.CollectBean;
-import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
-import com.warrior.hangsu.administrator.foreignnews.db.DbAdapter;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
-import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
+import com.warrior.hangsu.administrator.foreignnews.bean.CollectBean;
+import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
+import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnSevenFourteenListDialogListener;
+import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.ListDialog;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CollectedActivity extends BaseActivity
         implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
@@ -34,15 +40,18 @@ public class CollectedActivity extends BaseActivity
     private ArrayList<CollectBean> collectList = new ArrayList<CollectBean>();
     private CollectedAdapter adapter;
     private View emptyView;
-    private DbAdapter db;
     private String[] optionsList = {"设置为首页", "删除该收藏"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new DbAdapter(this);
         initUI();
-        refresh();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        doGetData();
     }
 
     private void initUI() {
@@ -71,9 +80,48 @@ public class CollectedActivity extends BaseActivity
         return R.layout.activity_main;
     }
 
-    private void refresh() {
-        collectList = db.queryAllCollect();
-        initListView();
+    private void doGetData() {
+        if (TextUtils.isEmpty(LoginBean.getInstance().getUserName(this))) {
+            this.finish();
+            return;
+        }
+        AVQuery<AVObject> query = new AVQuery<>("Collect");
+        query.whereEqualTo("owner", LoginBean.getInstance().getUserName());
+        query.limit(999);
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (LeanCloundUtil.handleLeanResult(CollectedActivity.this, e)) {
+                    collectList = new ArrayList<CollectBean>();
+                    if (null != list && list.size() > 0) {
+                        CollectBean item;
+                        for (int i = 0; i < list.size(); i++) {
+                            item = new CollectBean();
+                            item.setTitle(list.get(i).getString("collect_title"));
+                            item.setUrl(list.get(i).getString("collect_url"));
+                            item.setObjectId(list.get(i).getObjectId());
+
+                            collectList.add(item);
+                        }
+                    }
+                    initListView();
+                }
+            }
+        });
+    }
+
+    private void deleteCollected(int position) {
+        // 执行 CQL 语句实现删除一个 Todo 对象
+        AVQuery.doCloudQueryInBackground(
+                "delete from Collect where objectId='" + collectList.get(position).getObjectId() + "'"
+                , new CloudQueryCallback<AVCloudQueryResult>() {
+                    @Override
+                    public void done(AVCloudQueryResult avCloudQueryResult, AVException e) {
+                        if (LeanCloundUtil.handleLeanResult(CollectedActivity.this, e)) {
+                            doGetData();
+                        }
+                    }
+                });
     }
 
     private void initListView() {
@@ -101,7 +149,6 @@ public class CollectedActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        db.closeDb();
     }
 
     @Override
@@ -133,8 +180,7 @@ public class CollectedActivity extends BaseActivity
                                 CollectedActivity.this, ShareKeys.MAIN_URL, item.getUrl());
                         break;
                     case 1:
-                        db.deleteCollect(item.getUrl());
-                        refresh();
+                        deleteCollected(selected);
                         break;
                 }
             }

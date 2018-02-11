@@ -4,7 +4,7 @@ package com.warrior.hangsu.administrator.foreignnews.bean;
  * Created by Administrator on 2016/10/6.
  */
 
-public class CollectBean {
+public class CollectBean extends BaseBean{
     private String title;
     private String url;
     private String titleThumb;

@@ -1,9 +1,7 @@
 package com.warrior.hangsu.administrator.foreignnews.business.main;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +12,9 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.SaveCallback;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
@@ -21,25 +22,25 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
+import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
+import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
+import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
-import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
-import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
-import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
-import com.warrior.hangsu.administrator.foreignnews.db.DbAdapter;
-import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
-import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
-import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
-import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
+import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
+import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TextSelectionListener;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView;
@@ -54,14 +55,12 @@ public class WebActivity extends BaseActivity
     private WebBottomBar webBottomBar;
     private MangaDialog dialog;
     private ClipboardManager clip;//复制文本用
-    private DbAdapter db;
     private UMImage image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         clip = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        db = new DbAdapter(this);
         initUI();
 //        initUmeng();
         image = new UMImage(WebActivity.this, R.drawable.icon_garbage);//资源文件
@@ -114,8 +113,7 @@ public class WebActivity extends BaseActivity
         webBottomBar.setOnWebBottomBarOptionsClickListener(new OnWebBottomBarOptionsClickListener() {
             @Override
             public void onCollectClick() {
-                db.insertCollectTableTb(translateWebView.getTitle(), translateWebView.getUrl(), "");
-                baseToast.showToast("添加到收藏成功");
+                doCollect();
             }
 
             @Override
@@ -215,6 +213,26 @@ public class WebActivity extends BaseActivity
         }
     }
 
+    private void doCollect() {
+        String userName = LoginBean.getInstance().getUserName(this);
+        if (TextUtils.isEmpty(userName)) {
+            return;
+        }
+
+        AVObject object = new AVObject("Collect");
+        object.put("owner", userName);
+        object.put("collect_title", translateWebView.getTitle());
+        object.put("collect_url", translateWebView.getUrl());
+        object.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(AVException e) {
+                if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                    baseToast.showToast("收藏成功");
+                }
+            }
+        });
+    }
+
     private void openYoudao() {
         // ComponentName（组件名称）是用来打开其他应用程序中的Activity或服务的
         Intent intent = new Intent();
@@ -309,7 +327,6 @@ public class WebActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        db.closeDb();
         translateWebView.clearCache(true);
     }
 }
