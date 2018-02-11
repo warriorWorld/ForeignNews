@@ -35,6 +35,7 @@ import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
+import com.warrior.hangsu.administrator.foreignnews.utils.BlackListUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebTopBar;
@@ -311,7 +312,9 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
             if (!TextUtils.isEmpty(getUrl()) && !getUrl().equals(lastURL) && newProgress > 40) {
                 //不用等全部读取完就可以注入了
                 lastURL = getUrl();
-                JSinject();
+                if (!BlackListUtil.isBlackList(getUrl())) {
+                    JSinject();
+                }
             }
             if (!TextUtils.isEmpty(getUrl()) && !getUrl().equals(lastURL1) && newProgress <= 40) {
                 //告诉用户已经注入完成

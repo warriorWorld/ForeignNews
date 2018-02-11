@@ -47,12 +47,12 @@ public class CollectedActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUI();
+        doGetData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        doGetData();
     }
 
     private void initUI() {
@@ -183,6 +183,7 @@ public class CollectedActivity extends BaseActivity
                     case 0:
                         SharedPreferencesUtils.setSharedPreferencesData(
                                 CollectedActivity.this, ShareKeys.MAIN_URL, item.getUrl());
+                        baseToast.showToast("设置成功");
                         break;
                     case 1:
                         deleteCollected(selected);
