@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -77,11 +78,32 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener,
         versionTv = (TextView) findViewById(R.id.version_tv);
         checkUpdateRl = (RelativeLayout) findViewById(R.id.check_update_rl);
         closeTranslateCb = (CheckBox) findViewById(R.id.close_translate_cb);
+        closeTranslateCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferencesUtils.setSharedPreferencesData
+                        (AboutActivity.this, ShareKeys.CLOSE_TRANSLATE, isChecked);
+            }
+        });
         closeTutorialCb = (CheckBox) findViewById(R.id.close_tutorial_cb);
+        closeTutorialCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferencesUtils.setSharedPreferencesData
+                        (AboutActivity.this, ShareKeys.CLOSE_TUTORIAL, isChecked);
+            }
+        });
         setMainUrlRl = (RelativeLayout) findViewById(R.id.set_main_url_rl);
         authorRl = (RelativeLayout) findViewById(R.id.author_rl);
         feedbackRl = (RelativeLayout) findViewById(R.id.feedback_rl);
         logoutTv = (TextView) findViewById(R.id.logout_tv);
+
+        closeTranslateCb.setChecked
+                (SharedPreferencesUtils.getBooleanSharedPreferencesData(AboutActivity.this,
+                        ShareKeys.CLOSE_TRANSLATE, false));
+        closeTutorialCb.setChecked
+                (SharedPreferencesUtils.getBooleanSharedPreferencesData(AboutActivity.this,
+                        ShareKeys.CLOSE_TUTORIAL, true));
 
         checkUpdateRl.setOnClickListener(this);
         setMainUrlRl.setOnClickListener(this);

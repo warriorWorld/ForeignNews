@@ -37,7 +37,6 @@ import java.util.List;
 public class CollectedActivity extends BaseActivity
         implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private ListView collectedLv;
-    private CheckBox closeQueryWordCB;
     private ArrayList<CollectBean> collectList = new ArrayList<CollectBean>();
     private CollectedAdapter adapter;
     private View emptyView;
@@ -59,19 +58,6 @@ public class CollectedActivity extends BaseActivity
 
         emptyView = findViewById(R.id.empty_view);
         collectedLv = (ListView) findViewById(R.id.collected_listview);
-        closeQueryWordCB = (CheckBox) findViewById(R.id.close_query_word);
-        closeQueryWordCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-                SharedPreferencesUtils.setSharedPreferencesData
-                        (CollectedActivity.this, ShareKeys.CLOSE_TRANSLATE, isChecked);
-            }
-        });
-        closeQueryWordCB.setChecked
-                (SharedPreferencesUtils.getBooleanSharedPreferencesData(CollectedActivity.this,
-                        ShareKeys.CLOSE_TRANSLATE, false));
 
         baseTopBar.setTitle("我的收藏");
     }
