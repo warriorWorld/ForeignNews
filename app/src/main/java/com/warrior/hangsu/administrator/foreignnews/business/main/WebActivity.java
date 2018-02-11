@@ -66,6 +66,12 @@ public class WebActivity extends BaseActivity
 //        initUmeng();
         image = new UMImage(WebActivity.this, R.drawable.icon_garbage);//资源文件
 //        openYoudao();
+        if (!SharedPreferencesUtils.getBooleanSharedPreferencesData(this, ShareKeys.CLOSE_TUTORIAL, false)) {
+            MangaDialog dialog = new MangaDialog(this);
+            dialog.show();
+            dialog.setTitle("教程");
+            dialog.setMessage("1,当顶部网页标题颜色变为蓝色后,可通过长按单词翻译");
+        }
     }
 
     private void initUmeng() {
