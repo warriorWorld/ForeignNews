@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
@@ -35,6 +36,7 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeC
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
+import com.warrior.hangsu.administrator.foreignnews.utils.BaseParameterUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
@@ -63,6 +65,13 @@ public class WebActivity extends BaseActivity
     private MangaDialog dialog;
     private ClipboardManager clip;//复制文本用
     private UMImage image;
+    //版本更新
+    private String versionName, msg;
+    private int versionCode;
+    private boolean forceUpdate;
+    private AVFile downloadFile;
+    private MangaDialog versionDialog;
+    private DownloadDialog downloadDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -269,6 +278,31 @@ public class WebActivity extends BaseActivity
         });
     }
 
+    private void doGetVersionInfo() {
+        AVQuery<AVObject> query = new AVQuery<>("VersionInfo");
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                    if (null != list && list.size() > 0) {
+                        versionName = list.get(0).getString("versionName");
+                        versionCode = list.get(0).getInt("versionCode");
+                        forceUpdate = list.get(0).getBoolean("forceUpdate");
+                        msg = list.get(0).getString("description");
+                        downloadFile = list.get(0).getAVFile("apk");
+                        if (BaseParameterUtil.getInstance(WebActivity.this).
+                                getAppVersionCode() >= versionCode || SharedPreferencesUtils.
+                                getBooleanSharedPreferencesData(WebActivity.this,
+                                        ShareKeys.IGNORE_THIS_VERSION_KEY + versionName, false)) {
+                        } else {
+                            showVersionDialog();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     private void openYoudao() {
         // ComponentName（组件名称）是用来打开其他应用程序中的Activity或服务的
         Intent intent = new Intent();
@@ -378,6 +412,42 @@ public class WebActivity extends BaseActivity
         dialog.setTitle(title);
         dialog.setMessage(msg);
         dialog.setOkText("知道了");
+    }
+
+    private void showVersionDialog() {
+        if (null == versionDialog) {
+            versionDialog = new MangaDialog(WebActivity.this);
+            versionDialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
+                @Override
+                public void onOkClick() {
+                    versionDialog.dismiss();
+                    doDownload();
+                }
+
+                @Override
+                public void onCancelClick() {
+                    if (forceUpdate) {
+                        ActivityPoor.finishAllActivity();
+                    } else {
+                        SharedPreferencesUtils.setSharedPreferencesData(WebActivity.this,
+                                ShareKeys.IGNORE_THIS_VERSION_KEY + versionName, true);
+                        baseToast.showToast("忽略后可在'我的'页中点击'版本'按钮升级至最新版!", true);
+                    }
+                }
+            });
+        }
+        versionDialog.show();
+
+        versionDialog.setTitle("有新版本啦" + "v_" + versionName);
+        versionDialog.setMessage(msg);
+        versionDialog.setOkText("升级");
+        versionDialog.setCancelable(false);
+
+        if (!forceUpdate) {
+            versionDialog.setCancelText("忽略");
+        } else {
+            versionDialog.setCancelText("退出");
+        }
     }
 
     @Override

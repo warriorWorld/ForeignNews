@@ -10,4 +10,7 @@ public class ShareKeys {
     public static final String CLOSE_TUTORIAL = "close_tutorial";
     public static final String LOGIN_INFO_KEY = "login_info_key";
     public static final String ANNOUNCEMENT_READ_KEY="announcement_read_key";
+    public static final String DEVICE_KEY = "device_key";
+    public static final String DEVICE_TOKEN_KEY = "device_token_key";
+    public static final String IGNORE_THIS_VERSION_KEY = "ignore_this_version_key";
 }
