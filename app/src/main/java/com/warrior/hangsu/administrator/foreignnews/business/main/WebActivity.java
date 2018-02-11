@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -34,6 +35,7 @@ import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
 import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
 import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
+import com.warrior.hangsu.administrator.foreignnews.business.other.AboutActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
@@ -196,7 +198,8 @@ public class WebActivity extends BaseActivity
 
             @Override
             public void onOptionsClick() {
-
+                Intent intent = new Intent(WebActivity.this, AboutActivity.class);
+                startActivity(intent);
             }
 
             @Override

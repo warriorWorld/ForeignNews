@@ -46,6 +46,9 @@
             android:name=".business.collect.CollectedActivity"
             android:launchMode="standard"></activity>
         <activity
+            android:name=".business.other.AboutActivity"
+            android:launchMode="standard"></activity>
+        <activity
             android:name=".business.login.LoginActivity"
             android:launchMode="singleTask"></activity>
         <activity
