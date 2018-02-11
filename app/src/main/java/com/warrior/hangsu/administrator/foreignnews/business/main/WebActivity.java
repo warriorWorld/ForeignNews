@@ -38,10 +38,12 @@ import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity
 import com.warrior.hangsu.administrator.foreignnews.business.other.AboutActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnCopyClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarWebNumClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.BaseParameterUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
@@ -52,6 +54,7 @@ import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebSubTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.DownloadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
@@ -135,6 +138,12 @@ public class WebActivity extends BaseActivity
         hideBaseTopBar();
         translateWebView = (TranslateWebView) findViewById(R.id.translate_webview);
         webTopBar = (WebTopBar) findViewById(R.id.top_bar);
+        webTopBar.setOnWebTopClickListener(new OnWebTopClickListener() {
+            @Override
+            public void onTitleClick() {
+                showWebSubTopBar();
+            }
+        });
         webBottomBar = (WebBottomBar) findViewById(R.id.bottom_bar);
         webBottomBar.setOnWebBottomBarLogoutClickListener(new OnWebBottomBarLogoutClickListener() {
             @Override
@@ -427,6 +436,19 @@ public class WebActivity extends BaseActivity
         dialog.setTitle("是否保存图片");
         dialog.setOkText("是");
         dialog.setCancelText("否");
+    }
+
+    private void showWebSubTopBar() {
+        WebSubTopBar webSubTopBar = new WebSubTopBar(this);
+        webSubTopBar.setOnCopyClickListener(new OnCopyClickListener() {
+            @Override
+            public void onCopy() {
+                webTopBar.toggleEditAndShow(false);
+                clip.setText(translateWebView.getUrl());
+                baseToast.showToast("已复制链接");
+            }
+        });
+        webSubTopBar.show();
     }
 
     private void showAnnouncementDialog(String title, String msg) {

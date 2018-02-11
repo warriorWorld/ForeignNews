@@ -38,17 +38,6 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
     private TextView userNameTv;
     private RelativeLayout closeDwonArrowRl;
 
-    /**
-     * Find the Views in the layout<br />
-     * <br />
-     * Auto-created on 2018-02-10 17:12:02 by Android Layout Finder
-     * (http://www.buzzingandroid.com/tools/android-layout-finder)
-     */
-    private void findViews() {
-
-    }
-
-
     private OnWebBottomBarClickListener onWebBottomBarClickListener;
     private OnWebBottomBarOptionsClickListener onWebBottomBarOptionsClickListener;
     private OnWebBottomBarLogoutClickListener onWebBottomBarLogoutClickListener;

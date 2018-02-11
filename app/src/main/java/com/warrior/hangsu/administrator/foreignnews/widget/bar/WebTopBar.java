@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 
 /**
@@ -29,6 +30,7 @@ public class WebTopBar extends BaseWebTopBar implements View.OnClickListener {
     private ImageView refreshIV, cancelIV;
     private OnWebTopBarRefreshClickListener onWebTopBarRefreshClickListener;
     private OnWebTopBarSkipToURLListener onWebTopBarSkipToURLListener;
+    private OnWebTopClickListener onWebTopClickListener;
     private ProgressBar progressBar;
 
     public WebTopBar(Context context) {
@@ -107,6 +109,9 @@ public class WebTopBar extends BaseWebTopBar implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.web_title_tv:
                 toggleEditAndShow(true);
+                if (null != onWebTopClickListener) {
+                    onWebTopClickListener.onTitleClick();
+                }
                 break;
             case R.id.refresh_iv:
                 if (null != onWebTopBarRefreshClickListener) {
@@ -160,5 +165,9 @@ public class WebTopBar extends BaseWebTopBar implements View.OnClickListener {
     @Override
     public void setOnWebTopBarSkipToURLListener(OnWebTopBarSkipToURLListener onWebTopBarSkipToURLListener) {
         this.onWebTopBarSkipToURLListener = onWebTopBarSkipToURLListener;
+    }
+
+    public void setOnWebTopClickListener(OnWebTopClickListener onWebTopClickListener) {
+        this.onWebTopClickListener = onWebTopClickListener;
     }
 }
