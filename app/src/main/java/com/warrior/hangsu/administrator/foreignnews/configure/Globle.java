@@ -1,6 +1,7 @@
 package com.warrior.hangsu.administrator.foreignnews.configure;
 
 import android.graphics.Bitmap;
+import android.os.Environment;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
@@ -14,9 +15,8 @@ public class Globle {
      */
     public static final String YOUDAO = "http://fanyi.youdao.com/openapi.do?keyfrom=foreignnews&key=14473" +
             "94905&type=data&doctype=json&version=1.1&q=";
-    //数据库版本号
-    public static final int DB_VERSION = 1;
-
+    final public static String DOWNLOAD_PATH = Environment
+            .getExternalStorageDirectory().getAbsolutePath() + "/" + "english_browser";
     final public static DisplayImageOptions normalImageOptions = new DisplayImageOptions.Builder()
             .cacheInMemory(true)
             .cacheOnDisk(true)

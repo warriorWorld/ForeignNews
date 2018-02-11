@@ -1,8 +1,10 @@
 package com.warrior.hangsu.administrator.foreignnews.business.main;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
@@ -17,6 +19,8 @@ import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.GetDataCallback;
+import com.avos.avoscloud.ProgressCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMAuthListener;
@@ -38,6 +42,7 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptio
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.BaseParameterUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
+import com.warrior.hangsu.administrator.foreignnews.utils.FileUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
@@ -45,11 +50,13 @@ import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.DownloadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TextSelectionListener;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,8 +64,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class WebActivity extends BaseActivity
-        implements View.OnClickListener {
+        implements View.OnClickListener,
+        EasyPermissions.PermissionCallbacks {
     private TranslateWebView translateWebView;
     private WebTopBar webTopBar;
     private WebBottomBar webBottomBar;
@@ -82,6 +93,7 @@ public class WebActivity extends BaseActivity
         image = new UMImage(WebActivity.this, R.drawable.icon_garbage);//资源文件
 //        openYoudao();
         doGetAnnouncement();
+        doGetVersionInfo();
         if (!SharedPreferencesUtils.getBooleanSharedPreferencesData(this, ShareKeys.CLOSE_TUTORIAL, false)) {
             MangaDialog dialog = new MangaDialog(this);
             dialog.show();
@@ -450,6 +462,59 @@ public class WebActivity extends BaseActivity
         }
     }
 
+    @AfterPermissionGranted(111)
+    private void doDownload() {
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // Already have permission, do the thing
+            // ...
+            showDownLoadDialog();
+            final String filePath = Globle.DOWNLOAD_PATH + "/apk";
+            final File file = new File(filePath);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            downloadFile.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] bytes, AVException e) {
+                    // bytes 就是文件的数据流
+                    if (null != downloadDialog && downloadDialog.isShowing()) {
+                        downloadDialog.dismiss();
+                    }
+                    if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                        File apkFile = FileUtil.byte2File(bytes, filePath, "english_browser.apk");
+
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setAction("android.intent.action.VIEW");
+                        intent.addCategory("android.intent.category.DEFAULT");
+                        intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+                        startActivity(intent);
+                    }
+                }
+            }, new ProgressCallback() {
+                @Override
+                public void done(Integer integer) {
+                    // 下载进度数据，integer 介于 0 和 100。
+                    downloadDialog.setProgress(integer);
+                }
+            });
+
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, "我们需要写入/读取权限",
+                    111, perms);
+        }
+    }
+
+    private void showDownLoadDialog() {
+        if (null == downloadDialog) {
+            downloadDialog = new DownloadDialog(this);
+        }
+        downloadDialog.show();
+        downloadDialog.setCancelable(false);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -487,5 +552,38 @@ public class WebActivity extends BaseActivity
     protected void onDestroy() {
         super.onDestroy();
         translateWebView.clearCache(true);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        baseToast.showToast("已获得授权,请继续!");
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+//        baseToast.showToast(getResources().getString(R.string.no_permissions), true);
+        if (111 == requestCode) {
+            MangaDialog peanutDialog = new MangaDialog(WebActivity.this);
+            peanutDialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
+                @Override
+                public void onOkClick() {
+                    ActivityPoor.finishAllActivity();
+                }
+
+                @Override
+                public void onCancelClick() {
+
+                }
+            });
+            peanutDialog.show();
+            peanutDialog.setTitle("没有文件读写权限,无法更新App!可以授权后重试!");
+        }
     }
 }
