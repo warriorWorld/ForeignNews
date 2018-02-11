@@ -147,6 +147,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener,
                         if (versionCode == BaseParameterUtil.getInstance(AboutActivity.this).getAppVersionCode()) {
                             versionTv.setText(BaseParameterUtil.getInstance(AboutActivity.this).getAppVersionName()
                                     + "(最新版本)");
+                            baseToast.showToast("已经是最新版本啦~");
                         } else {
                             versionTv.setText(BaseParameterUtil.getInstance(AboutActivity.this).getAppVersionName()
                                     + "(有新版本啦~)");
