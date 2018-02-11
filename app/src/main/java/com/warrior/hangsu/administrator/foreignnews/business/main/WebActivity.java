@@ -14,6 +14,8 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMAuthListener;
@@ -46,7 +48,11 @@ import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarU
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TextSelectionListener;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WebActivity extends BaseActivity
@@ -66,6 +72,7 @@ public class WebActivity extends BaseActivity
 //        initUmeng();
         image = new UMImage(WebActivity.this, R.drawable.icon_garbage);//资源文件
 //        openYoudao();
+        doGetAnnouncement();
         if (!SharedPreferencesUtils.getBooleanSharedPreferencesData(this, ShareKeys.CLOSE_TUTORIAL, false)) {
             MangaDialog dialog = new MangaDialog(this);
             dialog.show();
@@ -241,6 +248,27 @@ public class WebActivity extends BaseActivity
         });
     }
 
+    private void doGetAnnouncement() {
+        AVQuery<AVObject> query = new AVQuery<>("Announcement");
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                    if (null != list && list.size() > 0) {
+                        String title = list.get(0).getString("title");
+                        String message = list.get(0).getString("message");
+                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                        String date = df.format(new Date());
+                        if (!date.equals(SharedPreferencesUtils.getSharedPreferencesData(
+                                WebActivity.this, ShareKeys.ANNOUNCEMENT_READ_KEY))) {
+                            showAnnouncementDialog(title, message);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     private void openYoudao() {
         // ComponentName（组件名称）是用来打开其他应用程序中的Activity或服务的
         Intent intent = new Intent();
@@ -326,10 +354,63 @@ public class WebActivity extends BaseActivity
         dialog.setCancelText("否");
     }
 
+    private void showAnnouncementDialog(String title, String msg) {
+        MangaDialog dialog = new MangaDialog(this);
+        dialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
+            @Override
+            public void onOkClick() {
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                String date = df.format(new Date());
+                SharedPreferencesUtils.setSharedPreferencesData
+                        (WebActivity.this, ShareKeys.ANNOUNCEMENT_READ_KEY, date);
+            }
+
+            @Override
+            public void onCancelClick() {
+
+            }
+        });
+        if (WebActivity.this.isFinishing()) {
+            return;
+        }
+        dialog.show();
+        dialog.setCancelable(false);
+        dialog.setTitle(title);
+        dialog.setMessage(msg);
+        dialog.setOkText("知道了");
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        showLogoutDialog();
+    }
+
+
+    private void showLogoutDialog() {
+        MangaDialog logoutDialog = new MangaDialog(WebActivity.this);
+        logoutDialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
+            @Override
+            public void onOkClick() {
+                ActivityPoor.finishAllActivity();
+            }
+
+            @Override
+            public void onCancelClick() {
+
+            }
+        });
+        logoutDialog.show();
+
+        logoutDialog.setTitle("确定退出?");
+        logoutDialog.setOkText("退出");
+        logoutDialog.setCancelText("再逛逛");
+        logoutDialog.setCancelable(true);
     }
 
     @Override
