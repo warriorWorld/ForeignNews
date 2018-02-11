@@ -225,7 +225,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
         this.webTopBar.setOnWebTopBarSkipToURLListener(new OnWebTopBarSkipToURLListener() {
             @Override
             public void skipToURL(String url) {
-                if (!url.contains("http://")) {
+                if (!url.contains("http://")&&!url.contains("https://")) {
                     loadUrl("http://" + url + "/");
                 } else {
 

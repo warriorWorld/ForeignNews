@@ -23,9 +23,11 @@ import com.avos.avoscloud.ProgressCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
+import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.main.WebActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.BaseParameterUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.FileUtil;
@@ -33,6 +35,7 @@ import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.DownloadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
 
 import java.io.File;
 import java.util.List;
@@ -263,6 +266,30 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener,
         authorDialog.setMessage("作者:  苏航\n邮箱:  772192594@qq.com");
     }
 
+    private void showSetMainUrlDialog() {
+        MangaEditDialog dialog = new MangaEditDialog(AboutActivity.this);
+        dialog.setOnEditResultListener(new OnEditResultListener() {
+            @Override
+            public void onResult(String text) {
+                if (!text.contains("http://") && !text.contains("https://")) {
+                    text = "http://" + text + "/";
+                }
+                SharedPreferencesUtils.setSharedPreferencesData(
+                        AboutActivity.this, ShareKeys.MAIN_URL, text);
+                baseToast.showToast("设置成功");
+            }
+
+            @Override
+            public void onCancelClick() {
+
+            }
+        });
+        dialog.setCancelable(true);
+        dialog.show();
+        dialog.setTitle("设置主页地址");
+        dialog.setHint("请输入要设置的主页地址");
+    }
+
     @Override
     public void onClick(View v) {
         Intent intent = null;
@@ -271,6 +298,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener,
                 doGetVersionInfo();
                 break;
             case R.id.set_main_url_rl:
+                showSetMainUrlDialog();
                 break;
             case R.id.author_rl:
                 showAuthorDialog();

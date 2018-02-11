@@ -41,6 +41,7 @@ import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarWebNumClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.BaseParameterUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
@@ -147,6 +148,12 @@ public class WebActivity extends BaseActivity
                 translateWebView.loadUrl
                         (SharedPreferencesUtils.getSharedPreferencesData
                                 (WebActivity.this, ShareKeys.MAIN_URL, Globle.DEFAULT_MAIN_URL));
+            }
+        });
+        webBottomBar.setOnWebBottomBarWebNumClickListener(new OnWebBottomBarWebNumClickListener() {
+            @Override
+            public void onWebNumClick() {
+                baseToast.showToast("待开发");
             }
         });
         webBottomBar.setOnWebBottomBarOptionsClickListener(new OnWebBottomBarOptionsClickListener() {
