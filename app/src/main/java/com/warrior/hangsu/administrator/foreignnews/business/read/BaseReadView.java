@@ -53,7 +53,6 @@ public abstract class BaseReadView extends View {
     protected PageFactory pagefactory = null;
 
     protected OnReadStateChangeListener listener;
-    protected String bookId;
     public boolean isPrepared = false;
     private OnUpFlipListener onUpFlipListener;
 
@@ -64,12 +63,11 @@ public abstract class BaseReadView extends View {
     //记录点击次数
     private int clickTime = 0;
 
-    public BaseReadView(Context context, String bookId,
+    public BaseReadView(Context context,
                         OnReadStateChangeListener listener) {
         super(context);
         this.context = context;
         this.listener = listener;
-        this.bookId = bookId;
 
         mScreenWidth = ScreenUtils.getScreenWidth();
         mScreenHeight = ScreenUtils.getScreenHeight();
@@ -82,21 +80,15 @@ public abstract class BaseReadView extends View {
         mScroller = new Scroller(getContext());
 
 
-        pagefactory = new PageFactory(getContext(), bookId);
+        pagefactory = new PageFactory(getContext());
         pagefactory.setOnReadStateChangeListener(listener);
     }
 
-    public synchronized void init(int theme) {
+    public synchronized void init(int theme, String title, String content) {
         if (!isPrepared) {
             try {
                 pagefactory.setBgBitmap(ThemeManager.getThemeDrawable(theme));
-                // 自动跳转到上次阅读位置
-                int pos[] = SettingManager.getInstance().getReadProgress(bookId);
-                int ret = pagefactory.openBook(bookId, new int[]{pos[0], pos[1]});
-                if (ret == 0) {
-                    listener.onLoadFailure(bookId);
-                    return;
-                }
+                pagefactory.setTitleAndContent(title, content);
                 pagefactory.onDraw(mCurrentPageCanvas);
                 postInvalidate();
             } catch (Exception e) {
@@ -350,16 +342,6 @@ public abstract class BaseReadView extends View {
 
     public void setTime(String time) {
         pagefactory.setTime(time);
-    }
-
-    public void setPosition(int[] pos) {
-        int ret = pagefactory.openBook(bookId, new int[]{pos[0], pos[1]});
-        if (ret == 0) {
-            listener.onLoadFailure(bookId);
-            return;
-        }
-        pagefactory.onDraw(mCurrentPageCanvas);
-        postInvalidate();
     }
 
     public int[] getReadPos() {

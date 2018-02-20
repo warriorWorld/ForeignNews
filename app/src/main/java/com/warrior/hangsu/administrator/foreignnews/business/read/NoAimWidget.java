@@ -26,8 +26,8 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnReadStateChangeLi
  */
 public class NoAimWidget extends OverlappedWidget {
 
-    public NoAimWidget(Context context, String bookId, OnReadStateChangeListener listener) {
-        super(context, bookId, listener);
+    public NoAimWidget(Context context, OnReadStateChangeListener listener) {
+        super(context, listener);
     }
 
     @Override

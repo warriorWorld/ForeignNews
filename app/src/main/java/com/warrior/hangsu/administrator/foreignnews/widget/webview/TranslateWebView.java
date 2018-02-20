@@ -63,6 +63,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
     private String lastURL = "";//用于判断是否已经注入
     private String lastURL1 = "";//用于只设置一遍颜色
     private OnWebViewLongClickListener onWebViewLongClickListener;
+    private String urlTitle;
 
     public TranslateWebView(Context context) {
         super(context);
@@ -269,6 +270,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
             public void onTextOnlyClick() {
                 Intent intent = new Intent(mContext, ReadTextOnlyActivity.class);
                 intent.putExtra("url", getUrl());
+                intent.putExtra("title", urlTitle);
                 mContext.startActivity(intent);
             }
         });
@@ -335,6 +337,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
         @Override
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
+            urlTitle = title;
             if (null != webTopBar) {
                 webTopBar.setTitle(title);
                 webTopBar.setPath(getUrl());

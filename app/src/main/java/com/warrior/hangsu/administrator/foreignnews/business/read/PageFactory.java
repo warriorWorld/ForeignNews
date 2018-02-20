@@ -80,10 +80,6 @@ public class PageFactory {
      */
     private int mbBufferLen;
     /**
-     * MappedByteBuffer：高效的文件内存映射
-     */
-    private MappedByteBuffer mbBuff;
-    /**
      * 页首页尾的位置
      */
     private int curEndPos = 0, curBeginPos = 0, tempBeginPos, tempEndPos;
@@ -102,22 +98,21 @@ public class PageFactory {
     private ProgressBar batteryView;
     private Bitmap batteryBitmap;
 
-    private String bookId;
     private int currentPage = 1;
 
     private OnReadStateChangeListener listener;
     private String charset = "UTF-8";
     private float currentPercent;
-    private int searchEndPos = 0;//搜索指针
+    private String title;
+    private String content;
 
-    public PageFactory(Context context, String bookId) {
+    public PageFactory(Context context) {
         this(context, ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight(),
                 //SettingManager.getInstance().getReadFontSize(bookId),
-                SettingManager.getInstance().getReadFontSize(),
-                bookId);
+                SettingManager.getInstance().getReadFontSize());
     }
 
-    public PageFactory(Context context, int width, int height, int fontSize, String bookId) {
+    public PageFactory(Context context, int width, int height, int fontSize) {
         mContext = context;
         mWidth = width;
         mHeight = height;
@@ -143,40 +138,9 @@ public class PageFactory {
         // mPaint.setTypeface(typeface);
         // mNumPaint.setTypeface(typeface);
 
-        this.bookId = bookId;
-
         time = dateFormat.format(new Date());
     }
 
-    /**
-     * 打开书籍文件
-     *
-     * @param position 阅读位置
-     * @return 0：文件不存在或打开失败  1：打开成功
-     */
-    public int openBook(String path, int[] position) {
-        try {
-            File file = new File(path);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            long length = file.length();
-            if (length > 10) {
-                mbBufferLen = (int) length;
-                // 创建文件通道，映射为MappedByteBuffer
-                mbBuff = new RandomAccessFile(file, "r")
-                        .getChannel()
-                        .map(FileChannel.MapMode.READ_ONLY, 0, length);
-                curBeginPos = position[0];
-                curEndPos = position[1];
-                mLines.clear();
-                return 1;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
 
     /**
      * 绘制阅读页面
@@ -196,10 +160,7 @@ public class PageFactory {
             } else {
                 canvas.drawColor(Color.WHITE);
             }
-            // 绘制标题       //TODO
-            int separatorPosition = bookId.lastIndexOf(File.separator);
-            int dotPosition = bookId.lastIndexOf(".");
-            String title = bookId.substring(separatorPosition + 1, dotPosition);
+            // 绘制标题
             canvas.drawText(title, marginWidth, y, mTitlePaint);
             y += mLineSpace + mNumFontSize;
             // 绘制阅读页面文字
@@ -225,9 +186,6 @@ public class PageFactory {
             //绘制时间
             String mTime = dateFormat.format(new Date());
             canvas.drawText(mTime, mWidth - marginWidth - timeLen, mHeight - marginHeight, mTitlePaint);
-
-            // 保存阅读进度
-            SettingManager.getInstance().saveReadProgress(bookId, curBeginPos, curEndPos, currentPercent);
         }
     }
 
@@ -388,9 +346,10 @@ public class PageFactory {
     private byte[] readParagraphForward(int curEndPos) {
         byte b0;
         int i = curEndPos;
+        byte[] contents = content.getBytes();
         //计算段落的长度 遇到回车就停下
         while (i < mbBufferLen) {
-            b0 = mbBuff.get(i++);
+            b0 = contents[i++];
             if (b0 == 0x0a) {//回车
                 break;
             }
@@ -399,7 +358,7 @@ public class PageFactory {
         byte[] buf = new byte[nParaSize];
         //根据段落长度 把一个个字符加进段落
         for (i = 0; i < nParaSize; i++) {
-            buf[i] = mbBuff.get(curEndPos + i);
+            buf[i] = contents[curEndPos + i];
         }
         return buf;
     }
@@ -413,8 +372,9 @@ public class PageFactory {
     private byte[] readParagraphBack(int curBeginPos) {
         byte b0;
         int i = curBeginPos - 1;
+        byte[] contents = content.getBytes();
         while (i > 0) {
-            b0 = mbBuff.get(i);
+            b0 = contents[i];
             if (b0 == 0x0a && i != curBeginPos - 1) {
                 //遇到回车 跳出循环
                 i++;
@@ -425,7 +385,7 @@ public class PageFactory {
         int nParaSize = curBeginPos - i;
         byte[] buf = new byte[nParaSize];
         for (int j = 0; j < nParaSize; j++) {
-            buf[j] = mbBuff.get(i + j);
+            buf[j] = contents[i + j];
         }
         return buf;
     }
@@ -483,16 +443,16 @@ public class PageFactory {
     }
 
     public void cancelPage() {
-        curBeginPos = tempBeginPos;
-        curEndPos = curBeginPos;
-
-        int ret = openBook(bookId, new int[]{curBeginPos, curEndPos});
-        if (ret == 0) {
-            onLoadChapterFailure(bookId);
-            return;
-        }
-        mLines.clear();
-        mLines = pageDown();
+//        curBeginPos = tempBeginPos;
+//        curEndPos = curBeginPos;
+//
+//        int ret = openBook(bookId, new int[]{curBeginPos, curEndPos});
+//        if (ret == 0) {
+//            onLoadChapterFailure(bookId);
+//            return;
+//        }
+//        mLines.clear();
+//        mLines = pageDown();
     }
 
     /**
@@ -708,5 +668,12 @@ public class PageFactory {
         str = str.replaceAll("\r", "");
         str = str.replaceAll("\\s", "");
         return str;
+    }
+
+    public void setTitleAndContent(String title, String content) {
+        this.content = content;
+        this.title = title;
+        mbBufferLen = content.length();
+        mLines.clear();
     }
 }

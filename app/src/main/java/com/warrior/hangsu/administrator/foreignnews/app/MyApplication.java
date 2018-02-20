@@ -12,6 +12,7 @@ import com.umeng.socialize.UMShareAPI;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.utils.AppUtils;
+import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 
 /**
@@ -29,6 +30,14 @@ public class MyApplication extends Application {
         initUserInfo();
         dealFileUriExposedException();
         AppUtils.init(this);
+        initPrefs();
+    }
+
+    /**
+     * 初始化SharedPreference
+     */
+    protected void initPrefs() {
+        SharedPreferencesUtil.init(getApplicationContext(), getPackageName() + "_preference", Context.MODE_MULTI_PROCESS);
     }
     private void dealFileUriExposedException() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
