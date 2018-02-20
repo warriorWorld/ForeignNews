@@ -51,7 +51,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 /**
  * 个人信息页
  */
-public class ReadTextOnlyActivity extends BaseActivity  {
+public class ReadTextOnlyActivity extends BaseActivity {
     private String url;
     private static org.jsoup.nodes.Document doc;
     private String urlContent;
@@ -119,53 +119,43 @@ public class ReadTextOnlyActivity extends BaseActivity  {
         }.start();
     }
 
-    @AfterPermissionGranted(111)
     private void initPagerWidget() {
-        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            // Already have permission, do the thing
-            // ...
-            mPageWidget = new OverlappedWidget(this, new ReadListener());
+        mPageWidget = new OverlappedWidget(this, new ReadListener());
 
-            if (SharedPreferencesUtil.getInstance().getBoolean(ShareKeys.ISNIGHT, false)) {
-                mPageWidget.setTextColor(getResources().getColor(R.color.chapter_content_night),
-                        getResources().getColor((R.color.chapter_title_night)));
-            }
-            mPageWidget.setOnWordClickListener(new OnWordClickListener() {
-                @Override
-                public void onWordClick(String word) {
-                    if (StringUtils.isWord(word)) {
-                        translation(word);
-                    }
-                }
-            });
-            mPageWidget.setOnUpFlipListener(new OnUpFlipListener() {
-                @Override
-                public void onUpFlip() {
-                    showReadDialog();
-                }
-            });
-            readWidgetFl.removeAllViews();
-            readWidgetFl.addView(mPageWidget);
-
-
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SingleLoadBarUtil.getInstance().dismissLoadBar();
-                    /**
-                     *要执行的操作
-                     */
-                    mPageWidget.init(SettingManager.getInstance().getReadTheme(), title, urlContent);
-                    toggleDayNight();
-                }
-            }, 500);//n秒后执行Runnable中的run方法
-        } else {
-            // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(this, "我们需要写入/读取权限",
-                    111, perms);
+        if (SharedPreferencesUtil.getInstance().getBoolean(ShareKeys.ISNIGHT, false)) {
+            mPageWidget.setTextColor(getResources().getColor(R.color.chapter_content_night),
+                    getResources().getColor((R.color.chapter_title_night)));
         }
+        mPageWidget.setOnWordClickListener(new OnWordClickListener() {
+            @Override
+            public void onWordClick(String word) {
+                if (StringUtils.isWord(word)) {
+                    translation(word);
+                }
+            }
+        });
+        mPageWidget.setOnUpFlipListener(new OnUpFlipListener() {
+            @Override
+            public void onUpFlip() {
+                showReadDialog();
+            }
+        });
+        readWidgetFl.removeAllViews();
+        readWidgetFl.addView(mPageWidget);
+
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SingleLoadBarUtil.getInstance().dismissLoadBar();
+                /**
+                 *要执行的操作
+                 */
+                mPageWidget.init(SettingManager.getInstance().getReadTheme(), title, urlContent);
+                toggleDayNight();
+            }
+        }, 500);//n秒后执行Runnable中的run方法
     }
 
     private void translation(final String word) {
