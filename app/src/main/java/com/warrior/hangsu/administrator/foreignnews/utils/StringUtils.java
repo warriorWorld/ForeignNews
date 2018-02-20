@@ -17,4 +17,12 @@ public class StringUtils {
         Matcher matcher = pattern.matcher(word);
         return matcher.matches();
     }
+
+    public static String replaceAllSpecialCharacterTo(String s,String to) {
+        String str = s.replaceAll("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&;*（）——+|{}【】\"‘；：”“’。，、？|-]", to);
+        str = str.replaceAll("\n", to);
+        str = str.replaceAll("\r", to);
+        str = str.replaceAll("\\s", to);
+        return str;
+    }
 }

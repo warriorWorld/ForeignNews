@@ -20,6 +20,7 @@ import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
 import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnReadDialogClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnReadStateChangeListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnSevenFourteenListDialogListener;
@@ -36,12 +37,15 @@ import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.ListDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.ReadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -253,6 +257,8 @@ public class ReadTextOnlyActivity extends BaseActivity {
                     if (TextUtils.isEmpty(LoginBean.getInstance().getUserName())) {
                         Intent intent = new Intent(ReadTextOnlyActivity.this, LoginActivity.class);
                         startActivity(intent);
+                    } else {
+                        showSaveDialog();
                     }
                 }
 
@@ -312,6 +318,41 @@ public class ReadTextOnlyActivity extends BaseActivity {
         });
         listDialog.show();
         listDialog.setOptionsList(ThemeManager.THEME_LIST);
+    }
+
+    private void showSaveDialog() {
+        MangaEditDialog dialog = new MangaEditDialog(this);
+        dialog.setOnEditResultListener(new OnEditResultListener() {
+            @Override
+            public void onResult(String text) {
+                File file = new File(Globle.DOWNLOAD_PATH);
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                try {
+                    FileWriter fw = new FileWriter(Globle.DOWNLOAD_PATH + File.separator
+                            + text + ".txt", true);
+                    fw.write(urlContent);
+                    fw.close();
+                    baseToast.showToast("保存成功!\n已保存至" + Globle.DOWNLOAD_PATH + "文件夹");
+                    // 上传错误信息到服务器
+//                uploadToServer(crashInfo);
+                } catch (IOException e) {
+                    baseToast.showToast(e + "");
+                }
+            }
+
+            @Override
+            public void onCancelClick() {
+
+            }
+        });
+        dialog.show();
+        dialog.setTitle("要保存文本吗?");
+        dialog.setHint("请输入文本标题");
+        dialog.setEditTextContent(StringUtils.replaceAllSpecialCharacterTo(title, "_"));
+        dialog.setOkText("确定");
+        dialog.setCancelText("取消");
     }
 
     private void showFontSizeSelectorDialog() {
