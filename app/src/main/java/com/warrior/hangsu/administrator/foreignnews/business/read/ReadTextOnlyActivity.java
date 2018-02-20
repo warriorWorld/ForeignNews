@@ -30,7 +30,7 @@ public class ReadTextOnlyActivity extends BaseActivity implements View.OnClickLi
     private TextView readTv;
     private String url;
     private static org.jsoup.nodes.Document doc;
-    String s;
+    private String urlContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class ReadTextOnlyActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initUI() {
-        readTv= (TextView) findViewById(R.id.read_tv);
+        readTv = (TextView) findViewById(R.id.read_tv);
         baseTopBar.setTitle("文本阅读");
     }
 
@@ -68,13 +68,13 @@ public class ReadTextOnlyActivity extends BaseActivity implements View.OnClickLi
                 if (null != doc) {
                     Elements test = doc.select("p");
                     for (int i = 0; i < test.size(); i++) {
-                        s += test.get(i).text();
+                        urlContent += test.get(i).text();
                     }
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            readTv.setText(s);
+                            readTv.setText(urlContent);
                         }
                     });
                 }

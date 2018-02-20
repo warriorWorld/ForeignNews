@@ -30,4 +30,17 @@
     <color name="main_text_color_gray">#c2c2c2</color>
     <color name="english_gray">#c7c7c7</color>
     <color name="divide_line">#e1e1e1</color>
+    <color name="read_theme_white">#ffffff</color>
+    <color name="read_theme_green">#bed0cf</color>
+    <color name="read_theme_yellow">#e6dbbf</color>
+    <color name="read_theme_gray">#AAAAAA</color>
+    <color name="read_theme_night">#000000</color>
+    <!--章节内容夜间颜色-->
+    <color name="chapter_content_night">#444444</color>
+    <!--章节标题夜间颜色-->
+    <color name="chapter_title_night">#292929</color>
+    <!--章节内容夜间颜色-->
+    <color name="chapter_content_day">#3B3220</color>
+    <!--章节标题日间颜色-->
+    <color name="chapter_title_day">#837B63</color>
 </resources>

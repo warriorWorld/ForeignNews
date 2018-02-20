@@ -11,6 +11,7 @@ import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
+import com.warrior.hangsu.administrator.foreignnews.utils.AppUtils;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 
 /**
@@ -27,6 +28,7 @@ public class MyApplication extends Application {
         initLeanCloud();
         initUserInfo();
         dealFileUriExposedException();
+        AppUtils.init(this);
     }
     private void dealFileUriExposedException() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
