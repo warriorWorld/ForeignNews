@@ -33,6 +33,6 @@ public class Globle {
 //            .showImageOnLoading(R.drawable.spider_hat_color512)
 //            .showImageOnFail(R.drawable.spider_hat_gray512)
             .build();
-    public static final String DEFAULT_MAIN_URL = "https://www.baidu.com/";
+    public static final String DEFAULT_MAIN_URL = "http://cn.bing.com/";
     public static final String[] BLACK_LIST = {"baidu", "https://www.taobao.com/"};
 }
