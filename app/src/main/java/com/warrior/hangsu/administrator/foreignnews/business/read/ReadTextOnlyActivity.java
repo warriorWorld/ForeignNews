@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -26,8 +27,7 @@ import java.util.ArrayList;
  * 个人信息页
  */
 public class ReadTextOnlyActivity extends BaseActivity implements View.OnClickListener {
-    private EditText feedbackEt;
-    private Button okBtn;
+    private TextView readTv;
     private String url;
     private static org.jsoup.nodes.Document doc;
     String s;
@@ -45,16 +45,13 @@ public class ReadTextOnlyActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initUI() {
-        feedbackEt = (EditText) findViewById(R.id.feedback_et);
-        okBtn = (Button) findViewById(R.id.ok_btn);
-
-        okBtn.setOnClickListener(this);
-        baseTopBar.setTitle("意见反馈");
+        readTv= (TextView) findViewById(R.id.read_tv);
+        baseTopBar.setTitle("文本阅读");
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_feedback;
+        return R.layout.activity_read_text;
     }
 
     private void doGetData() {
@@ -69,7 +66,7 @@ public class ReadTextOnlyActivity extends BaseActivity implements View.OnClickLi
                 }
 
                 if (null != doc) {
-                    Elements test = doc.select("div.p");
+                    Elements test = doc.select("p");
                     for (int i = 0; i < test.size(); i++) {
                         s += test.get(i).text();
                     }
@@ -77,7 +74,7 @@ public class ReadTextOnlyActivity extends BaseActivity implements View.OnClickLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            feedbackEt.setText(s);
+                            readTv.setText(s);
                         }
                     });
                 }
