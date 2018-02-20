@@ -17,7 +17,7 @@ android {
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug{
+        debug {
             minifyEnabled false
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -40,7 +40,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.0.+'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.android.support:design:25.0.+'
-    compile files('libs/jsoup-1.7.2.jar')
     compile files('libs/volley.jar')
     compile files('libs/SocialSDK_QQZone_3.jar')
     compile files('libs/SocialSDK_umengqq.jar')
@@ -54,4 +53,6 @@ dependencies {
     // LeanCloud 基础包
     compile('cn.leancloud.android:avoscloud-sdk:v4.4.3')
     compile 'pub.devrel:easypermissions:0.4.2'
+    // jsoup HTML parser library @ https://jsoup.org/
+    compile 'org.jsoup:jsoup:1.10.3'
 }

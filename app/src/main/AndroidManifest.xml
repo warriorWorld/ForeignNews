@@ -52,6 +52,9 @@
             android:name=".business.other.FeedbackActivity"
             android:launchMode="standard"></activity>
         <activity
+            android:name=".business.read.ReadTextOnlyActivity"
+            android:launchMode="standard"></activity>
+        <activity
             android:name=".business.login.LoginActivity"
             android:launchMode="singleTask"></activity>
         <activity

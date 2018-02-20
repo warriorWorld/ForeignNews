@@ -10,4 +10,6 @@ public interface OnWebBottomBarClickListener {
     void onForwardClick();
 
     void onRefreshClick();
+
+    void onTextOnlyClick();
 }

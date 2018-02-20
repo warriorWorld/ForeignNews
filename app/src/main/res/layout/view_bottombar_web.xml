@@ -45,6 +45,15 @@
             android:layout_centerInParent="true"
             android:src="@drawable/home" />
 
+        <ImageView
+            android:id="@+id/text_only_iv"
+            android:layout_width="@dimen/bottombar_button"
+            android:layout_height="@dimen/bottombar_button"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/bottombar_button_margin"
+            android:layout_toRightOf="@+id/home_iv"
+            android:src="@drawable/text_only_icon" />
+
         <TextView
             android:id="@+id/web_num_iv"
             android:layout_width="@dimen/bottombar_button"
@@ -56,7 +65,8 @@
             android:gravity="center"
             android:text="1"
             android:textColor="@color/english_browser"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/options_iv"
@@ -64,7 +74,7 @@
             android:layout_height="@dimen/bottombar_button"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/bottombar_button_margin"
-            android:layout_toRightOf="@+id/web_num_iv"
+            android:layout_toRightOf="@+id/text_only_iv"
             android:src="@drawable/options" />
     </RelativeLayout>
 

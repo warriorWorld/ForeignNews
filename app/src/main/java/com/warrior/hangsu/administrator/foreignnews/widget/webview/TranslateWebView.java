@@ -17,6 +17,7 @@
 package com.warrior.hangsu.administrator.foreignnews.widget.webview;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -32,6 +33,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.business.read.ReadTextOnlyActivity;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
@@ -225,7 +227,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
         this.webTopBar.setOnWebTopBarSkipToURLListener(new OnWebTopBarSkipToURLListener() {
             @Override
             public void skipToURL(String url) {
-                if (!url.contains("http://")&&!url.contains("https://")) {
+                if (!url.contains("http://") && !url.contains("https://")) {
                     loadUrl("http://" + url + "/");
                 } else {
 
@@ -261,6 +263,13 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
             @Override
             public void onRefreshClick() {
                 refresh();
+            }
+
+            @Override
+            public void onTextOnlyClick() {
+                Intent intent = new Intent(mContext, ReadTextOnlyActivity.class);
+                intent.putExtra("url", getUrl());
+                mContext.startActivity(intent);
             }
         });
     }

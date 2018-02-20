@@ -20,7 +20,7 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarWebNu
  */
 public class WebBottomBar extends BaseWebBottomBar implements View.OnClickListener {
     private Context context;
-    private ImageView backwardIV, forwardIV, homeIV, optionsIV;
+    private ImageView backwardIV, forwardIV, homeIV, optionsIV,textOnlyIv;
     private TextView webNumTV;
     private View bottomLayout;
     private OnWebBottomBarClickListener onWebBottomBarClickListener;
@@ -62,6 +62,9 @@ public class WebBottomBar extends BaseWebBottomBar implements View.OnClickListen
         homeIV = (ImageView) findViewById(R.id.home_iv);
         optionsIV = (ImageView) findViewById(R.id.options_iv);
         webNumTV = (TextView) findViewById(R.id.web_num_iv);
+        textOnlyIv= (ImageView) findViewById(R.id.text_only_iv);
+
+        textOnlyIv.setOnClickListener(this);
         backwardIV.setOnClickListener(this);
         forwardIV.setOnClickListener(this);
         homeIV.setOnClickListener(this);
@@ -96,6 +99,11 @@ public class WebBottomBar extends BaseWebBottomBar implements View.OnClickListen
             case R.id.forward_iv:
                 if (null != onWebBottomBarClickListener) {
                     onWebBottomBarClickListener.onForwardClick();
+                }
+                break;
+            case R.id.text_only_iv:
+                if (null != onWebBottomBarClickListener) {
+                    onWebBottomBarClickListener.onTextOnlyClick();
                 }
                 break;
             case R.id.home_iv:
