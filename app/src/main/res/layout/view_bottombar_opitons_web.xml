@@ -139,7 +139,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="英文漫画"
+                android:text="更多英语学习App"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -191,6 +191,32 @@
             android:text="点击登录"
             android:textColor="@color/white"
             android:textSize="11sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/share_app_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="-20dp"
+        android:layout_marginRight="30dp"
+        android:background="@color/transparency"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="3dp"
+            android:text="分享App"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/qr_code_icon" />
+
     </LinearLayout>
 
     <RelativeLayout

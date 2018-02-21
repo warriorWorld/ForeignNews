@@ -7,6 +7,10 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 
 import com.avos.avoscloud.AVOSCloud;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
@@ -31,6 +35,19 @@ public class MyApplication extends Application {
         dealFileUriExposedException();
         AppUtils.init(this);
         initPrefs();
+        initImageLoader(this);
+    }
+
+    public static void initImageLoader(Context context) {
+        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(context);
+        config.threadPriority(Thread.NORM_PRIORITY - 2);
+        config.denyCacheImageMultipleSizesInMemory();
+        config.diskCacheFileNameGenerator(new Md5FileNameGenerator());
+        config.diskCacheSize(50 * 1024 * 1024); // 50 MiB
+        config.tasksProcessingOrder(QueueProcessingType.LIFO);
+        config.writeDebugLogs(); // Remove for release app
+
+        ImageLoader.getInstance().init(config.build());
     }
 
     /**
@@ -39,12 +56,14 @@ public class MyApplication extends Application {
     protected void initPrefs() {
         SharedPreferencesUtil.init(getApplicationContext(), getPackageName() + "_preference", Context.MODE_MULTI_PROCESS);
     }
+
     private void dealFileUriExposedException() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
         }
     }
+
     /**
      * 友盟
      */
@@ -59,9 +78,11 @@ public class MyApplication extends Application {
         AVOSCloud.initialize(this, "1JckrFjW7OIyxuE2tC2oPlOm-gzGzoHsz", "uerfNutO5dUrvJQoulCH4ePP");
         AVOSCloud.setDebugLogEnabled(true);
     }
+
     private void initUserInfo() {
         LoginBean.getInstance().setLoginInfo(this, LoginBean.getLoginInfo(this));
     }
+
     public static Context getContext() {
         return context;
     }

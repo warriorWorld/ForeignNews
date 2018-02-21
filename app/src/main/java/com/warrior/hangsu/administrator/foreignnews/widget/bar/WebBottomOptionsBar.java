@@ -34,6 +34,7 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
     private LinearLayout mangaLl;
     private LinearLayout exitLl;
     private LinearLayout headLl;
+    private LinearLayout shareAppLl;
     private ImageView userHeadIv;
     private TextView userNameTv;
     private RelativeLayout closeDwonArrowRl;
@@ -78,7 +79,9 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
         userHeadIv = (ImageView) findViewById(R.id.user_head_iv);
         userNameTv = (TextView) findViewById(R.id.user_name_tv);
         closeDwonArrowRl = (RelativeLayout) findViewById(R.id.close_dialog_rl);
+        shareAppLl = (LinearLayout) findViewById(R.id.share_app_ll);
 
+        shareAppLl.setOnClickListener(this);
         closeDwonArrowRl.setOnClickListener(this);
         addCollectLl.setOnClickListener(this);
         addCollectedLl.setOnClickListener(this);
@@ -133,6 +136,11 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
             case R.id.head_ll:
                 if (null != onWebBottomBarOptionsClickListener) {
                     onWebBottomBarOptionsClickListener.onLoginClick();
+                }
+                break;
+            case R.id.share_app_ll:
+                if (null != onWebBottomBarOptionsClickListener) {
+                    onWebBottomBarOptionsClickListener.onShareAppClick();
                 }
                 break;
             case R.id.close_dialog_rl:
