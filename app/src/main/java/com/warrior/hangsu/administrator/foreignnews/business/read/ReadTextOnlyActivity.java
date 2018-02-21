@@ -18,6 +18,7 @@ import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
 import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
 import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
+import com.warrior.hangsu.administrator.foreignnews.business.main.WebActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
@@ -28,6 +29,7 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnUpFlipListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWordClickListener;
 import com.warrior.hangsu.administrator.foreignnews.mannger.SettingManager;
 import com.warrior.hangsu.administrator.foreignnews.mannger.ThemeManager;
+import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.ScreenUtils;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
@@ -48,6 +50,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -55,7 +58,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 /**
  * 个人信息页
  */
-public class ReadTextOnlyActivity extends BaseActivity {
+public class ReadTextOnlyActivity extends BaseActivity implements
+        EasyPermissions.PermissionCallbacks {
     private String url;
     private static org.jsoup.nodes.Document doc;
     private String urlContent;
@@ -258,7 +262,7 @@ public class ReadTextOnlyActivity extends BaseActivity {
                         Intent intent = new Intent(ReadTextOnlyActivity.this, LoginActivity.class);
                         startActivity(intent);
                     } else {
-                        showSaveDialog();
+                        baseToast.showToast("你好!" + LoginBean.getInstance().getUserName() + "!");
                     }
                 }
 
@@ -270,6 +274,11 @@ public class ReadTextOnlyActivity extends BaseActivity {
                 @Override
                 public void onExitClick() {
                     ReadTextOnlyActivity.this.finish();
+                }
+
+                @Override
+                public void onSaveClick() {
+                    showSaveDialog();
                 }
             });
         }
@@ -320,39 +329,49 @@ public class ReadTextOnlyActivity extends BaseActivity {
         listDialog.setOptionsList(ThemeManager.THEME_LIST);
     }
 
+    @AfterPermissionGranted(111)
     private void showSaveDialog() {
-        MangaEditDialog dialog = new MangaEditDialog(this);
-        dialog.setOnEditResultListener(new OnEditResultListener() {
-            @Override
-            public void onResult(String text) {
-                File file = new File(Globle.DOWNLOAD_PATH);
-                if (!file.exists()) {
-                    file.mkdirs();
-                }
-                try {
-                    FileWriter fw = new FileWriter(Globle.DOWNLOAD_PATH + File.separator
-                            + text + ".txt", true);
-                    fw.write(urlContent);
-                    fw.close();
-                    baseToast.showToast("保存成功!\n已保存至" + Globle.DOWNLOAD_PATH + "文件夹");
-                    // 上传错误信息到服务器
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // Already have permission, do the thing
+            // ...
+            MangaEditDialog dialog = new MangaEditDialog(this);
+            dialog.setOnEditResultListener(new OnEditResultListener() {
+                @Override
+                public void onResult(String text) {
+                    File file = new File(Globle.DOWNLOAD_PATH);
+                    if (!file.exists()) {
+                        file.mkdirs();
+                    }
+                    try {
+                        FileWriter fw = new FileWriter(Globle.DOWNLOAD_PATH + File.separator
+                                + text + ".txt", true);
+                        fw.write(urlContent);
+                        fw.close();
+                        baseToast.showToast("保存成功!\n已保存至" + Globle.DOWNLOAD_PATH + "文件夹");
+                        // 上传错误信息到服务器
 //                uploadToServer(crashInfo);
-                } catch (IOException e) {
-                    baseToast.showToast(e + "");
+                    } catch (IOException e) {
+                        baseToast.showToast(e + "");
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelClick() {
+                @Override
+                public void onCancelClick() {
 
-            }
-        });
-        dialog.show();
-        dialog.setTitle("要保存文本吗?");
-        dialog.setHint("请输入文本标题");
-        dialog.setEditTextContent(StringUtils.replaceAllSpecialCharacterTo(title, "_"));
-        dialog.setOkText("确定");
-        dialog.setCancelText("取消");
+                }
+            });
+            dialog.show();
+            dialog.setTitle("要保存文本吗?");
+            dialog.setHint("请输入文本标题");
+            dialog.setEditTextContent(StringUtils.replaceAllSpecialCharacterTo(title, "_"));
+            dialog.setOkText("确定");
+            dialog.setCancelText("取消");
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, "我们需要写入/读取权限",
+                    111, perms);
+        }
     }
 
     private void showFontSizeSelectorDialog() {
@@ -397,6 +416,38 @@ public class ReadTextOnlyActivity extends BaseActivity {
         public void onFlip() {
             //TODO
 //            hideReadBar();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        baseToast.showToast("已获得授权,请继续!");
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+//        baseToast.showToast(getResources().getString(R.string.no_permissions), true);
+        if (111 == requestCode) {
+            MangaDialog peanutDialog = new MangaDialog(ReadTextOnlyActivity.this);
+            peanutDialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
+                @Override
+                public void onOkClick() {
+                }
+
+                @Override
+                public void onCancelClick() {
+
+                }
+            });
+            peanutDialog.show();
+            peanutDialog.setTitle("没有文件读写权限,无法保存文本!");
         }
     }
 }

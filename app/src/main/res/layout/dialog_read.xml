@@ -153,7 +153,7 @@
 
 
         <LinearLayout
-            android:id="@+id/exit_ll"
+            android:id="@+id/save_txt_ll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -165,13 +165,13 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/exit_icon" />
+                android:src="@drawable/save_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="退出阅读模式"
+                android:text="保存文本"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>

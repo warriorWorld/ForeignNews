@@ -30,7 +30,7 @@ import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils
 public class ReadDialog extends Dialog implements View.OnClickListener {
     private Context context;
     private OnReadDialogClickListener onReadDialogClickListener;
-    private LinearLayout exitLl;
+    private LinearLayout saveLl;
     private LinearLayout toggleTranslateWayLl;
     private TextView translateWayTv;
     private LinearLayout closeTranslateLl;
@@ -77,7 +77,7 @@ public class ReadDialog extends Dialog implements View.OnClickListener {
 
     private void init() {
         toggleTranslateWayLl = (LinearLayout) findViewById(R.id.toggle_translate_way_ll);
-        exitLl = (LinearLayout) findViewById(R.id.exit_ll);
+        saveLl = (LinearLayout) findViewById(R.id.save_txt_ll);
         translateWayTv = (TextView) findViewById(R.id.translate_way_tv);
         closeTranslateLl = (LinearLayout) findViewById(R.id.close_translate_ll);
         closeTranslateTv = (TextView) findViewById(R.id.close_translate_tv);
@@ -93,7 +93,7 @@ public class ReadDialog extends Dialog implements View.OnClickListener {
         closeDialogRl = (RelativeLayout) findViewById(R.id.close_dialog_rl);
         headLl = (LinearLayout) findViewById(R.id.head_ll);
 
-        exitLl.setOnClickListener(this);
+        saveLl.setOnClickListener(this);
         toggleTranslateWayLl.setOnClickListener(this);
         closeTranslateLl.setOnClickListener(this);
         textSizeLl.setOnClickListener(this);
@@ -141,9 +141,9 @@ public class ReadDialog extends Dialog implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.exit_ll:
+            case R.id.save_txt_ll:
                 if (null != onReadDialogClickListener) {
-                    onReadDialogClickListener.onExitClick();
+                    onReadDialogClickListener.onSaveClick();
                 }
                 break;
             case R.id.toggle_translate_way_ll:

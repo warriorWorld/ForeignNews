@@ -20,4 +20,6 @@ public interface OnReadDialogClickListener {
     void onCloseDialogClick();
 
     void onExitClick();
+
+    void onSaveClick();
 }
