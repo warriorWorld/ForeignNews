@@ -40,7 +40,7 @@ public class OverlappedWidget extends BaseReadView {
 
     public OverlappedWidget(Context context,
                             OnReadStateChangeListener listener) {
-        super(context,  listener);
+        super(context, listener);
 
         mTouch.x = 0.01f;
         mTouch.y = 0.01f;
@@ -60,24 +60,30 @@ public class OverlappedWidget extends BaseReadView {
         mPath0.reset();
 
         canvas.save();
-        if (actiondownX > mScreenWidth >> 1) {
-            mPath0.moveTo(mScreenWidth + touch_down, 0);
-            mPath0.lineTo(mScreenWidth + touch_down, mScreenHeight);
+//        if (actiondownX > mScreenWidth >> 1) {//>>1相当于除2
+        float adjustedTouchDown = 0;
+        if (touch_down < -FLIP_THRESHOLD) {
+            adjustedTouchDown = touch_down + FLIP_THRESHOLD;
+            mPath0.moveTo(mScreenWidth + adjustedTouchDown, 0);
+            mPath0.lineTo(mScreenWidth + adjustedTouchDown, mScreenHeight);
             mPath0.lineTo(mScreenWidth, mScreenHeight);
             mPath0.lineTo(mScreenWidth, 0);
-            mPath0.lineTo(mScreenWidth + touch_down, 0);
+            mPath0.lineTo(mScreenWidth + adjustedTouchDown, 0);
             mPath0.close();
             canvas.clipPath(mPath0, Region.Op.XOR);
-            canvas.drawBitmap(mCurPageBitmap, touch_down, 0, null);
-        } else {
-            mPath0.moveTo(touch_down, 0);
-            mPath0.lineTo(touch_down, mScreenHeight);
+            canvas.drawBitmap(mCurPageBitmap, adjustedTouchDown, 0, null);
+        } else if (touch_down > FLIP_THRESHOLD) {
+            adjustedTouchDown = touch_down - FLIP_THRESHOLD;
+            mPath0.moveTo(adjustedTouchDown, 0);
+            mPath0.lineTo(adjustedTouchDown, mScreenHeight);
             mPath0.lineTo(mScreenWidth, mScreenHeight);
             mPath0.lineTo(mScreenWidth, 0);
-            mPath0.lineTo(touch_down, 0);
+            mPath0.lineTo(adjustedTouchDown, 0);
             mPath0.close();
             canvas.clipPath(mPath0);
-            canvas.drawBitmap(mCurPageBitmap, touch_down, 0, null);
+            canvas.drawBitmap(mCurPageBitmap, adjustedTouchDown, 0, null);
+        } else {
+            canvas.drawBitmap(mCurPageBitmap, 0, 0, null);
         }
         try {
             canvas.restore();
@@ -90,13 +96,19 @@ public class OverlappedWidget extends BaseReadView {
     protected void drawCurrentPageShadow(Canvas canvas) {
         canvas.save();
         GradientDrawable shadow;
-        if (actiondownX > mScreenWidth >> 1) {
+        float adjustedTouchDown = 0;
+        if (touch_down < -FLIP_THRESHOLD) {
+            adjustedTouchDown = touch_down + FLIP_THRESHOLD;
             shadow = mBackShadowDrawableLR;
-            shadow.setBounds((int) (mScreenWidth + touch_down - 5), 0, (int) (mScreenWidth + touch_down + 5), mScreenHeight);
+            shadow.setBounds((int) (mScreenWidth + adjustedTouchDown - 5), 0, (int) (mScreenWidth + adjustedTouchDown + 5), mScreenHeight);
 
+        } else if (touch_down > FLIP_THRESHOLD) {
+            adjustedTouchDown = touch_down - FLIP_THRESHOLD;
+            shadow = mBackShadowDrawableRL;
+            shadow.setBounds((int) (adjustedTouchDown - 5), 0, (int) (adjustedTouchDown + 5), mScreenHeight);
         } else {
             shadow = mBackShadowDrawableRL;
-            shadow.setBounds((int) (touch_down - 5), 0, (int) (touch_down + 5), mScreenHeight);
+            shadow.setBounds((int) (-5), 0, (int) (+5), mScreenHeight);
         }
         shadow.draw(canvas);
         try {
@@ -114,10 +126,11 @@ public class OverlappedWidget extends BaseReadView {
     @Override
     protected void drawNextPageAreaAndShadow(Canvas canvas) {
         canvas.save();
-        if (actiondownX > mScreenWidth >> 1) {
+//        if (actiondownX > mScreenWidth >> 1) {
+        if (touch_down < -FLIP_THRESHOLD) {
             canvas.clipPath(mPath0);
             canvas.drawBitmap(mNextPageBitmap, 0, 0, null);
-        } else {
+        } else if (touch_down > FLIP_THRESHOLD) {
             canvas.clipPath(mPath0, Region.Op.XOR);
             canvas.drawBitmap(mNextPageBitmap, 0, 0, null);
         }
@@ -144,10 +157,19 @@ public class OverlappedWidget extends BaseReadView {
         if (mScroller.computeScrollOffset()) {
             float x = mScroller.getCurrX();
             float y = mScroller.getCurrY();
-            if (actiondownX > mScreenWidth >> 1) {
-                touch_down = -(mScreenWidth - x);
+//            if (actiondownX > mScreenWidth >> 1) {
+//                touch_down = -(mScreenWidth - x);
+//            } else {
+//                touch_down = x;
+//            }
+            if (touch_down < -FLIP_THRESHOLD) {
+                //左滑
+                touch_down = -(mScreenWidth - x + FLIP_THRESHOLD);
+            } else if (touch_down > FLIP_THRESHOLD) {
+                //右滑
+                touch_down = x + FLIP_THRESHOLD;
             } else {
-                touch_down = x;
+                return;
             }
             mTouch.y = y;
             //touch_down = mTouch.x - actiondownX;
@@ -158,12 +180,22 @@ public class OverlappedWidget extends BaseReadView {
     @Override
     protected void startAnimation() {
         int dx;
-        if (actiondownX > mScreenWidth / 2) {
-            dx = (int) -(mScreenWidth + touch_down);
+        float adjustedTouchDown = 0;
+        if (touch_down < -FLIP_THRESHOLD) {
+//            ToastUtils.showLongToast("startAnimation  左滑");
+            //左滑
+            adjustedTouchDown = touch_down + FLIP_THRESHOLD;
+            dx = (int) -(mScreenWidth + adjustedTouchDown);
             mScroller.startScroll((int) (mScreenWidth + touch_down), (int) mTouch.y, dx, 0, 700);
-        } else {
-            dx = (int) (mScreenWidth - touch_down);
+        } else if (touch_down > FLIP_THRESHOLD) {
+//            ToastUtils.showLongToast("startAnimation  右滑");
+            //右滑
+            adjustedTouchDown = touch_down - FLIP_THRESHOLD;
+            dx = (int) (mScreenWidth - adjustedTouchDown);
             mScroller.startScroll((int) touch_down, (int) mTouch.y, dx, 0, 700);
+        } else {
+//            ToastUtils.showLongToast("startAnimation  处理了");
+            mScroller.startScroll((int) touch_down, (int) mTouch.y, 0, 0, 700);
         }
     }
 
@@ -176,13 +208,47 @@ public class OverlappedWidget extends BaseReadView {
 
     @Override
     protected void restoreAnimation() {
-        int dx;
-        if (actiondownX > mScreenWidth / 2) {
-            dx = (int) (mScreenWidth - mTouch.x);
+//        int dx;
+//        float adjustedTouchX = 0;
+//        if (touch_down < -FLIP_THRESHOLD) {
+//            adjustedTouchX =touch_down- FLIP_THRESHOLD;
+//            dx = (int) (mScreenWidth -adjustedTouchX);
+//            mScroller.startScroll((int)adjustedTouchX, (int) mTouch.y, dx, 0, 600);
+//        } else if (touch_down > FLIP_THRESHOLD) {
+//            adjustedTouchX = mTouch.x + FLIP_THRESHOLD;
+//            dx = (int) (-adjustedTouchX);
+//            mScroller.startScroll((int)adjustedTouchX, (int) mTouch.y, dx, 0, 600);
+//        }
+        int startPosition;
+        float travelX = 0;
+        if (touch_down < CANCEL_THRESHOLD && touch_down > FLIP_THRESHOLD) {
+//            ToastUtils.showLongToast("restoreAnimation  右滑");
+            //右滑
+            startPosition = (int) (touch_down - FLIP_THRESHOLD);
+            travelX = (int) (-startPosition);
+            mScroller.startScroll((int) startPosition, (int) mTouch.y, (int) travelX, 0, 600);
+        } else if (touch_down > -CANCEL_THRESHOLD && touch_down < -FLIP_THRESHOLD) {
+            //左滑
+//            ToastUtils.showLongToast("restoreAnimation  左滑");
+            startPosition = (int) (mScreenWidth + touch_down + FLIP_THRESHOLD);
+            travelX = (int) -(touch_down - FLIP_THRESHOLD);
+
+            mScroller.startScroll((int) startPosition, (int) mTouch.y, (int) travelX, 0, 600);
         } else {
-            dx = (int) (-mTouch.x);
+//            ToastUtils.showLongToast("restoreAnimation  未处理");
+            if (touch_down > 0) {
+                //右滑
+                startPosition = (int) (touch_down);
+                travelX = (int) (-startPosition);
+                mScroller.startScroll((int) startPosition, (int) mTouch.y, (int) travelX, 0, 600);
+            } else {
+                //左滑
+                startPosition = (int) (mScreenWidth + touch_down);
+                travelX = (int) -(touch_down);
+
+                mScroller.startScroll((int) startPosition, (int) mTouch.y, (int) travelX, 0, 600);
+            }
         }
-        mScroller.startScroll((int) mTouch.x, (int) mTouch.y, dx, 0, 300);
     }
 
     public void setBitmaps(Bitmap bm1, Bitmap bm2) {

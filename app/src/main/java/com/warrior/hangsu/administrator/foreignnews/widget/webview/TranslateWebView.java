@@ -16,6 +16,7 @@
 
 package com.warrior.hangsu.administrator.foreignnews.widget.webview;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -272,6 +273,24 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
                 intent.putExtra("url", getUrl());
                 intent.putExtra("title", urlTitle);
                 mContext.startActivity(intent);
+                /**
+                 * 已弃用
+                 */
+                // ComponentName（组件名称）是用来打开其他应用程序中的Activity或服务的
+//                Intent intent = new Intent();
+//                ComponentName cmp = new ComponentName
+//                        ("com.warrior.hangsu.administrator.strangerbookreader",
+//                                "com.warrior.hangsu.administrator.strangerbookreader.business.main.MainActivity");// 报名该有activity
+//
+//                intent.putExtra("url", getUrl());
+//                intent.putExtra("url_title", urlTitle);
+//                intent.setAction(Intent.ACTION_MAIN);
+//                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+////                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                intent.setComponent(cmp);
+//
+//                mContext.startActivity(intent);
             }
         });
     }

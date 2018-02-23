@@ -33,6 +33,7 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnReadStateChangeLi
 import com.warrior.hangsu.administrator.foreignnews.mannger.SettingManager;
 import com.warrior.hangsu.administrator.foreignnews.utils.AppUtils;
 import com.warrior.hangsu.administrator.foreignnews.utils.ScreenUtils;
+import com.warrior.hangsu.administrator.foreignnews.utils.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -281,6 +282,17 @@ public class PageFactory {
             //因为段落间也有空白 所以需要更新总可以显示的行数
             mPageLineCount = (mVisibleHeight - paraSpace) / (mFontSize + mLineSpace);
         }
+        for (int i = 0; i < lines.size() - 1; i++) {
+            //不处理最后一行
+            //给单词加换行符
+            String lineString = lines.get(i);
+            String nextLineString = lines.get(i + 1);
+            if (!lineString.endsWith("@") &&
+                    StringUtils.isWord(lineString.substring(lineString.length() - 1, lineString.length())) &&
+                    StringUtils.isWord(nextLineString.substring(0, 1))) {
+                lines.set(i, lines.get(i) + "-");
+            }
+        }
         return lines;
     }
 
@@ -289,53 +301,53 @@ public class PageFactory {
      *
      * @return
      */
-    public Vector<String> pageLast() {
-        String strParagraph = "";
-        Vector<String> lines = new Vector<>();
-        currentPage = 0;
-        while (curEndPos < mbBufferLen) {
-            int paraSpace = 0;
-            mPageLineCount = mVisibleHeight / (mFontSize + mLineSpace);
-            curBeginPos = curEndPos;
-            while ((lines.size() < mPageLineCount) && (curEndPos < mbBufferLen)) {
-                byte[] parabuffer = readParagraphForward(curEndPos);
-                curEndPos += parabuffer.length;
-                try {
-                    strParagraph = new String(parabuffer, charset);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                strParagraph = strParagraph.replaceAll("\r\n", "  ");
-                strParagraph = strParagraph.replaceAll("\n", " "); // 段落中的换行符去掉，绘制的时候再换行
-
-                while (strParagraph.length() > 0) {
-                    int paintSize = mPaint.breakText(strParagraph, true, mVisibleWidth, null);
-                    lines.add(strParagraph.substring(0, paintSize));
-                    strParagraph = strParagraph.substring(paintSize);
-                    if (lines.size() >= mPageLineCount) {
-                        break;
-                    }
-                }
-                lines.set(lines.size() - 1, lines.get(lines.size() - 1) + "@");
-
-                if (strParagraph.length() != 0) {
-                    try {
-                        curEndPos -= (strParagraph).getBytes(charset).length;
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                }
-                paraSpace += mLineSpace;
-                mPageLineCount = (mVisibleHeight - paraSpace) / (mFontSize + mLineSpace);
-            }
-            if (curEndPos < mbBufferLen) {
-                lines.clear();
-            }
-            currentPage++;
-        }
-        //SettingManager.getInstance().saveReadProgress(bookId, currentChapter, curBeginPos, curEndPos);
-        return lines;
-    }
+//    public Vector<String> pageLast() {
+//        String strParagraph = "";
+//        Vector<String> lines = new Vector<>();
+//        currentPage = 0;
+//        while (curEndPos < mbBufferLen) {
+//            int paraSpace = 0;
+//            mPageLineCount = mVisibleHeight / (mFontSize + mLineSpace);
+//            curBeginPos = curEndPos;
+//            while ((lines.size() < mPageLineCount) && (curEndPos < mbBufferLen)) {
+//                byte[] parabuffer = readParagraphForward(curEndPos);
+//                curEndPos += parabuffer.length;
+//                try {
+//                    strParagraph = new String(parabuffer, charset);
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//                strParagraph = strParagraph.replaceAll("\r\n", "  ");
+//                strParagraph = strParagraph.replaceAll("\n", " "); // 段落中的换行符去掉，绘制的时候再换行
+//
+//                while (strParagraph.length() > 0) {
+//                    int paintSize = mPaint.breakText(strParagraph, true, mVisibleWidth, null);
+//                    lines.add(strParagraph.substring(0, paintSize));
+//                    strParagraph = strParagraph.substring(paintSize);
+//                    if (lines.size() >= mPageLineCount) {
+//                        break;
+//                    }
+//                }
+//                lines.set(lines.size() - 1, lines.get(lines.size() - 1) + "@");
+//
+//                if (strParagraph.length() != 0) {
+//                    try {
+//                        curEndPos -= (strParagraph).getBytes(charset).length;
+//                    } catch (UnsupportedEncodingException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                paraSpace += mLineSpace;
+//                mPageLineCount = (mVisibleHeight - paraSpace) / (mFontSize + mLineSpace);
+//            }
+//            if (curEndPos < mbBufferLen) {
+//                lines.clear();
+//            }
+//            currentPage++;
+//        }
+//        //SettingManager.getInstance().saveReadProgress(bookId, currentChapter, curBeginPos, curEndPos);
+//        return lines;
+//    }
 
     /**
      * 读取下一段落
@@ -442,17 +454,14 @@ public class PageFactory {
         return BookStatus.LOAD_SUCCESS;
     }
 
+    //TODO 这里有问题 之后再改吧
     public void cancelPage() {
-//        curBeginPos = tempBeginPos;
-//        curEndPos = curBeginPos;
-//
-//        int ret = openBook(bookId, new int[]{curBeginPos, curEndPos});
-//        if (ret == 0) {
-//            onLoadChapterFailure(bookId);
-//            return;
-//        }
-//        mLines.clear();
-//        mLines = pageDown();
+        curBeginPos = tempBeginPos;
+        curEndPos = curBeginPos;
+
+        jumpByEndPos(curEndPos);
+        mLines.clear();
+        mLines = pageDown();
     }
 
     /**
@@ -507,7 +516,11 @@ public class PageFactory {
      */
     public void setPercent(int persent) {
         float a = (float) (mbBufferLen * persent) / 100;
-        curEndPos = (int) a;
+        jumpByEndPos((int) a);
+    }
+
+    private void jumpByEndPos(int endPos) {
+        curEndPos = (int) endPos;
         if (curEndPos == 0) {
             nextPage();
         } else {
@@ -618,12 +631,38 @@ public class PageFactory {
             end = (i < indices.length ? indices[i] : lineString.length());
             if (end >= touchCharacterPosition) {
                 res = lineString.substring(start, end);
-                //处理当最后一个单词被行断开的情况
-                if (i == indices.length && !lineString.endsWith("@")) {
+                //处理当最后一个单词被行断开的情况 不能是句尾 末尾是标点或空格也不行
+//                if (i == indices.length && !lineString.endsWith("@") &&
+//                        StringUtil.isWord(lineString.substring(lineString.length() - 1, lineString.length()))) {
+                if (i == indices.length && lineString.endsWith("-")) {
+                    //因为我给所有末尾断开的单词加换行符了 所以直接这么判断就好了
                     try {
                         String nextLineString = mLines.get(linePosition + 1);
-                        int firstUnLetterPosition = getUnLetterPosition(nextLineString)[0];
-                        res += nextLineString.substring(0, firstUnLetterPosition);
+                        Integer[] nextUnletters = getUnLetterPosition(nextLineString);
+                        if (nextUnletters == null || nextUnletters.length == 0) {
+                            //说明下一行整行都没有特殊字符
+                            res += nextLineString;
+                        } else {
+                            int firstUnLetterPosition = getUnLetterPosition(nextLineString)[0];
+                            res += nextLineString.substring(0, firstUnLetterPosition);
+                        }
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        //当最后一个字符是特殊字符时直接catch就好
+                    }
+                } else if (start == 0 && linePosition != 0) {
+                    //处理当这一行第一个单词实际上上一行最后一个单词一部分的情况
+                    try {
+                        String lastLineString = mLines.get(linePosition - 1);
+//                        if (lastLineString.endsWith("@") ||
+//                                !StringUtil.isWord(lastLineString.substring(lastLineString.length() - 1, lastLineString.length()))) {
+                        //当上一行最后一个单词是句尾 或者末尾是标点或空格也不行
+                        if (!lastLineString.endsWith("-")) {
+                            //因为我加了换行符 所以直接改成这么判断了
+                            break;
+                        }
+                        Integer[] lastUnletters = getUnLetterPosition(lastLineString);
+                        int endUnLetterPosition = lastUnletters[lastUnletters.length - 1];
+                        res = lastLineString.substring(endUnLetterPosition, lastLineString.length()) + res;
                     } catch (ArrayIndexOutOfBoundsException e) {
                         //当最后一个字符是特殊字符时直接catch就好
                     }
