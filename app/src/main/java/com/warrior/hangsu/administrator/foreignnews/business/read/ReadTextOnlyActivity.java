@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -51,6 +52,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -59,7 +61,7 @@ import pub.devrel.easypermissions.EasyPermissions;
  * 个人信息页
  */
 public class ReadTextOnlyActivity extends BaseActivity implements
-        EasyPermissions.PermissionCallbacks {
+        EasyPermissions.PermissionCallbacks, TextToSpeech.OnInitListener {
     private String url;
     private static org.jsoup.nodes.Document doc;
     private String urlContent;
@@ -69,6 +71,7 @@ public class ReadTextOnlyActivity extends BaseActivity implements
     private MangaDialog dialog;
     private ReadDialog readDialog;
     private String title;
+    private TextToSpeech tts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +89,11 @@ public class ReadTextOnlyActivity extends BaseActivity implements
         initUI();
         initPagerWidget();
         doGetData();
+        initTTS();
+    }
+
+    private void initTTS() {
+        tts = new TextToSpeech(this, this); // 参数Context,TextToSpeech.OnInitListener
     }
 
     @Override
@@ -168,6 +176,7 @@ public class ReadTextOnlyActivity extends BaseActivity implements
 
     private void translation(final String word) {
         clip.setText(word);
+        text2Speech(word);
         if (SharedPreferencesUtils.getBooleanSharedPreferencesData
                 (this, ShareKeys.CLOSE_TRANSLATE, false)) {
             return;
@@ -206,6 +215,13 @@ public class ReadTextOnlyActivity extends BaseActivity implements
 
     }
 
+    private void text2Speech(String text) {
+        if (tts != null && !tts.isSpeaking()) {
+            tts.setPitch(0.0f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
+            tts.speak(text,
+                    TextToSpeech.QUEUE_FLUSH, null);
+        }
+    }
 
     private void showOnlyOkDialog(String title, String msg) {
         if (null == dialog) {
@@ -394,6 +410,31 @@ public class ReadTextOnlyActivity extends BaseActivity implements
         listDialog.show();
         listDialog.setOptionsList(SettingManager.FONT_SIZE_LIST);
         listDialog.setCodeList(SettingManager.FONT_SIZE_CODE_LIST);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        tts.stop(); // 不管是否正在朗读TTS都被打断
+        tts.shutdown(); // 关闭，释放资源
+    }
+
+    /**
+     * 用来初始化TextToSpeech引擎
+     * status:SUCCESS或ERROR这2个值
+     * setLanguage设置语言，帮助文档里面写了有22种
+     * TextToSpeech.LANG_MISSING_DATA：表示语言的数据丢失。
+     * TextToSpeech.LANG_NOT_SUPPORTED:不支持
+     */
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            int result = tts.setLanguage(Locale.ENGLISH);
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                baseToast.showToast("数据丢失或不支持");
+            }
+        }
     }
 
 
