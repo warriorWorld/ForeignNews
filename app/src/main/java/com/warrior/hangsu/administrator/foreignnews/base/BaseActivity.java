@@ -121,22 +121,6 @@ public abstract class BaseActivity extends Activity {
 //                ToastUtil.tipShort(BaseActivity.this, "需要登录");
 //                intent = new Intent(BaseActivity.this, LoginActivity.class);
 //                break;
-            case EventBusEvent.COPY_BOARD_URL_EVENT:
-                showBaseDialog("检测到你复制了某个网址，是否跳转到详情页？", "", "是", "否",
-                        new MangaDialog.OnPeanutDialogClickListener() {
-                            @Override
-                            public void onOkClick() {
-                                Intent intent1 = new Intent(BaseActivity.this, WebActivity.class);
-                                intent1.putExtra("url", event.getMsg());
-                                startActivity(intent1);
-                            }
-
-                            @Override
-                            public void onCancelClick() {
-
-                            }
-                        });
-                break;
         }
         if (null != intent) {
             startActivity(intent);
