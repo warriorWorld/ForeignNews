@@ -40,6 +40,7 @@ import android.webkit.WebViewClient;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.business.read.ReadTextOnlyActivity;
+import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
@@ -159,7 +160,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.contains("youxinyouqian")){
+                if (url.contains("youxinyouqian")) {
                     return false;
                 }
                 // 这样写是为了可以在webview中点击链接还继续在webview中显示,而不是打开浏览器
@@ -178,25 +179,33 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
-                showErrorDialog(description);
+                if (Globle.IS_TEST) {
+                    showErrorDialog(description);
+                }
             }
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
-                showErrorDialog(error.toString());
+                if (Globle.IS_TEST) {
+                    showErrorDialog(error.toString());
+                }
             }
 
             @Override
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                 super.onReceivedHttpError(view, request, errorResponse);
-                showErrorDialog(errorResponse.toString());
+                if (Globle.IS_TEST) {
+                    showErrorDialog(errorResponse.toString());
+                }
             }
 
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 super.onReceivedSslError(view, handler, error);
-                showErrorDialog(error+"");
+                if (Globle.IS_TEST) {
+                    showErrorDialog(error + "");
+                }
             }
         });
         setWebChromeClient(new MyWebChromeClient());
