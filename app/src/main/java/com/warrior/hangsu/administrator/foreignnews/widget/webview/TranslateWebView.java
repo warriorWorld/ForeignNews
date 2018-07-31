@@ -19,6 +19,7 @@ package com.warrior.hangsu.administrator.foreignnews.widget.webview;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.http.SslError;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -28,7 +29,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.webkit.JsResult;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -43,6 +48,7 @@ import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 
 /**
  * Webview subclass that hijacks web content selection.
@@ -118,7 +124,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
      *
      * @param context
      */
-    protected void init(Context context) {
+    protected void init(final Context context) {
 
         // On Touch Listener
         setOnLongClickListener(this);
@@ -153,6 +159,9 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url.contains("youxinyouqian")){
+                    return false;
+                }
                 // 这样写是为了可以在webview中点击链接还继续在webview中显示,而不是打开浏览器
                 loadUrl(url);
                 return true;
@@ -164,6 +173,30 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
                 super.onPageFinished(view, url);
                 // 全部完成后注入效率太低
 //                JSinject();
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                showErrorDialog(description);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                showErrorDialog(error.toString());
+            }
+
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+                super.onReceivedHttpError(view, request, errorResponse);
+                showErrorDialog(errorResponse.toString());
+            }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                super.onReceivedSslError(view, handler, error);
+                showErrorDialog(error+"");
             }
         });
         setWebChromeClient(new MyWebChromeClient());
@@ -187,6 +220,12 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
 
         //隐藏缩放按钮
         getSettings().setDisplayZoomControls(false);
+    }
+
+    private void showErrorDialog(String error) {
+        MangaDialog dialog = new MangaDialog(mContext);
+        dialog.show();
+        dialog.setTitle(error + "");
     }
 
     private void JSinject() {

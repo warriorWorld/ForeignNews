@@ -1,9 +1,11 @@
 package com.warrior.hangsu.administrator.foreignnews.base;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +13,28 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
+import com.warrior.hangsu.administrator.foreignnews.business.main.WebActivity;
+import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.eventbus.EventBusEvent;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
+import com.warrior.hangsu.administrator.foreignnews.service.CopyBoardService;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
+import com.warrior.hangsu.administrator.foreignnews.utils.ServiceUtil;
+import com.warrior.hangsu.administrator.foreignnews.utils.StringUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.TopBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.toast.EasyToast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public abstract class BaseActivity extends Activity {
     protected TopBar baseTopBar;
@@ -95,7 +112,7 @@ public abstract class BaseActivity extends Activity {
      * @param event
      */
     @Subscribe
-    public void onEventMainThread(EventBusEvent event) {
+    public void onEventMainThread(final EventBusEvent event) {
         if (null == event)
             return;
         Intent intent = null;
@@ -104,9 +121,55 @@ public abstract class BaseActivity extends Activity {
 //                ToastUtil.tipShort(BaseActivity.this, "需要登录");
 //                intent = new Intent(BaseActivity.this, LoginActivity.class);
 //                break;
+            case EventBusEvent.COPY_BOARD_URL_EVENT:
+                showBaseDialog("检测到你复制了某个网址，是否跳转到详情页？", "", "是", "否",
+                        new MangaDialog.OnPeanutDialogClickListener() {
+                            @Override
+                            public void onOkClick() {
+                                Intent intent1 = new Intent(BaseActivity.this, WebActivity.class);
+                                intent1.putExtra("url", event.getMsg());
+                                startActivity(intent1);
+                            }
+
+                            @Override
+                            public void onCancelClick() {
+
+                            }
+                        });
+                break;
         }
         if (null != intent) {
             startActivity(intent);
+        }
+    }
+
+    protected void showBaseDialog(String title, String msg, String okText, String cancelText, MangaDialog.OnPeanutDialogClickListener listener) {
+        MangaDialog baseDialog = new MangaDialog(this);
+        if (null != listener)
+            baseDialog.setOnPeanutDialogClickListener(listener);
+        baseDialog.show();
+        if (!TextUtils.isEmpty(title)) {
+            baseDialog.setTitle(title);
+        }
+        if (!TextUtils.isEmpty(msg)) {
+            baseDialog.setMessage(msg);
+        }
+        if (!TextUtils.isEmpty(okText)) {
+            baseDialog.setOkText(okText);
+        }
+        if (!TextUtils.isEmpty(cancelText)) {
+            baseDialog.setCancelText(cancelText);
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!ServiceUtil.isServiceWork(this,
+                "com.warrior.hangsu.administrator.foreignnews.service.CopyBoardService")) {
+            Intent intent = new Intent(this, CopyBoardService.class);
+            startService(intent);
         }
     }
 

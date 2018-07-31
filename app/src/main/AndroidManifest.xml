@@ -90,6 +90,7 @@
             android:name="com.umeng.socialize.editorpage.ShareActivity"
             android:excludeFromRecents="true"
             android:theme="@style/Theme.UMDefault" />
+        <service android:name=".service.CopyBoardService"></service>
         <!-- 友盟 -->
         <!-- 友盟 -->
         <meta-data
