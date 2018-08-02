@@ -11,6 +11,7 @@ import android.speech.tts.TextToSpeech;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.widget.Toast;
 
@@ -252,6 +253,12 @@ public class WebActivity extends BaseActivity
         translateWebView.loadUrl
                 (SharedPreferencesUtils.getSharedPreferencesData
                         (this, ShareKeys.MAIN_URL, Globle.DEFAULT_MAIN_URL));
+        translateWebView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                baseToast.showToast("download");
+            }
+        });
     }
 
     @Override
