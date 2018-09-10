@@ -138,10 +138,15 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
         //插件状态
         webSettings.setPluginState(WebSettings.PluginState.ON);
         webSettings.setAllowFileAccess(true);// 允许通过网页上传文件
+        webSettings.setSupportZoom(true);
         webSettings.setBuiltInZoomControls(true);// 可缩放
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);// 优先使用缓存
         webSettings.setDomStorageEnabled(true);// 打开本地缓存提供JS调用,至关重要
         webSettings.setAppCacheMaxSize(1024 * 1024 * 8);// 实现8倍缓存
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);//设置默认加载的可视范围是大视野范围
+        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+//        setInitialScale(100);
 
 
         buildDrawingCache(true);
