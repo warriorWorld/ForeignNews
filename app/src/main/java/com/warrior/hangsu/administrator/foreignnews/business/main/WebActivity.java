@@ -11,6 +11,7 @@ import android.speech.tts.TextToSpeech;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.widget.Toast;
 
@@ -40,7 +41,9 @@ import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity
 import com.warrior.hangsu.administrator.foreignnews.business.other.AboutActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
+import com.warrior.hangsu.administrator.foreignnews.eventbus.EventBusEvent;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnCopyClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
@@ -60,12 +63,15 @@ import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebSubTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.DownloadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.QrDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TextSelectionListener;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -247,11 +253,89 @@ public class WebActivity extends BaseActivity
         translateWebView.loadUrl
                 (SharedPreferencesUtils.getSharedPreferencesData
                         (this, ShareKeys.MAIN_URL, Globle.DEFAULT_MAIN_URL));
+        translateWebView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                baseToast.showToast("download");
+            }
+        });
     }
 
     @Override
     protected int getLayoutId() {
         return R.layout.activity_webview;
+    }
+
+    @Override
+    public void onEventMainThread(final EventBusEvent event) {
+        if (event.getEventType() == EventBusEvent.COPY_BOARD_URL_EVENT || event.getEventType() == EventBusEvent.COPY_BOARD_TEXT_EVENT) {
+            switch (event.getEventType()) {
+                case EventBusEvent.COPY_BOARD_URL_EVENT:
+                    showBaseDialog("检测到你复制了某个网址，是否跳转到详情页？", "", "是", "否",
+                            new MangaDialog.OnPeanutDialogClickListener() {
+                                @Override
+                                public void onOkClick() {
+                                    translateWebView.loadUrl(event.getMsg());
+                                }
+
+                                @Override
+                                public void onCancelClick() {
+
+                                }
+                            });
+                    break;
+                case EventBusEvent.COPY_BOARD_TEXT_EVENT:
+                    showSaveDialog(event.getMsg());
+                    break;
+            }
+        } else {
+            super.onEventMainThread(event);
+        }
+    }
+
+    @AfterPermissionGranted(111)
+    private void showSaveDialog(final String content) {
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // Already have permission, do the thing
+            // ...
+            MangaEditDialog dialog = new MangaEditDialog(this);
+            dialog.setOnEditResultListener(new OnEditResultListener() {
+                @Override
+                public void onResult(String text) {
+                    File file = new File(Globle.DOWNLOAD_PATH);
+                    if (!file.exists()) {
+                        file.mkdirs();
+                    }
+                    try {
+                        FileWriter fw = new FileWriter(Globle.DOWNLOAD_PATH + File.separator
+                                + text + ".txt", true);
+                        fw.write(content);
+                        fw.close();
+                        baseToast.showToast("保存成功!\n已保存至" + Globle.DOWNLOAD_PATH + "文件夹");
+                        // 上传错误信息到服务器
+//                uploadToServer(crashInfo);
+                    } catch (IOException e) {
+                        baseToast.showToast(e + "");
+                    }
+                }
+
+                @Override
+                public void onCancelClick() {
+
+                }
+            });
+            dialog.show();
+            dialog.setTitle("检测到你复制了一段文本,是否将其转换为TXT文件?");
+            dialog.setHint("请输入文本标题");
+//        dialog.setEditTextContent(StringUtils.replaceAllSpecialCharacterTo(title, "_"));
+            dialog.setOkText("确定");
+            dialog.setCancelText("取消");
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, "我们需要写入/读取权限",
+                    111, perms);
+        }
     }
 
     @Override
