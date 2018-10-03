@@ -163,6 +163,7 @@ public class MainActivity extends BaseMultiTabActivity
     protected void initUI() {
         super.initUI();
         hideBaseTopBar();
+        tabLayout.setVisibility(View.GONE);
         webTopBar = (WebTopBar) findViewById(R.id.top_bar);
         webTopBar.setOnWebTopClickListener(new OnWebTopClickListener() {
             @Override
@@ -289,6 +290,15 @@ public class MainActivity extends BaseMultiTabActivity
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main_webview;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 33 && null != data) {
+            String url = data.getStringExtra("url");
+            currentWebFragment.loadUrl(url);
+        }
     }
 
     @Override

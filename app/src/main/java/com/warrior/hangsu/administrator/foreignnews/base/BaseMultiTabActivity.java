@@ -23,9 +23,9 @@ import java.lang.reflect.Field;
  */
 
 public abstract class BaseMultiTabActivity extends BaseFragmentActivity {
-    private TabLayout tabLayout;
-    private ViewPager vp;
-    private MyFragmentPagerAdapter adapter;
+    protected TabLayout tabLayout;
+    protected ViewPager vp;
+    protected MyFragmentPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

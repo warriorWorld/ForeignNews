@@ -282,7 +282,7 @@ public class WebFragment extends BaseRefreshFragment implements
     }
 
     public String getUrl() {
-        return url;
+        return myWebView.getUrl();
     }
 
     public String getTitle() {
