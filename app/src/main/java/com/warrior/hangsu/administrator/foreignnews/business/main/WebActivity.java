@@ -245,6 +245,21 @@ public class WebActivity extends BaseActivity
                 }, 150);//n秒后执行Runnable中的run方法
                 translation(word);
             }
+
+            @Override
+            public void clickWord(String word) {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        /**
+                         *要执行的操作
+                         */
+                        translateWebView.clearFocus();
+                    }
+                }, 50);//n秒后执行Runnable中的run方法
+                translation(word);
+            }
         });
         translateWebView.setOnWebViewLongClickListener(new TranslateWebView.OnWebViewLongClickListener() {
             @Override

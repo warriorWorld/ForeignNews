@@ -67,10 +67,19 @@ public class TextSelectionJavascriptInterface {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-//                    Toast.makeText(mContext, msg,
-//                            Toast.LENGTH_LONG).show();
-                    
                     textSelectionListener.seletedWord(msg);
+                }
+            });
+        }
+    }
+
+    @JavascriptInterface
+    public void clickWord(final String msg) {
+        if (this.textSelectionListener != null) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    textSelectionListener.clickWord(msg);
                 }
             });
         }

@@ -52,7 +52,7 @@ import java.util.HashMap;
  *
  * @author Brandon Tate
  */
-public class TranslateWebView extends MyWebView implements OnLongClickListener, View.OnTouchListener {
+public class TranslateWebView extends MyWebView implements OnLongClickListener, View.OnTouchListener, View.OnClickListener {
     private String TAG = "TranslateWebView";
     /**
      * Javascript interface for catching text selection.
@@ -100,6 +100,11 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         return false;
     }
 
+    @Override
+    public void onClick(View v) {
+
+    }
+
 
     /**
      * Setups up the web view.
@@ -113,6 +118,7 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
 
         // On Touch Listener
         setOnLongClickListener(this);
+        setOnClickListener(this);
         setOnTouchListener(this);
 
         // Webview client.
@@ -150,6 +156,13 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
                     mSelectionListener.seletedWord(word);
                 }
             }
+
+            @Override
+            public void clickWord(String word) {
+                if (null != mSelectionListener) {
+                    mSelectionListener.seletedWord(word);
+                }
+            }
         });
         addJavascriptInterface(mTextSelectionJSInterface,
                 mTextSelectionJSInterface.getInterfaceName());
@@ -182,6 +195,21 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         loadUrl("javascript:" + js);
 //        ToastUtil.tipShort(mContext, "注入完成");
         currentInjectedUrl = getUrl();
+    }
+
+    private void clickJsInject() {
+        //以下是JavaScript注入的代码 目前是以直接注入text的方式注入的 也就是说是直接把方法以字符串的方式注入进去的,所以assets里的文件没用
+        String js = "var newscript = document.createElement(\"script\");";
+//                js += "newscript.src=\"file:///android_asset/android.selection.js\";";
+//                js += "newscript.onload=function(){android.selection.longTouch();};";  //xxx()代表js中某方法
+        js += "newscript.text =  function clickSelected(){  "+
+//                "var str=window.getSelection().toString();     \nif(document.selection){\n" +
+//                "                        str=document.selection.createRange().text;// IE\n" +
+//                "                    }"+
+                "\twindow.TextSelection.clickWord(\"test\");};";
+        js += "document.body.appendChild(newscript);";
+        loadUrl("javascript:" + js);
+//        ToastUtil.tipShort(mContext, "注入完成");
     }
 
     private void refresh() {
@@ -252,6 +280,14 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         if (null != webTopBar) {
             webTopBar.toggleEditAndShow(false);
         }
+//        clickJsInject();
+//        Handler handler = new Handler();
+//        Runnable updateThread = new Runnable() {
+//            public void run() {
+//                loadUrl("javascript:clickSelected();");
+//            }
+//        };
+//        handler.postDelayed(updateThread, 0);
         return false;
     }
 
@@ -276,6 +312,7 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         @Override
         public boolean onJsAlert(WebView view, String url, String message,
                                  JsResult result) {
+            baseToast.showToast(message);
             return true;
         }
 
