@@ -87,16 +87,18 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
             onWebViewLongClickListener.onImgLongClick(result.getExtra());
             return true;
         }
-        if (!currentInjectedUrl.equals(getUrl())) {
-            JSinject();
-        }
-        Handler handler = new Handler();
-        Runnable updateThread = new Runnable() {
-            public void run() {
-                loadUrl("javascript:longTouchSelected();");
+        if (type == HitTestResult.UNKNOWN_TYPE) {
+            if (!currentInjectedUrl.equals(getUrl())) {
+                JSinject();
             }
-        };
-        handler.postDelayed(updateThread, 0);
+            Handler handler = new Handler();
+            Runnable updateThread = new Runnable() {
+                public void run() {
+                    loadUrl("javascript:longTouchSelected();");
+                }
+            };
+            handler.postDelayed(updateThread, 0);
+        }
         return false;
     }
 
