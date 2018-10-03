@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,7 @@ import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.eventbus.EventBusEvent;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnCopyClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnSpeakClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
@@ -66,6 +68,7 @@ import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.QrDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.TranslateDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TextSelectionListener;
 import com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView;
 
@@ -101,6 +104,7 @@ public class WebActivity extends BaseActivity
     private DownloadDialog downloadDialog;
     private String qrFilePath;
     private TextToSpeech tts;
+    private TranslateDialog translateResultDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -494,7 +498,7 @@ public class WebActivity extends BaseActivity
                         for (int i = 0; i < item.getExplains().size(); i++) {
                             t = t + item.getExplains().get(i) + ";";
                         }
-                        showOnlyOkDialog(word, result.getQuery() + " [" + item.getPhonetic() +
+                        showTranslateResultDialog(word, result.getQuery() + " [" + item.getPhonetic() +
                                 "]: " + "\n" + t);
                     } else {
                         baseToast.showToast("没查到该词");
@@ -517,8 +521,11 @@ public class WebActivity extends BaseActivity
     private void text2Speech(String text) {
         if (tts != null && !tts.isSpeaking()) {
             tts.setPitch(0.0f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
+            HashMap<String, String> myHashAlarm = new HashMap();
+            myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+                    String.valueOf(AudioManager.STREAM_ALARM));
             tts.speak(text,
-                    TextToSpeech.QUEUE_FLUSH, null);
+                    TextToSpeech.QUEUE_FLUSH, myHashAlarm);
         }
     }
 
@@ -528,14 +535,22 @@ public class WebActivity extends BaseActivity
         qrDialog.setImg("file://" + qrFilePath);
     }
 
-    private void showOnlyOkDialog(String title, String msg) {
-        if (null == dialog) {
-            dialog = new MangaDialog(this);
+    private void showTranslateResultDialog(final String title, String msg) {
+        if (null == translateResultDialog) {
+            translateResultDialog = new TranslateDialog(this);
+            translateResultDialog.setOnSpeakClickListener(new OnSpeakClickListener() {
+                @Override
+                public void onSpeakClick(String word) {
+                    text2Speech(word);
+                }
+            });
         }
-        dialog.show();
-        dialog.setTitle(title);
-        dialog.setMessage(msg);
-        dialog.setOkText("确定");
+        translateResultDialog.show();
+
+        translateResultDialog.setTitle(title);
+        translateResultDialog.setMessage(msg);
+        translateResultDialog.setOkText("确定");
+        translateResultDialog.setCancelable(true);
     }
 
     private void showSaveImgDialog(final String imgUrl) {
