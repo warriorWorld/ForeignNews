@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,7 +19,7 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.CloudQueryCallback;
 import com.avos.avoscloud.FindCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseFragmentActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.CollectBean;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
@@ -34,7 +32,7 @@ import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarU
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectedActivity extends BaseActivity
+public class CollectedActivity extends BaseFragmentActivity
         implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private ListView collectedLv;
     private ArrayList<CollectBean> collectList = new ArrayList<CollectBean>();
@@ -50,12 +48,8 @@ public class CollectedActivity extends BaseActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    private void initUI() {
-
+    protected void initUI() {
+        super.initUI();
         emptyView = findViewById(R.id.empty_view);
         collectedLv = (ListView) findViewById(R.id.collected_listview);
 

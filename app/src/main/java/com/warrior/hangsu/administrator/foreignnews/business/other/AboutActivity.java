@@ -21,10 +21,8 @@ import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.GetDataCallback;
 import com.avos.avoscloud.ProgressCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseFragmentActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
-import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
-import com.warrior.hangsu.administrator.foreignnews.business.main.WebActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
@@ -45,7 +43,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
-public class AboutActivity extends BaseActivity implements View.OnClickListener,
+public class AboutActivity extends BaseFragmentActivity implements View.OnClickListener,
         EasyPermissions.PermissionCallbacks {
     private ImageView appIconIv;
     private TextView versionTv;
@@ -71,13 +69,15 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         refreshUI();
         doGetVersionInfo();
     }
 
-    private void initUI() {
+    @Override
+    protected void initUI() {
+        super.initUI();
         appIconIv = (ImageView) findViewById(R.id.app_icon_iv);
         versionTv = (TextView) findViewById(R.id.version_tv);
         checkUpdateRl = (RelativeLayout) findViewById(R.id.check_update_rl);

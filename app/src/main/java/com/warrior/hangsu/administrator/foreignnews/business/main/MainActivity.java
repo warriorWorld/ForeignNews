@@ -1,23 +1,17 @@
 package com.warrior.hangsu.administrator.foreignnews.business.main;
 
 import android.Manifest;
-import android.content.ComponentName;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.speech.tts.TextToSpeech;
-import android.text.ClipboardManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.DownloadListener;
-import android.webkit.WebView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
@@ -26,40 +20,34 @@ import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.GetDataCallback;
 import com.avos.avoscloud.ProgressCallback;
 import com.avos.avoscloud.SaveCallback;
-import com.umeng.socialize.ShareAction;
-import com.umeng.socialize.UMAuthListener;
-import com.umeng.socialize.UMShareAPI;
-import com.umeng.socialize.UMShareListener;
-import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.media.UMImage;
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseMultiTabActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
-import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
 import com.warrior.hangsu.administrator.foreignnews.business.ad.AdvertisingActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.other.AboutActivity;
+import com.warrior.hangsu.administrator.foreignnews.business.read.ReadTextOnlyActivity;
+import com.warrior.hangsu.administrator.foreignnews.business.web.TranslateWebFragment;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.eventbus.EventBusEvent;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnCopyClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
-import com.warrior.hangsu.administrator.foreignnews.listener.OnSpeakClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnReceivedWebInfoListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptionsClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarWebNumClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.BaseParameterUtil;
-import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.FileUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
-import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
-import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
-import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebSubTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
@@ -68,9 +56,6 @@ import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.QrDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
-import com.warrior.hangsu.administrator.foreignnews.widget.dialog.TranslateDialog;
-import com.warrior.hangsu.administrator.foreignnews.widget.webview.TextSelectionListener;
-import com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -78,23 +63,19 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class WebActivity extends BaseActivity
+public class MainActivity extends BaseMultiTabActivity
         implements View.OnClickListener,
-        EasyPermissions.PermissionCallbacks, TextToSpeech.OnInitListener {
-    private TranslateWebView translateWebView;
+        EasyPermissions.PermissionCallbacks, View.OnTouchListener {
+    private TranslateWebFragment currentWebFragment;
     private WebTopBar webTopBar;
     private WebBottomBar webBottomBar;
     private MangaDialog dialog;
     private ClipboardManager clip;//复制文本用
-    private UMImage image;
     //版本更新
     private String versionName, msg;
     private int versionCode;
@@ -103,17 +84,13 @@ public class WebActivity extends BaseActivity
     private MangaDialog versionDialog;
     private DownloadDialog downloadDialog;
     private String qrFilePath;
-    private TextToSpeech tts;
-    private TranslateDialog translateResultDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         clip = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         initUI();
-//        initUmeng();
-        image = new UMImage(WebActivity.this, R.drawable.icon_garbage);//资源文件
-//        openYoudao();
         doGetAnnouncement();
         doGetVersionInfo();
         if (TextUtils.isEmpty(LoginBean.getInstance().getUserName())) {
@@ -123,24 +100,90 @@ public class WebActivity extends BaseActivity
             MangaDialog dialog = new MangaDialog(this);
             dialog.show();
             dialog.setTitle("教程");
-            dialog.setMessage("1,当顶部网页标题颜色变为蓝色后,可通过长按单词翻译+\n" +
-                    "2,可在设置中关闭教程");
+            dialog.setMessage("1,可长按单词翻译+\n" +
+                    "2,也可以点击右下角图标翻译");
         }
-        initTTS();
     }
 
-    private void initTTS() {
-        tts = new TextToSpeech(this, this); // 参数Context,TextToSpeech.OnInitListener
+    @Override
+    protected void initFragment() {
+        currentWebFragment = new TranslateWebFragment();
+        currentWebFragment.setOnReceivedWebInfoListener(new OnReceivedWebInfoListener() {
+            @Override
+            public void onReceivedTitle(String title) {
+                if (null != webTopBar) {
+                    webTopBar.setTitle(title);
+                    webTopBar.setPath(currentWebFragment.getUrl());
+                }
+            }
+
+            @Override
+            public void onProgress(int progress) {
+                if (null != webTopBar) {
+                    webTopBar.setProgress(progress);
+                }
+            }
+        });
     }
 
-    private void initUI() {
+    @Override
+    protected String getActivityTitle() {
+        return "";
+    }
+
+    @Override
+    protected int getPageCount() {
+        return 1;
+    }
+
+    @Override
+    protected ViewPager.OnPageChangeListener getPageListener() {
+        return null;
+    }
+
+    @Override
+    protected String[] getTabTitleList() {
+        String[] titleList = new String[1];
+        titleList[0] = "test";
+        return titleList;
+    }
+
+    @Override
+    protected Fragment getFragmentByPosition(int position) {
+        switch (position) {
+            case 0:
+                return currentWebFragment;
+            default:
+                return currentWebFragment;
+        }
+    }
+
+
+    @Override
+    protected void initUI() {
+        super.initUI();
         hideBaseTopBar();
-        translateWebView = (TranslateWebView) findViewById(R.id.translate_webview);
         webTopBar = (WebTopBar) findViewById(R.id.top_bar);
         webTopBar.setOnWebTopClickListener(new OnWebTopClickListener() {
             @Override
             public void onTitleClick() {
                 showWebSubTopBar();
+            }
+        });
+        webTopBar.setOnWebTopBarRefreshClickListener(new OnWebTopBarRefreshClickListener() {
+            @Override
+            public void onRefreshClick() {
+                currentWebFragment.doGetData();
+            }
+        });
+        webTopBar.setOnWebTopBarSkipToURLListener(new OnWebTopBarSkipToURLListener() {
+            @Override
+            public void skipToURL(String url) {
+                if (!url.contains("http://") && !url.contains("https://")) {
+                    currentWebFragment.loadUrl("http://" + url + "/");
+                } else {
+                    currentWebFragment.loadUrl(url);
+                }
             }
         });
         webBottomBar = (WebBottomBar) findViewById(R.id.bottom_bar);
@@ -153,9 +196,9 @@ public class WebActivity extends BaseActivity
         webBottomBar.setOnWebBottomBarHomeClickListener(new OnWebBottomBarHomeClickListener() {
             @Override
             public void onHomeClick() {
-                translateWebView.loadUrl
+                currentWebFragment.loadUrl
                         (SharedPreferencesUtils.getSharedPreferencesData
-                                (WebActivity.this, ShareKeys.MAIN_URL, Globle.DEFAULT_MAIN_URL));
+                                (MainActivity.this, ShareKeys.MAIN_URL, Globle.DEFAULT_MAIN_URL));
             }
         });
         webBottomBar.setOnWebBottomBarWebNumClickListener(new OnWebBottomBarWebNumClickListener() {
@@ -172,39 +215,18 @@ public class WebActivity extends BaseActivity
 
             @Override
             public void onCollectedClick() {
-                Intent intent = new Intent(WebActivity.this, CollectedActivity.class);
+                Intent intent = new Intent(MainActivity.this, CollectedActivity.class);
                 startActivityForResult(intent, 33);
             }
 
             @Override
             public void onShareClick() {
-                new ShareAction(WebActivity.this).withTitle("来自垃圾浏览器的分享")
-                        .withText(translateWebView.getTitle())
-                        .withMedia(image)
-                        .withTargetUrl(translateWebView.getUrl())
-                        .setDisplayList(SHARE_MEDIA.QQ, SHARE_MEDIA.WEIXIN)
-                        .setCallback(new UMShareListener() {
-                            @Override
-                            public void onResult(SHARE_MEDIA share_media) {
-                                ToastUtil.tipShort(WebActivity.this, "分享成功");
-                            }
-
-                            @Override
-                            public void onError(SHARE_MEDIA share_media, Throwable throwable) {
-                                ToastUtil.tipShort(WebActivity.this, "分享失败");
-                            }
-
-                            @Override
-                            public void onCancel(SHARE_MEDIA share_media) {
-                                ToastUtil.tipShort(WebActivity.this, "分享取消");
-                            }
-                        }).open();
             }
 
             @Override
             public void onLoginClick() {
                 if (TextUtils.isEmpty(LoginBean.getInstance().getUserName())) {
-                    Intent intent = new Intent(WebActivity.this, LoginActivity.class);
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
                 } else {
                     baseToast.showToast("你好!" + LoginBean.getInstance().getUserName() + ".");
@@ -213,13 +235,13 @@ public class WebActivity extends BaseActivity
 
             @Override
             public void onOptionsClick() {
-                Intent intent = new Intent(WebActivity.this, AboutActivity.class);
+                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                 startActivity(intent);
             }
 
             @Override
             public void onMangaClick() {
-                Intent intent = new Intent(WebActivity.this, AdvertisingActivity.class);
+                Intent intent = new Intent(MainActivity.this, AdvertisingActivity.class);
                 startActivity(intent);
             }
 
@@ -228,61 +250,45 @@ public class WebActivity extends BaseActivity
                 showQrDialog();
             }
         });
-        translateWebView.setWebTopBar(webTopBar);
-        translateWebView.setWebBottomBar(webBottomBar);
-        translateWebView.setSelectionListener(new TextSelectionListener() {
+        webBottomBar.setOnWebBottomBarClickListener(new OnWebBottomBarClickListener() {
             @Override
-            public void seletedWord(String word) {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        /**
-                         *要执行的操作
-                         */
-                        translateWebView.clearFocus();
-                    }
-                }, 150);//n秒后执行Runnable中的run方法
-                translation(word);
+            public void onBackwardClick() {
+                currentWebFragment.goBack(); // goBack()表示返回WebView的上一页面
+                if (currentWebFragment.canGoBack()) {
+                    webBottomBar.toggleBackwardState(true);
+                } else {
+                    webBottomBar.toggleBackwardState(false);
+                }
             }
 
             @Override
-            public void clickWord(String word) {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        /**
-                         *要执行的操作
-                         */
-                        translateWebView.clearFocus();
-                    }
-                }, 50);//n秒后执行Runnable中的run方法
-                translation(word);
+            public void onForwardClick() {
+                currentWebFragment.goForward();
+                if (currentWebFragment.canGoForward()) {
+                    webBottomBar.toggleForwardState(true);
+                } else {
+                    webBottomBar.toggleForwardState(false);
+                }
             }
-        });
-        translateWebView.setOnWebViewLongClickListener(new TranslateWebView.OnWebViewLongClickListener() {
-            @Override
-            public void onImgLongClick(String imgUrl) {
-                showSaveImgDialog(imgUrl);
 
+            @Override
+            public void onRefreshClick() {
+                currentWebFragment.doGetData();
             }
-        });
 
-        translateWebView.loadUrl
-                (SharedPreferencesUtils.getSharedPreferencesData
-                        (this, ShareKeys.MAIN_URL, Globle.DEFAULT_MAIN_URL));
-        translateWebView.setDownloadListener(new DownloadListener() {
             @Override
-            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                baseToast.showToast("download");
+            public void onTextOnlyClick() {
+                Intent intent = new Intent(MainActivity.this, ReadTextOnlyActivity.class);
+                intent.putExtra("url", currentWebFragment.getUrl());
+                intent.putExtra("title", currentWebFragment.getTitle());
+                startActivity(intent);
             }
         });
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_webview;
+        return R.layout.activity_main_webview;
     }
 
     @Override
@@ -294,7 +300,7 @@ public class WebActivity extends BaseActivity
                             new MangaDialog.OnPeanutDialogClickListener() {
                                 @Override
                                 public void onOkClick() {
-                                    translateWebView.loadUrl(event.getMsg());
+                                    currentWebFragment.loadUrl(event.getMsg());
                                 }
 
                                 @Override
@@ -357,31 +363,21 @@ public class WebActivity extends BaseActivity
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 33 && null != data) {
-            String url = data.getStringExtra("url");
-            translateWebView.loadUrl(url);
-        }
-    }
-
     private void doCollect() {
         String userName = LoginBean.getInstance().getUserName(this);
         if (TextUtils.isEmpty(userName)) {
             return;
         }
-        SingleLoadBarUtil.getInstance().showLoadBar(WebActivity.this);
+        SingleLoadBarUtil.getInstance().showLoadBar(MainActivity.this);
         AVObject object = new AVObject("Collect");
         object.put("owner", userName);
-        object.put("collect_title", translateWebView.getTitle());
-        object.put("collect_url", translateWebView.getUrl());
+        object.put("collect_title", currentWebFragment.getTitle());
+        object.put("collect_url", currentWebFragment.getUrl());
         object.saveInBackground(new SaveCallback() {
             @Override
             public void done(AVException e) {
                 SingleLoadBarUtil.getInstance().dismissLoadBar();
-                if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                if (LeanCloundUtil.handleLeanResult(MainActivity.this, e)) {
                     baseToast.showToast("收藏成功");
                 }
             }
@@ -393,14 +389,14 @@ public class WebActivity extends BaseActivity
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
-                if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                if (LeanCloundUtil.handleLeanResult(MainActivity.this, e)) {
                     if (null != list && list.size() > 0) {
                         String title = list.get(0).getString("title");
                         String message = list.get(0).getString("message");
                         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                         String date = df.format(new Date());
                         if (!date.equals(SharedPreferencesUtils.getSharedPreferencesData(
-                                WebActivity.this, ShareKeys.ANNOUNCEMENT_READ_KEY))) {
+                                MainActivity.this, ShareKeys.ANNOUNCEMENT_READ_KEY))) {
                             showAnnouncementDialog(title, message);
                         }
                     }
@@ -414,7 +410,7 @@ public class WebActivity extends BaseActivity
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
-                if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                if (LeanCloundUtil.handleLeanResult(MainActivity.this, e)) {
                     if (null != list && list.size() > 0) {
                         versionName = list.get(0).getString("versionName");
                         versionCode = list.get(0).getInt("versionCode");
@@ -425,9 +421,9 @@ public class WebActivity extends BaseActivity
                         if (null != qrCodeFile) {
                             doDownloadQRcode();
                         }
-                        if (BaseParameterUtil.getInstance(WebActivity.this).
+                        if (BaseParameterUtil.getInstance(MainActivity.this).
                                 getAppVersionCode() >= versionCode || SharedPreferencesUtils.
-                                getBooleanSharedPreferencesData(WebActivity.this,
+                                getBooleanSharedPreferencesData(MainActivity.this,
                                         ShareKeys.IGNORE_THIS_VERSION_KEY + versionName, false)) {
                         } else {
                             showVersionDialog();
@@ -460,7 +456,7 @@ public class WebActivity extends BaseActivity
                 @Override
                 public void done(byte[] bytes, AVException e) {
                     // bytes 就是文件的数据流
-                    if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                    if (LeanCloundUtil.handleLeanResult(MainActivity.this, e)) {
                         File apkFile = FileUtil.byte2File(bytes, folderPath, qrFileName);
                     }
                 }
@@ -478,71 +474,6 @@ public class WebActivity extends BaseActivity
         }
     }
 
-    private void openYoudao() {
-        // ComponentName（组件名称）是用来打开其他应用程序中的Activity或服务的
-        Intent intent = new Intent();
-//        ComponentName cmp = new ComponentName("com.youdao.dict", "com.youdao.dict.DictDemo");// 包名或者启动页是错的
-        ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");// 报名该有activity
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setComponent(cmp);
-
-        startActivity(intent);
-    }
-
-
-    private void translation(final String word) {
-        clip.setText(word);
-        text2Speech(word);
-        //记录查过的单词
-        if (SharedPreferencesUtils.getBooleanSharedPreferencesData
-                (this, ShareKeys.CLOSE_TRANSLATE, false)) {
-            return;
-        }
-        String url = Globle.YOUDAO + word;
-        HashMap<String, String> params = new HashMap<String, String>();
-        VolleyCallBack<YoudaoResponse> callback = new VolleyCallBack<YoudaoResponse>() {
-
-            @Override
-            public void loadSucceed(YoudaoResponse result) {
-                if (null != result && result.getErrorCode() == 0) {
-                    YoudaoResponse.BasicBean item = result.getBasic();
-                    String t = "";
-                    if (null != item) {
-                        for (int i = 0; i < item.getExplains().size(); i++) {
-                            t = t + item.getExplains().get(i) + ";";
-                        }
-                        showTranslateResultDialog(word, result.getQuery() + " [" + item.getPhonetic() +
-                                "]: " + "\n" + t);
-                    } else {
-                        baseToast.showToast("没查到该词");
-                    }
-                } else {
-                    baseToast.showToast("网络连接失败");
-                }
-            }
-
-            @Override
-            public void loadFailed(VolleyError error) {
-                baseToast.showToast("error" + error);
-            }
-        };
-        VolleyTool.getInstance(this).requestData(Request.Method.GET,
-                WebActivity.this, url, params,
-                YoudaoResponse.class, callback);
-    }
-
-    private void text2Speech(String text) {
-        if (tts != null && !tts.isSpeaking()) {
-            tts.setPitch(0.0f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
-            HashMap<String, String> myHashAlarm = new HashMap();
-            myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-                    String.valueOf(AudioManager.STREAM_ALARM));
-            tts.speak(text,
-                    TextToSpeech.QUEUE_FLUSH, myHashAlarm);
-        }
-    }
 
     private void showQrDialog() {
         QrDialog qrDialog = new QrDialog(this);
@@ -550,44 +481,6 @@ public class WebActivity extends BaseActivity
         qrDialog.setImg("file://" + qrFilePath);
     }
 
-    private void showTranslateResultDialog(final String title, String msg) {
-        if (null == translateResultDialog) {
-            translateResultDialog = new TranslateDialog(this);
-            translateResultDialog.setOnSpeakClickListener(new OnSpeakClickListener() {
-                @Override
-                public void onSpeakClick(String word) {
-                    text2Speech(word);
-                }
-            });
-        }
-        translateResultDialog.show();
-
-        translateResultDialog.setTitle(title);
-        translateResultDialog.setMessage(msg);
-        translateResultDialog.setOkText("确定");
-        translateResultDialog.setCancelable(true);
-    }
-
-    private void showSaveImgDialog(final String imgUrl) {
-        MangaDialog dialog = new MangaDialog(this);
-        dialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
-            @Override
-            public void onOkClick() {
-                DownLoadUtil.downloadImg(WebActivity.this, imgUrl);
-                baseToast.showToast("如果成功保存了,那就会保存在\n" + "garbage/img文件夹中");
-
-            }
-
-            @Override
-            public void onCancelClick() {
-
-            }
-        });
-        dialog.show();
-        dialog.setTitle("是否保存图片");
-        dialog.setOkText("是");
-        dialog.setCancelText("否");
-    }
 
     private void showWebSubTopBar() {
         WebSubTopBar webSubTopBar = new WebSubTopBar(this);
@@ -595,7 +488,7 @@ public class WebActivity extends BaseActivity
             @Override
             public void onCopy() {
                 webTopBar.toggleEditAndShow(false);
-                clip.setText(translateWebView.getUrl());
+                clip.setText(currentWebFragment.getUrl());
                 baseToast.showToast("已复制链接");
             }
         });
@@ -610,7 +503,7 @@ public class WebActivity extends BaseActivity
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                 String date = df.format(new Date());
                 SharedPreferencesUtils.setSharedPreferencesData
-                        (WebActivity.this, ShareKeys.ANNOUNCEMENT_READ_KEY, date);
+                        (MainActivity.this, ShareKeys.ANNOUNCEMENT_READ_KEY, date);
             }
 
             @Override
@@ -618,7 +511,7 @@ public class WebActivity extends BaseActivity
 
             }
         });
-        if (WebActivity.this.isFinishing()) {
+        if (MainActivity.this.isFinishing()) {
             return;
         }
         dialog.show();
@@ -630,7 +523,7 @@ public class WebActivity extends BaseActivity
 
     private void showVersionDialog() {
         if (null == versionDialog) {
-            versionDialog = new MangaDialog(WebActivity.this);
+            versionDialog = new MangaDialog(MainActivity.this);
             versionDialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
                 @Override
                 public void onOkClick() {
@@ -643,7 +536,7 @@ public class WebActivity extends BaseActivity
                     if (forceUpdate) {
                         ActivityPoor.finishAllActivity();
                     } else {
-                        SharedPreferencesUtils.setSharedPreferencesData(WebActivity.this,
+                        SharedPreferencesUtils.setSharedPreferencesData(MainActivity.this,
                                 ShareKeys.IGNORE_THIS_VERSION_KEY + versionName, true);
                         baseToast.showToast("忽略后可在'我的'页中点击'版本'按钮升级至最新版!", true);
                     }
@@ -683,7 +576,7 @@ public class WebActivity extends BaseActivity
                     if (null != downloadDialog && downloadDialog.isShowing()) {
                         downloadDialog.dismiss();
                     }
-                    if (LeanCloundUtil.handleLeanResult(WebActivity.this, e)) {
+                    if (LeanCloundUtil.handleLeanResult(MainActivity.this, e)) {
                         File apkFile = FileUtil.byte2File(bytes, filePath, "english_browser.apk");
 
                         Intent intent = new Intent();
@@ -730,7 +623,7 @@ public class WebActivity extends BaseActivity
 
 
     private void showLogoutDialog() {
-        MangaDialog logoutDialog = new MangaDialog(WebActivity.this);
+        MangaDialog logoutDialog = new MangaDialog(MainActivity.this);
         logoutDialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
             @Override
             public void onOkClick() {
@@ -751,11 +644,11 @@ public class WebActivity extends BaseActivity
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        translateWebView.clearCache(true);
-        tts.stop(); // 不管是否正在朗读TTS都被打断
-        tts.shutdown(); // 关闭，释放资源
+    public boolean onTouch(View v, MotionEvent event) {
+        if (null != webTopBar) {
+            webTopBar.toggleEditAndShow(false);
+        }
+        return false;
     }
 
     @Override
@@ -774,7 +667,7 @@ public class WebActivity extends BaseActivity
     public void onPermissionsDenied(int requestCode, List<String> perms) {
 //        baseToast.showToast(getResources().getString(R.string.no_permissions), true);
         if (111 == requestCode) {
-            MangaDialog peanutDialog = new MangaDialog(WebActivity.this);
+            MangaDialog peanutDialog = new MangaDialog(MainActivity.this);
             peanutDialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
                 @Override
                 public void onOkClick() {
@@ -788,25 +681,6 @@ public class WebActivity extends BaseActivity
             });
             peanutDialog.show();
             peanutDialog.setTitle("没有文件读写权限,无法更新App!可以授权后重试!");
-        }
-    }
-
-
-    /**
-     * 用来初始化TextToSpeech引擎
-     * status:SUCCESS或ERROR这2个值
-     * setLanguage设置语言，帮助文档里面写了有22种
-     * TextToSpeech.LANG_MISSING_DATA：表示语言的数据丢失。
-     * TextToSpeech.LANG_NOT_SUPPORTED:不支持
-     */
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-            int result = tts.setLanguage(Locale.ENGLISH);
-            if (result == TextToSpeech.LANG_MISSING_DATA
-                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                baseToast.showToast("数据丢失或不支持");
-            }
         }
     }
 }

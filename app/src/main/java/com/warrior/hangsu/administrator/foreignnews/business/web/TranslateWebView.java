@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package com.warrior.hangsu.administrator.foreignnews.widget.webview;
+package com.warrior.hangsu.administrator.foreignnews.business.web;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,42 +27,36 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.business.read.ReadTextOnlyActivity;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnReceivedWebInfoListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
-import com.warrior.hangsu.administrator.foreignnews.utils.BlackListUtil;
-import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.toast.EasyToast;
-
-import java.util.HashMap;
 
 /**
  * Webview subclass that hijacks web content selection.
  *
  * @author Brandon Tate
  */
-public class TranslateWebView extends MyWebView implements OnLongClickListener, View.OnTouchListener, View.OnClickListener {
+public class TranslateWebView extends MyWebView implements OnLongClickListener, View.OnClickListener {
     private String TAG = "TranslateWebView";
     /**
      * Javascript interface for catching text selection.
      */
     protected TextSelectionJavascriptInterface mTextSelectionJSInterface = null;
-    private BaseWebTopBar webTopBar;
-    private BaseWebBottomBar webBottomBar;
     private OnWebViewLongClickListener onWebViewLongClickListener;
     private String urlTitle;
     private EasyToast baseToast;
     private TextSelectionListener mSelectionListener;
     private String currentInjectedUrl = "";
+    private OnReceivedWebInfoListener mOnReceivedWebInfoListener;
 
     public TranslateWebView(Context context) {
         super(context);
@@ -121,7 +113,6 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         // On Touch Listener
         setOnLongClickListener(this);
         setOnClickListener(this);
-        setOnTouchListener(this);
 
         // Webview client.
         setWebViewClient(new WebViewClient() {
@@ -204,7 +195,7 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         String js = "var newscript = document.createElement(\"script\");";
 //                js += "newscript.src=\"file:///android_asset/android.selection.js\";";
 //                js += "newscript.onload=function(){android.selection.longTouch();};";  //xxx()代表js中某方法
-        js += "newscript.text =  function clickSelected(){  "+
+        js += "newscript.text =  function clickSelected(){  " +
 //                "var str=window.getSelection().toString();     \nif(document.selection){\n" +
 //                "                        str=document.selection.createRange().text;// IE\n" +
 //                "                    }"+
@@ -218,80 +209,6 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         reload();
     }
 
-    public void setWebTopBar(BaseWebTopBar webTopBar) {
-        this.webTopBar = webTopBar;
-        this.webTopBar.setOnWebTopBarRefreshClickListener(new OnWebTopBarRefreshClickListener() {
-            @Override
-            public void onRefreshClick() {
-                refresh();
-            }
-        });
-        this.webTopBar.setOnWebTopBarSkipToURLListener(new OnWebTopBarSkipToURLListener() {
-            @Override
-            public void skipToURL(String url) {
-                if (!url.contains("http://") && !url.contains("https://")) {
-                    loadUrl("http://" + url + "/");
-                } else {
-
-                    loadUrl(url);
-                }
-            }
-        });
-    }
-
-    public void setWebBottomBar(final WebBottomBar webBottomBar) {
-        this.webBottomBar = webBottomBar;
-        this.webBottomBar.setOnWebBottomBarClickListener(new OnWebBottomBarClickListener() {
-            @Override
-            public void onBackwardClick() {
-                goBack(); // goBack()表示返回WebView的上一页面
-                if (canGoBack()) {
-                    webBottomBar.toggleBackwardState(true);
-                } else {
-                    webBottomBar.toggleBackwardState(false);
-                }
-            }
-
-            @Override
-            public void onForwardClick() {
-                goForward();
-                if (canGoForward()) {
-                    webBottomBar.toggleForwardState(true);
-                } else {
-                    webBottomBar.toggleForwardState(false);
-                }
-            }
-
-            @Override
-            public void onRefreshClick() {
-                refresh();
-            }
-
-            @Override
-            public void onTextOnlyClick() {
-                Intent intent = new Intent(mContext, ReadTextOnlyActivity.class);
-                intent.putExtra("url", getUrl());
-                intent.putExtra("title", urlTitle);
-                mContext.startActivity(intent);
-            }
-        });
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        if (null != webTopBar) {
-            webTopBar.toggleEditAndShow(false);
-        }
-//        clickJsInject();
-//        Handler handler = new Handler();
-//        Runnable updateThread = new Runnable() {
-//            public void run() {
-//                loadUrl("javascript:clickSelected();");
-//            }
-//        };
-//        handler.postDelayed(updateThread, 0);
-        return false;
-    }
 
     public void setOnWebViewLongClickListener(OnWebViewLongClickListener onWebViewLongClickListener) {
         this.onWebViewLongClickListener = onWebViewLongClickListener;
@@ -299,6 +216,10 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
 
     public void setSelectionListener(TextSelectionListener selectionListener) {
         mSelectionListener = selectionListener;
+    }
+
+    public void setOnReceivedWebInfoListener(OnReceivedWebInfoListener onReceivedWebInfoListener) {
+        mOnReceivedWebInfoListener = onReceivedWebInfoListener;
     }
 
 
@@ -323,8 +244,8 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
             // 得到读取进度
             super.onProgressChanged(view, newProgress);
             Log.i("ts", "读取进度" + newProgress);
-            if (null != webTopBar) {
-                webTopBar.setProgress(newProgress);
+            if (null != mOnReceivedWebInfoListener) {
+                mOnReceivedWebInfoListener.onProgress(newProgress);
             }
         }
 
@@ -332,9 +253,8 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
             urlTitle = title;
-            if (null != webTopBar) {
-                webTopBar.setTitle(title);
-                webTopBar.setPath(getUrl());
+            if (null != mOnReceivedWebInfoListener) {
+                mOnReceivedWebInfoListener.onReceivedTitle(title);
             }
         }
     }

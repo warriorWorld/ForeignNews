@@ -14,16 +14,15 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseFragmentActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
-import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends BaseFragmentActivity implements View.OnClickListener {
     private ImageView crossIv;
     private EditText userIdEt;
     private EditText userPsdEt;
@@ -51,14 +50,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         if (!TextUtils.isEmpty(LoginBean.getInstance().getUserName())) {
             userIdEt.setText(LoginBean.getInstance().getUserName());
         }
     }
 
-    private void initUI() {
+    @Override
+    protected void initUI() {
+        super.initUI();
         crossIv = (ImageView) findViewById(R.id.cross_iv);
         userIdEt = (EditText) findViewById(R.id.user_id_et);
         userPsdEt = (EditText) findViewById(R.id.user_psd_et);

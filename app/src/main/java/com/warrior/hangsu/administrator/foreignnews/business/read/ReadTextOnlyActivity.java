@@ -8,18 +8,16 @@ import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseFragmentActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
 import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
 import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
-import com.warrior.hangsu.administrator.foreignnews.business.main.WebActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
@@ -30,7 +28,6 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnUpFlipListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWordClickListener;
 import com.warrior.hangsu.administrator.foreignnews.mannger.SettingManager;
 import com.warrior.hangsu.administrator.foreignnews.mannger.ThemeManager;
-import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.ScreenUtils;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
@@ -60,7 +57,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 /**
  * 个人信息页
  */
-public class ReadTextOnlyActivity extends BaseActivity implements
+public class ReadTextOnlyActivity extends BaseFragmentActivity implements
         EasyPermissions.PermissionCallbacks, TextToSpeech.OnInitListener {
     private String url;
     private static org.jsoup.nodes.Document doc;
@@ -101,7 +98,9 @@ public class ReadTextOnlyActivity extends BaseActivity implements
         return R.layout.activity_read_text;
     }
 
-    private void initUI() {
+    @Override
+    protected void initUI() {
+        super.initUI();
         readWidgetFl = (FrameLayout) findViewById(R.id.read_widget_fl);
         hideBaseTopBar();
     }

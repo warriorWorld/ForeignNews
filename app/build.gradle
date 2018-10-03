@@ -51,8 +51,9 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     implementation files('libs/universal-image-loader-1.9.5.jar')
     // LeanCloud 基础包
-    compile('cn.leancloud.android:avoscloud-sdk:v4.4.3')
+    compile 'cn.leancloud.android:avoscloud-sdk:v4.4.3'
     compile 'pub.devrel:easypermissions:0.4.2'
     // jsoup HTML parser library @ https://jsoup.org/
     compile 'org.jsoup:jsoup:1.10.3'
+    implementation files('libs/afinal-0.3.32-bin.jar')
 }

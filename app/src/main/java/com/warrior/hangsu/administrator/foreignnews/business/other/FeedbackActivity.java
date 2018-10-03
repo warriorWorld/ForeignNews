@@ -10,7 +10,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.SaveCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseFragmentActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
@@ -18,7 +18,7 @@ import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 /**
  * 个人信息页
  */
-public class FeedbackActivity extends BaseActivity implements View.OnClickListener {
+public class FeedbackActivity extends BaseFragmentActivity implements View.OnClickListener {
     private EditText feedbackEt;
     private Button okBtn;
 
@@ -29,7 +29,9 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
         initUI();
     }
 
-    private void initUI() {
+    @Override
+    protected void initUI() {
+        super.initUI();
         feedbackEt = (EditText) findViewById(R.id.feedback_et);
         okBtn = (Button) findViewById(R.id.ok_btn);
 

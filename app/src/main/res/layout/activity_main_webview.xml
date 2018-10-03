@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar
         android:id="@+id/top_bar"
@@ -9,12 +9,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"></com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar>
 
-    <com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView
-        android:id="@+id/translate_webview"
+    <include
+        layout="@layout/activity_only_vp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_bar"
-        android:layout_below="@+id/top_bar"></com.warrior.hangsu.administrator.foreignnews.widget.webview.TranslateWebView>
+        android:layout_below="@+id/top_bar"></include>
 
     <com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar
         android:id="@+id/bottom_bar"

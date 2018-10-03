@@ -12,12 +12,12 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SignUpCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
-import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseFragmentActivity;
 import com.warrior.hangsu.administrator.foreignnews.utils.MatchStringUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
 
-public class RegisterActivity extends BaseActivity implements View.OnClickListener {
+public class RegisterActivity extends BaseFragmentActivity implements View.OnClickListener {
     private ImageView crossIv;
     private EditText userIdEt;
     private EditText emailEt;
@@ -30,7 +30,9 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         initUI();
     }
 
-    private void initUI() {
+    @Override
+    protected void initUI() {
+        super.initUI();
         crossIv = (ImageView) findViewById(R.id.cross_iv);
         userIdEt = (EditText) findViewById(R.id.user_id_et);
         emailEt = (EditText) findViewById(R.id.email_et);

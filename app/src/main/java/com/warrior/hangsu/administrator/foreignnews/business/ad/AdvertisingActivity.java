@@ -18,7 +18,7 @@ import com.avos.avoscloud.GetDataCallback;
 import com.avos.avoscloud.ProgressCallback;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.adapter.AdListRecyclerListAdapter;
-import com.warrior.hangsu.administrator.foreignnews.base.BaseActivity;
+import com.warrior.hangsu.administrator.foreignnews.base.BaseFragmentActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.AdBean;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnRecycleItemClickListener;
@@ -37,7 +37,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
-public class AdvertisingActivity extends BaseActivity implements View.OnClickListener,
+public class AdvertisingActivity extends BaseFragmentActivity implements View.OnClickListener,
         EasyPermissions.PermissionCallbacks {
     private RecyclerView adListRcv;
     private View emptyView;
@@ -57,11 +57,8 @@ public class AdvertisingActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    private void initUI() {
+    protected void initUI() {
+        super.initUI();
         adListRcv = (RecyclerView) findViewById(R.id.ad_list_rcv);
         adListRcv.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false) {
