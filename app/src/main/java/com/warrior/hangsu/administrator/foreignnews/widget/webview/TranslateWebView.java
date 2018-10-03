@@ -43,13 +43,14 @@ import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.toast.EasyToast;
 
 /**
  * Webview subclass that hijacks web content selection.
  *
  * @author Brandon Tate
  */
-public class TranslateWebView extends WebView implements OnLongClickListener, TextSelectionJavascriptInterfaceListener, View.OnTouchListener {
+public class TranslateWebView extends WebView implements OnLongClickListener, View.OnTouchListener {
     /**
      * Context.
      */
@@ -65,6 +66,8 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
     private String lastURL1 = "";//用于只设置一遍颜色
     private OnWebViewLongClickListener onWebViewLongClickListener;
     private String urlTitle;
+    private EasyToast baseToast;
+    private TextSelectionListener mSelectionListener;
 
     public TranslateWebView(Context context) {
         super(context);
@@ -94,13 +97,13 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
             onWebViewLongClickListener.onImgLongClick(result.getExtra());
             return true;
         }
+        baseToast.showToast("onLongClick");
         Handler handler = new Handler();
         Runnable updateThread = new Runnable() {
             public void run() {
                 //其实直接调用就好了
                 loadUrl("javascript:longTouchSelected();");
             }
-
         };
         handler.postDelayed(updateThread, 0);
         // Tell the javascript to handle this if not in selection mode
@@ -119,6 +122,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
      * @param context
      */
     protected void init(Context context) {
+        baseToast = new EasyToast(context);
 
         // On Touch Listener
         setOnLongClickListener(this);
@@ -161,6 +165,8 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
             @Override
             public void onPageFinished(WebView view, String url) {
                 // 一般实现以下这个方法,这个方法是这个网页结束后调用的
+                baseToast.showToast("onPageFinished:\n" + url);
+                JSinject();
                 super.onPageFinished(view, url);
                 // 全部完成后注入效率太低
 //                JSinject();
@@ -169,7 +175,14 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
         setWebChromeClient(new MyWebChromeClient());
 
         //JavaScript回调接口
-        mTextSelectionJSInterface = new TextSelectionJavascriptInterface(mContext, this);
+        mTextSelectionJSInterface = new TextSelectionJavascriptInterface(mContext, new TextSelectionListener() {
+            @Override
+            public void seletedWord(String word) {
+                if (null != mSelectionListener) {
+                    mSelectionListener.seletedWord(word);
+                }
+            }
+        });
         addJavascriptInterface(mTextSelectionJSInterface,
                 mTextSelectionJSInterface.getInterfaceName());
 
@@ -201,14 +214,8 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
                 "            }};";
         js += "document.body.appendChild(newscript);";
         loadUrl("javascript:" + js);
-        //TODO 提示用户注入完成
 //        ToastUtil.tipShort(mContext, "注入完成");
         webTopBar.setTitleTextColor(getResources().getColor(R.color.top_bar));
-    }
-
-    @Override
-    public void tsjiJSError(String error) {
-        Log.e(TAG, "JSError: " + error);
     }
 
     private void refresh() {
@@ -295,10 +302,6 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
         });
     }
 
-    public void setTextSelectionListener(TextSelectionListener textSelectionListener) {
-        mTextSelectionJSInterface.setTextSelectionListener(textSelectionListener);
-    }
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (null != webTopBar) {
@@ -309,6 +312,10 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
 
     public void setOnWebViewLongClickListener(OnWebViewLongClickListener onWebViewLongClickListener) {
         this.onWebViewLongClickListener = onWebViewLongClickListener;
+    }
+
+    public void setSelectionListener(TextSelectionListener selectionListener) {
+        mSelectionListener = selectionListener;
     }
 
 
@@ -343,7 +350,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Te
                 //不用等全部读取完就可以注入了
                 lastURL = getUrl();
                 if (!BlackListUtil.isBlackList(getUrl())) {
-                    JSinject();
+//                    JSinject();
                 }
             }
             if (!TextUtils.isEmpty(getUrl()) && !getUrl().equals(lastURL1) && newProgress <= 40) {

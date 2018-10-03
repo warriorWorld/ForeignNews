@@ -220,7 +220,7 @@ public class WebActivity extends BaseActivity
         });
         translateWebView.setWebTopBar(webTopBar);
         translateWebView.setWebBottomBar(webBottomBar);
-        translateWebView.setTextSelectionListener(new TextSelectionListener() {
+        translateWebView.setSelectionListener(new TextSelectionListener() {
             @Override
             public void seletedWord(String word) {
                 Handler handler = new Handler();

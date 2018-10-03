@@ -24,10 +24,6 @@ public class TextSelectionJavascriptInterface {
      */
     private final String interfaceName = "TextSelection";
 
-    /**
-     * The webview to work with.
-     */
-    private TextSelectionJavascriptInterfaceListener mListener;
     private TextSelectionListener textSelectionListener;
 
     /**
@@ -54,34 +50,11 @@ public class TextSelectionJavascriptInterface {
      * @param mListener
      */
     public TextSelectionJavascriptInterface(Context c,
-                                            TextSelectionJavascriptInterfaceListener mListener) {
+                                            TextSelectionListener mListener) {
         this.mContext = c;
-        this.mListener = mListener;
+        this.textSelectionListener = mListener;
     }
 
-    /**
-     * Handles javascript errors.
-     * <p/>
-     * 如果您在编写HTML5应用，需要在JS代码中访问Java中的函数，则您会用到WebView的addJavascriptInterface()函数。
-     * 因为安全问题，在Android4.2中(如果应用的android:targetSdkVersion数值为17+)JS只能访问带有
-     *
-     * @param error
-     * @JavascriptInterface注解的Java函数。 之前，任何Public的函数都可以在JS代码中访问，而Java对象继承关系会导致很多Public的函数都可以在JS中访问，其中一个重要的函数就是
-     * getClass()。然后JS可以通过反射来访问其他一些内容。通过引入 @JavascriptInterface注解，则在JS中只能访问
-     * @JavascriptInterface注解的函数。这样就可以增强安全性。 如果您的应用android:targetSdkVersion数值为17或者大于17记得添加 @JavascriptInterface 注解。
-     */
-    @JavascriptInterface
-    public void jsError(final String error) {
-        if (this.mListener != null) {
-
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mListener.tsjiJSError(error);
-                }
-            });
-        }
-    }
 
     /**
      * 在JavaScript中调用该方法告诉java已经获取到选择的单词
