@@ -206,7 +206,7 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
 //                "var str=window.getSelection().toString();     \nif(document.selection){\n" +
 //                "                        str=document.selection.createRange().text;// IE\n" +
 //                "                    }"+
-                "\twindow.TextSelection.clickWord(\"test\");};";
+                "\twindow.TextSelection.clickWord(document.selection.createTextRange().text);};";
         js += "document.body.appendChild(newscript);";
         loadUrl("javascript:" + js);
 //        ToastUtil.tipShort(mContext, "注入完成");
