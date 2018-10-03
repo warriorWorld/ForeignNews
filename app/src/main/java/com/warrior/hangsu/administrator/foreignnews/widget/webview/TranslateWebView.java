@@ -45,16 +45,14 @@ import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.toast.EasyToast;
 
+import java.util.HashMap;
+
 /**
  * Webview subclass that hijacks web content selection.
  *
  * @author Brandon Tate
  */
-public class TranslateWebView extends WebView implements OnLongClickListener, View.OnTouchListener {
-    /**
-     * Context.
-     */
-    protected Context mContext;
+public class TranslateWebView extends MyWebView implements OnLongClickListener, View.OnTouchListener {
     private String TAG = "TranslateWebView";
     /**
      * Javascript interface for catching text selection.
@@ -62,30 +60,22 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Vi
     protected TextSelectionJavascriptInterface mTextSelectionJSInterface = null;
     private BaseWebTopBar webTopBar;
     private BaseWebBottomBar webBottomBar;
-    private String lastURL = "";//用于判断是否已经注入
-    private String lastURL1 = "";//用于只设置一遍颜色
     private OnWebViewLongClickListener onWebViewLongClickListener;
     private String urlTitle;
     private EasyToast baseToast;
     private TextSelectionListener mSelectionListener;
+    private String currentInjectedUrl = "";
 
     public TranslateWebView(Context context) {
         super(context);
-        mContext = context;
-        init(context);
     }
 
     public TranslateWebView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mContext = context;
-        init(context);
-
     }
 
     public TranslateWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-        init(context);
     }
 
 
@@ -97,21 +87,16 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Vi
             onWebViewLongClickListener.onImgLongClick(result.getExtra());
             return true;
         }
-        baseToast.showToast("onLongClick");
+        if (!currentInjectedUrl.equals(getUrl())) {
+            JSinject();
+        }
         Handler handler = new Handler();
         Runnable updateThread = new Runnable() {
             public void run() {
-                //其实直接调用就好了
                 loadUrl("javascript:longTouchSelected();");
             }
         };
         handler.postDelayed(updateThread, 0);
-        // Tell the javascript to handle this if not in selection mode
-//        loadUrl("javascript:android.selection.longTouch();");
-
-        // Don't let the webview handle it
-//        return true;
-        //let the webview handle it
         return false;
     }
 
@@ -121,27 +106,14 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Vi
      *
      * @param context
      */
+    @Override
     protected void init(Context context) {
+        super.init(context);
         baseToast = new EasyToast(context);
 
         // On Touch Listener
         setOnLongClickListener(this);
         setOnTouchListener(this);
-
-        // Webview init
-        WebSettings webSettings = getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        //插件状态
-        webSettings.setPluginState(WebSettings.PluginState.ON);
-        webSettings.setAllowFileAccess(true);// 允许通过网页上传文件
-        webSettings.setBuiltInZoomControls(true);// 可缩放
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);// 优先使用缓存
-
-
-        buildDrawingCache(true);
-        setDrawingCacheEnabled(true);
-
 
         // Webview client.
         setWebViewClient(new WebViewClient() {
@@ -165,14 +137,10 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Vi
             @Override
             public void onPageFinished(WebView view, String url) {
                 // 一般实现以下这个方法,这个方法是这个网页结束后调用的
-                baseToast.showToast("onPageFinished:\n" + url);
                 JSinject();
                 super.onPageFinished(view, url);
-                // 全部完成后注入效率太低
-//                JSinject();
             }
         });
-        setWebChromeClient(new MyWebChromeClient());
 
         //JavaScript回调接口
         mTextSelectionJSInterface = new TextSelectionJavascriptInterface(mContext, new TextSelectionListener() {
@@ -197,9 +165,7 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Vi
                 }
             }
         });
-
-        //隐藏缩放按钮
-        getSettings().setDisplayZoomControls(false);
+        setWebChromeClient(new MyWebChromeClient());
     }
 
     private void JSinject() {
@@ -215,13 +181,10 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Vi
         js += "document.body.appendChild(newscript);";
         loadUrl("javascript:" + js);
 //        ToastUtil.tipShort(mContext, "注入完成");
-        webTopBar.setTitleTextColor(getResources().getColor(R.color.top_bar));
+        currentInjectedUrl = getUrl();
     }
 
     private void refresh() {
-        lastURL = "";
-        lastURL1 = "";
-        webTopBar.setTitleTextColor(getResources().getColor(R.color.text_color));
         reload();
     }
 
@@ -280,24 +243,6 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Vi
                 intent.putExtra("url", getUrl());
                 intent.putExtra("title", urlTitle);
                 mContext.startActivity(intent);
-                /**
-                 * 已弃用
-                 */
-                // ComponentName（组件名称）是用来打开其他应用程序中的Activity或服务的
-//                Intent intent = new Intent();
-//                ComponentName cmp = new ComponentName
-//                        ("com.warrior.hangsu.administrator.strangerbookreader",
-//                                "com.warrior.hangsu.administrator.strangerbookreader.business.main.MainActivity");// 报名该有activity
-//
-//                intent.putExtra("url", getUrl());
-//                intent.putExtra("url_title", urlTitle);
-//                intent.setAction(Intent.ACTION_MAIN);
-//                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-////                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//                intent.setComponent(cmp);
-//
-//                mContext.startActivity(intent);
             }
         });
     }
@@ -331,9 +276,6 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Vi
         @Override
         public boolean onJsAlert(WebView view, String url, String message,
                                  JsResult result) {
-//            Toast.makeText(mContext, message,
-//                    Toast.LENGTH_LONG).show();
-//            loadUrl("javascript: android.selection.clearSelection();");
             return true;
         }
 
@@ -344,19 +286,6 @@ public class TranslateWebView extends WebView implements OnLongClickListener, Vi
             Log.i("ts", "读取进度" + newProgress);
             if (null != webTopBar) {
                 webTopBar.setProgress(newProgress);
-            }
-
-            if (!TextUtils.isEmpty(getUrl()) && !getUrl().equals(lastURL) && newProgress > 40) {
-                //不用等全部读取完就可以注入了
-                lastURL = getUrl();
-                if (!BlackListUtil.isBlackList(getUrl())) {
-//                    JSinject();
-                }
-            }
-            if (!TextUtils.isEmpty(getUrl()) && !getUrl().equals(lastURL1) && newProgress <= 40) {
-                //告诉用户已经注入完成
-                lastURL1 = getUrl();
-                webTopBar.setTitleTextColor(getResources().getColor(R.color.text_color));
             }
         }
 
