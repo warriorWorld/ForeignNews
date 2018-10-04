@@ -10,6 +10,7 @@
         android:layout_height="47dp"
         android:background="@color/white"
         app:left_background="@drawable/backward"
+        android:visibility="gone"
         app:title_text="标题"
         app:title_textColor="@color/main_text_color"/>
 

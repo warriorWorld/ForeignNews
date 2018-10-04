@@ -84,6 +84,10 @@ public abstract class BaseRefreshFragment extends BaseFragment implements View.O
         refreshBaseTopbar.setVisibility(View.GONE);
     }
 
+    protected void showRefreshTopBar() {
+        refreshBaseTopbar.setVisibility(View.GONE);
+    }
+
     protected void hideLoadMore() {
         baseSwipeLayout.setEnabled(false);
     }

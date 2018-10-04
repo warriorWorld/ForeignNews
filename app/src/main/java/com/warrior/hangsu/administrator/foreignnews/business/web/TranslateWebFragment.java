@@ -74,8 +74,8 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
 
     @Override
     protected void initFrgmentUI(ViewGroup view) {
-        super.initFrgmentUI(view);
         hideRefreshTopBar();
+        super.initFrgmentUI(view);
         myWebView.setSelectionListener(new TextSelectionListener() {
             @Override
             public void seletedWord(String word) {

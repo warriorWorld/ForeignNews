@@ -11,13 +11,20 @@ import com.warrior.hangsu.administrator.foreignnews.base.FragmentContainerActivi
  * 个人信息页
  */
 public class WebActivity extends FragmentContainerActivity {
-    private WebFragment mWebFragment;
+    private TranslateWebFragment mWebFragment;
+    private String title = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mWebFragment = new WebFragment();
+        mWebFragment = new TranslateWebFragment();
         super.onCreate(savedInstanceState);
-        hideBaseTopBar();
+    }
+
+    @Override
+    protected void initUI() {
+        super.initUI();
+        title = getIntent().getStringExtra("title");
+        baseTopBar.setTitle(title);
     }
 
     @Override
