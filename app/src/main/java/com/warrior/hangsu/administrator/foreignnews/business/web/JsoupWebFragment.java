@@ -26,7 +26,7 @@ public class JsoupWebFragment extends TranslateWebFragment {
             public void onReceivedTitle(final String url, String title) {
                 removeAD(url);
 
-                if (myWebView.getUrl().contains("9gag") && myWebView.getUrl().contains("comment")) {
+                if (url.contains("9gag") && url.contains("comment")) {
                     Intent intent = new Intent(getActivity(), WebActivity.class);
                     intent.putExtra("url", url);
                     intent.putExtra("title","评论");

@@ -5,6 +5,10 @@ import android.os.Bundle;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseFragment;
 import com.warrior.hangsu.administrator.foreignnews.base.FragmentContainerActivity;
+import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.TopBar;
+
+import javax.microedition.khronos.opengles.GL;
 
 
 /**
@@ -25,6 +29,24 @@ public class WebActivity extends FragmentContainerActivity {
         super.initUI();
         title = getIntent().getStringExtra("title");
         baseTopBar.setTitle(title);
+        baseTopBar.setOnTopBarClickListener(new TopBar.OnTopBarClickListener() {
+            @Override
+            public void onLeftClick() {
+                finish();
+            }
+
+            @Override
+            public void onRightClick() {
+
+            }
+
+            @Override
+            public void onTitleClick() {
+                if (Globle.IS_TEST) {
+                    showBaseDialog(mWebFragment.getUrl(), "", "知道了", "", null);
+                }
+            }
+        });
     }
 
     @Override

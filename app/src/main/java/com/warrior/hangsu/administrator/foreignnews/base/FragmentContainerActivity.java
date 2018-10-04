@@ -25,7 +25,7 @@ public abstract class FragmentContainerActivity extends BaseFragmentActivity imp
     protected void initUI() {
         super.initUI();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.base_container, getFragment());
+        transaction.replace(R.id.fragment_container, getFragment());
         transaction.commit();
 
         baseTopBar.setTitle(getTopBarTitle());
@@ -33,7 +33,7 @@ public abstract class FragmentContainerActivity extends BaseFragmentActivity imp
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_base;
+        return R.layout.activity_container;
     }
 
 
