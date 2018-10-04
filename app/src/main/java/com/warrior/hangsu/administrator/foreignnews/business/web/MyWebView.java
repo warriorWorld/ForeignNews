@@ -20,8 +20,10 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -73,6 +75,9 @@ public class MyWebView extends WebView implements View.OnLongClickListener {
      * @param context
      */
     protected void init(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().flush();
+        }
         setOnLongClickListener(this);
         // Webview init
         WebSettings webSettings = getSettings();

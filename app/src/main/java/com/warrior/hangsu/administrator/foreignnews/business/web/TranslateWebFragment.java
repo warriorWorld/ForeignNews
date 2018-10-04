@@ -235,7 +235,7 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
     @Override
     public void onDestroy() {
         super.onDestroy();
-        myWebView.clearCache(true);
+//        myWebView.clearCache(true);
         tts.stop(); // 不管是否正在朗读TTS都被打断
         tts.shutdown(); // 关闭，释放资源
     }
