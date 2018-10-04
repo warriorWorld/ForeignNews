@@ -26,6 +26,7 @@ import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnSevenFourteenListDialogListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
+import com.warrior.hangsu.administrator.foreignnews.widget.bar.TopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.ListDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
@@ -54,6 +55,25 @@ public class CollectedActivity extends BaseFragmentActivity
         collectedLv = (ListView) findViewById(R.id.collected_listview);
 
         baseTopBar.setTitle("我的收藏");
+        baseTopBar.setRightText("恢复默认首页");
+        baseTopBar.setOnTopBarClickListener(new TopBar.OnTopBarClickListener() {
+            @Override
+            public void onLeftClick() {
+                finish();
+            }
+
+            @Override
+            public void onRightClick() {
+                SharedPreferencesUtils.setSharedPreferencesData(
+                        CollectedActivity.this, ShareKeys.MAIN_URL,"file:///android_asset/main_page.html");
+                baseToast.showToast("设置成功");
+            }
+
+            @Override
+            public void onTitleClick() {
+
+            }
+        });
     }
 
     @Override
