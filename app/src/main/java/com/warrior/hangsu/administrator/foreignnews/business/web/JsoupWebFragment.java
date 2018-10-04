@@ -35,12 +35,13 @@ public class JsoupWebFragment extends TranslateWebFragment {
                                 e.printStackTrace();
                             }
                             if (null != doc) {
-                                Elements mangaListElements = doc.getElementsByClass("salt-container");
-                                doc.removeClass("salt-container");
+                                final Elements mangaListElements = doc.getElementsByClass("logo ninegag white");
+                                doc.removeClass("logo ninegag white");
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        myWebView.loadUrl(doc.html());
+                                        baseToast.showToast(mangaListElements.size() + "");
+                                        loadUrl(doc.html());
                                     }
                                 });
                             }
