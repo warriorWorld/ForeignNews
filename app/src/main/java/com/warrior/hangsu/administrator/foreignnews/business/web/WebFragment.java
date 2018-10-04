@@ -80,17 +80,17 @@ public class WebFragment extends BaseRefreshFragment implements
         if (hideTopLeft) {
             refreshBaseTopbar.hideLeftButton();
         }
-        myWebView.setOnPeanutWebViewListener(new MyWebView.OnPeanutWebViewListener() {
-            @Override
-            public void onReceivedTitle(String title) {
-                if (!MatchStringUtil.isChinese(title)) {
-                    refreshBaseTopbar.setTitle(getResources().getString(R.string.app_name));
-                } else {
-                    refreshBaseTopbar.setTitle(title);
-                }
-
-            }
-        });
+//        myWebView.setOnPeanutWebViewListener(new MyWebView.OnPeanutWebViewListener() {
+//            @Override
+//            public void onReceivedTitle(String title) {
+//                if (!MatchStringUtil.isChinese(title)) {
+//                    refreshBaseTopbar.setTitle(getResources().getString(R.string.app_name));
+//                } else {
+//                    refreshBaseTopbar.setTitle(title);
+//                }
+//
+//            }
+//        });
         myWebView.setOnUrlChangeListener(new OnUrlChangeListener() {
             @Override
             public void onUrlChange(String url) {

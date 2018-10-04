@@ -256,6 +256,9 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
             if (null != mOnReceivedWebInfoListener) {
                 mOnReceivedWebInfoListener.onReceivedTitle(title);
             }
+            if (null != onPeanutWebViewListener) {
+                onPeanutWebViewListener.onReceivedTitle(getUrl(),title);
+            }
         }
     }
 

@@ -44,7 +44,7 @@ public class MyWebView extends WebView implements View.OnLongClickListener {
      * Context.
      */
     protected Context mContext;
-    private OnPeanutWebViewListener onPeanutWebViewListener;
+    protected OnPeanutWebViewListener onPeanutWebViewListener;
     private OnWebViewLongClickListener onWebViewLongClickListener;
     private OnUrlChangeListener onUrlChangeListener;
     private OnAllVersionScrollChangeListener onAllVersionScrollChangeListener;
@@ -206,13 +206,13 @@ public class MyWebView extends WebView implements View.OnLongClickListener {
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
             if (null != onPeanutWebViewListener) {
-                onPeanutWebViewListener.onReceivedTitle(title);
+                onPeanutWebViewListener.onReceivedTitle(getUrl(),title);
             }
         }
     }
 
     public interface OnPeanutWebViewListener {
-        void onReceivedTitle(String title);
+        void onReceivedTitle(String url,String title);
     }
 
     public interface OnWebViewLongClickListener {

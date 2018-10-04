@@ -29,6 +29,7 @@ import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedAc
 import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.other.AboutActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.read.ReadTextOnlyActivity;
+import com.warrior.hangsu.administrator.foreignnews.business.web.JsoupWebFragment;
 import com.warrior.hangsu.administrator.foreignnews.business.web.TranslateWebFragment;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
@@ -73,7 +74,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends BaseMultiTabActivity
         implements View.OnClickListener,
         EasyPermissions.PermissionCallbacks, View.OnTouchListener {
-    private TranslateWebFragment currentWebFragment;
+    private JsoupWebFragment currentWebFragment;
     private WebTopBar webTopBar;
     private WebBottomBar webBottomBar;
     private MangaDialog dialog;
@@ -110,7 +111,7 @@ public class MainActivity extends BaseMultiTabActivity
 
     @Override
     protected void initFragment() {
-        currentWebFragment = new TranslateWebFragment();
+        currentWebFragment = new JsoupWebFragment();
         currentWebFragment.setOnReceivedWebInfoListener(new OnReceivedWebInfoListener() {
             @Override
             public void onReceivedTitle(String title) {
