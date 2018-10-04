@@ -120,7 +120,7 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
         myWebView.setOnReceivedWebInfoListener(mOnReceivedWebInfoListener);
     }
 
-    private void translation(final String word) {
+    public void translation(final String word) {
         clip.setText(word);
         text2Speech(word);
         //记录查过的单词

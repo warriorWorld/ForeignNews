@@ -16,6 +16,16 @@
         android:layout_above="@+id/bottom_bar"
         android:layout_below="@+id/top_bar"></include>
 
+    <ImageView
+        android:id="@+id/translate_iv"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="80dp"
+        android:layout_marginRight="30dp"
+        android:src="@drawable/abc_icon"/>
+
     <com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"

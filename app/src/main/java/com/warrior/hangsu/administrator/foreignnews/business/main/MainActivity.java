@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
@@ -54,6 +55,7 @@ import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.DownloadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.OnlyEditDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.QrDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
@@ -84,7 +86,8 @@ public class MainActivity extends BaseMultiTabActivity
     private MangaDialog versionDialog;
     private DownloadDialog downloadDialog;
     private String qrFilePath;
-
+    private ImageView tranlateIv;
+    private OnlyEditDialog searchDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,6 +167,7 @@ public class MainActivity extends BaseMultiTabActivity
         super.initUI();
         hideBaseTopBar();
         tabLayout.setVisibility(View.GONE);
+        tranlateIv = (ImageView) findViewById(R.id.translate_iv);
         webTopBar = (WebTopBar) findViewById(R.id.top_bar);
         webTopBar.setOnWebTopClickListener(new OnWebTopClickListener() {
             @Override
@@ -285,6 +289,8 @@ public class MainActivity extends BaseMultiTabActivity
                 startActivity(intent);
             }
         });
+
+        tranlateIv.setOnClickListener(this);
     }
 
     @Override
@@ -620,9 +626,32 @@ public class MainActivity extends BaseMultiTabActivity
         downloadDialog.setCancelable(false);
     }
 
+    private void showTranslateDialog() {
+        if (null == searchDialog) {
+            searchDialog = new OnlyEditDialog(this);
+            searchDialog.setOnEditResultListener(new OnEditResultListener() {
+                @Override
+                public void onResult(String text) {
+                    currentWebFragment.translation(text);
+                }
+
+                @Override
+                public void onCancelClick() {
+
+                }
+            });
+            searchDialog.setCancelable(true);
+        }
+        searchDialog.show();
+        searchDialog.clearEdit();
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.translate_iv:
+                showTranslateDialog();
+                break;
         }
     }
 
