@@ -128,9 +128,12 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                // 这样写是为了可以在webview中点击链接还继续在webview中显示,而不是打开浏览器
-                loadUrl(url);
-                return true;
+                if (getUrl() != null && url != null && url.equals(getUrl())) {
+                    goBack();
+                    return true;
+                }
+                view.loadUrl(url);
+                return false;
             }
 
             @Override
@@ -257,7 +260,7 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
                 mOnReceivedWebInfoListener.onReceivedTitle(title);
             }
             if (null != onPeanutWebViewListener) {
-                onPeanutWebViewListener.onReceivedTitle(getUrl(),title);
+                onPeanutWebViewListener.onReceivedTitle(getUrl(), title);
             }
         }
     }

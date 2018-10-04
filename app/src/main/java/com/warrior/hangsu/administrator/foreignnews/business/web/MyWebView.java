@@ -16,10 +16,7 @@
 
 package com.warrior.hangsu.administrator.foreignnews.business.web;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -116,17 +113,12 @@ public class MyWebView extends WebView implements View.OnLongClickListener {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.startsWith("http:") || url.startsWith("https:")) {
-                    return false;
+                if (getUrl() != null && url != null && url.equals(getUrl())) {
+                    goBack();
+                    return true;
                 }
-                try {
-                    // Otherwise allow the OS to handle things like tel, mailto, etc.
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    mContext.startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-
-                }
-                return true;
+                view.loadUrl(url);
+                return false;
             }
 
             @Override
@@ -206,13 +198,13 @@ public class MyWebView extends WebView implements View.OnLongClickListener {
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
             if (null != onPeanutWebViewListener) {
-                onPeanutWebViewListener.onReceivedTitle(getUrl(),title);
+                onPeanutWebViewListener.onReceivedTitle(getUrl(), title);
             }
         }
     }
 
     public interface OnPeanutWebViewListener {
-        void onReceivedTitle(String url,String title);
+        void onReceivedTitle(String url, String title);
     }
 
     public interface OnWebViewLongClickListener {

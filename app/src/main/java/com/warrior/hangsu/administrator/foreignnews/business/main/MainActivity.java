@@ -169,6 +169,13 @@ public class MainActivity extends BaseMultiTabActivity
         hideBaseTopBar();
         tabLayout.setVisibility(View.GONE);
         tranlateIv = (ImageView) findViewById(R.id.translate_iv);
+        tranlateIv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                currentWebFragment.removeAD(currentWebFragment.getUrl());
+                return true;
+            }
+        });
         webTopBar = (WebTopBar) findViewById(R.id.top_bar);
         webTopBar.setOnWebTopClickListener(new OnWebTopClickListener() {
             @Override
