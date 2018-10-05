@@ -82,7 +82,7 @@ public class MyGsonRequest<T> extends Request<T> {
         try {
             String jsonString = new String(response.data,
                     HttpHeaderParser.parseCharset(response.headers));
-            Logger.d("json串" + jsonString);
+            Logger.d("mClass" + mClass +"json串" + jsonString);
 //            jsonString = StringUtil.cutString(jsonString);
             return Response.success(mGson.fromJson(jsonString, mClass),
                     HttpHeaderParser.parseCacheHeaders(response));

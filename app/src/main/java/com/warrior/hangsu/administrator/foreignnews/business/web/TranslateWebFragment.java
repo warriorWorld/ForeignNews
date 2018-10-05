@@ -153,7 +153,9 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
 
             @Override
             public void loadFailed(VolleyError error) {
-                baseToast.showToast("error" + error);
+                MangaDialog dialog=new MangaDialog(getActivity());
+                dialog.show();
+                dialog.setTitle(error.toString());
             }
         };
         VolleyTool.getInstance(getActivity()).requestData(Request.Method.GET,
