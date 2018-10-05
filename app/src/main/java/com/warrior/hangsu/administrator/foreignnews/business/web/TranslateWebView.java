@@ -132,7 +132,7 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
                     goBack();
                     return true;
                 }
-                view.loadUrl(url);
+                loadUrl(url);
                 return false;
             }
 

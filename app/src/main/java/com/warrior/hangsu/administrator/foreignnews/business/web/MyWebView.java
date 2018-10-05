@@ -91,9 +91,10 @@ public class MyWebView extends WebView implements View.OnLongClickListener {
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
 
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setDomStorageEnabled(true);// 打开本地缓存提供JS调用,至关重要
         webSettings.setAppCacheMaxSize(1024 * 1024 * 8);// 实现8倍缓存
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
         buildDrawingCache(true);
         setDrawingCacheEnabled(true);
