@@ -16,8 +16,10 @@
 
 package com.warrior.hangsu.administrator.foreignnews.business.web;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -128,12 +130,23 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (getUrl() != null && url != null && url.equals(getUrl())) {
-                    goBack();
-                    return true;
+//                if (getUrl() != null && url != null && url.equals(getUrl())) {
+//                    goBack();
+//                    return true;
+//                }
+//                loadUrl(url);
+//                return false;
+                if (url.startsWith("http:") || url.startsWith("https:")) {
+                    return false;
                 }
-                loadUrl(url);
-                return false;
+                try {
+                    // Otherwise allow the OS to handle things like tel, mailto, etc.
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    mContext.startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+
+                }
+                return true;
             }
 
             @Override

@@ -101,36 +101,36 @@ public class MyWebView extends WebView implements View.OnLongClickListener {
 
 
         // Webview client.
-        setWebViewClient(new WebViewClient() {
-            // This is how it is supposed to work, so I'll leave it in, but this
-            // doesn't get called on pinch
-            // So for now I have to use deprecated getScale method.
-            @Override
-            public void onScaleChanged(WebView view, float oldScale,
-                                       float newScale) {
-                //这样会阻止缩放
-                super.onScaleChanged(view, oldScale, newScale);
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (getUrl() != null && url != null && url.equals(getUrl())) {
-                    goBack();
-                    return true;
-                }
-                view.loadUrl(url);
-                return false;
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                if (null != onUrlChangeListener) {
-                    onUrlChangeListener.onUrlChange(url);
-                }
-                // 一般实现以下这个方法,这个方法是这个网页结束后调用的
-                super.onPageFinished(view, url);
-            }
-        });
+//        setWebViewClient(new WebViewClient() {
+//            // This is how it is supposed to work, so I'll leave it in, but this
+//            // doesn't get called on pinch
+//            // So for now I have to use deprecated getScale method.
+//            @Override
+//            public void onScaleChanged(WebView view, float oldScale,
+//                                       float newScale) {
+//                //这样会阻止缩放
+//                super.onScaleChanged(view, oldScale, newScale);
+//            }
+//
+//            @Override
+//            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//                if (getUrl() != null && url != null && url.equals(getUrl())) {
+//                    goBack();
+//                    return true;
+//                }
+//                loadUrl(url);
+//                return false;
+//            }
+//
+//            @Override
+//            public void onPageFinished(WebView view, String url) {
+//                if (null != onUrlChangeListener) {
+//                    onUrlChangeListener.onUrlChange(url);
+//                }
+//                // 一般实现以下这个方法,这个方法是这个网页结束后调用的
+//                super.onPageFinished(view, url);
+//            }
+//        });
         setWebChromeClient(new MyWebChromeClient());
 
 
