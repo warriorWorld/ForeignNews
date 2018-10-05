@@ -65,6 +65,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -89,12 +90,12 @@ public class MainActivity extends BaseMultiTabActivity
     private String qrFilePath;
     private ImageView tranlateIv;
     private OnlyEditDialog searchDialog;
+    private ArrayList<JsoupWebFragment> webfragmentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         clip = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        initUI();
         doGetAnnouncement();
         doGetVersionInfo();
         if (TextUtils.isEmpty(LoginBean.getInstance().getUserName())) {
@@ -111,8 +112,12 @@ public class MainActivity extends BaseMultiTabActivity
 
     @Override
     protected void initFragment() {
-        currentWebFragment = new JsoupWebFragment();
-        currentWebFragment.setOnReceivedWebInfoListener(new OnReceivedWebInfoListener() {
+        addOneWebFragment("");
+    }
+
+    private void addOneWebFragment(String initUrl) {
+        JsoupWebFragment webFragment = new JsoupWebFragment();
+        webFragment.setOnReceivedWebInfoListener(new OnReceivedWebInfoListener() {
             @Override
             public void onReceivedTitle(String title) {
                 if (null != webTopBar) {
@@ -128,6 +133,12 @@ public class MainActivity extends BaseMultiTabActivity
                 }
             }
         });
+        webfragmentList.add(webFragment);
+        currentWebFragment = webFragment;
+        if (!TextUtils.isEmpty(initUrl)) {
+            webFragment.setUrl(initUrl);
+        }
+        initUI();
     }
 
     @Override
@@ -137,29 +148,41 @@ public class MainActivity extends BaseMultiTabActivity
 
     @Override
     protected int getPageCount() {
-        return 1;
+        return webfragmentList.size();
     }
 
     @Override
     protected ViewPager.OnPageChangeListener getPageListener() {
-        return null;
+        return new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                currentWebFragment = webfragmentList.get(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        };
     }
 
     @Override
     protected String[] getTabTitleList() {
-        String[] titleList = new String[1];
-        titleList[0] = "test";
+        String[] titleList = new String[webfragmentList.size()];
+        for (int i = 0; i < titleList.length; i++) {
+            titleList[i] = "tag" + (i + 1);
+        }
         return titleList;
     }
 
     @Override
     protected Fragment getFragmentByPosition(int position) {
-        switch (position) {
-            case 0:
-                return currentWebFragment;
-            default:
-                return currentWebFragment;
-        }
+        return webfragmentList.get(position);
     }
 
 
@@ -167,7 +190,11 @@ public class MainActivity extends BaseMultiTabActivity
     protected void initUI() {
         super.initUI();
         hideBaseTopBar();
-        tabLayout.setVisibility(View.GONE);
+        if (webfragmentList.size()<2) {
+            tabLayout.setVisibility(View.GONE);
+        }else {
+            tabLayout.setVisibility(View.VISIBLE);
+        }
         tranlateIv = (ImageView) findViewById(R.id.translate_iv);
         tranlateIv.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -295,6 +322,16 @@ public class MainActivity extends BaseMultiTabActivity
                 intent.putExtra("url", currentWebFragment.getUrl());
                 intent.putExtra("title", currentWebFragment.getTitle());
                 startActivity(intent);
+            }
+
+            @Override
+            public void onNewTagClick() {
+                addOneWebFragment("");
+            }
+
+            @Override
+            public void onDeleteTagClick() {
+
             }
         });
 

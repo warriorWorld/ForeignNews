@@ -21,6 +21,8 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarWebNu
 public class WebBottomBar extends BaseWebBottomBar implements View.OnClickListener {
     private Context context;
     private ImageView backwardIV, forwardIV, homeIV, optionsIV,textOnlyIv;
+    private ImageView subtractTagIv;
+    private ImageView addTagIv;
     private TextView webNumTV;
     private View bottomLayout;
     private OnWebBottomBarClickListener onWebBottomBarClickListener;
@@ -63,7 +65,11 @@ public class WebBottomBar extends BaseWebBottomBar implements View.OnClickListen
         optionsIV = (ImageView) findViewById(R.id.options_iv);
         webNumTV = (TextView) findViewById(R.id.web_num_iv);
         textOnlyIv= (ImageView) findViewById(R.id.text_only_iv);
+        subtractTagIv = (ImageView)findViewById( R.id.subtract_tag_iv );
+        addTagIv = (ImageView)findViewById( R.id.add_tag_iv );
 
+        subtractTagIv.setOnClickListener(this);
+        addTagIv.setOnClickListener(this);
         textOnlyIv.setOnClickListener(this);
         backwardIV.setOnClickListener(this);
         forwardIV.setOnClickListener(this);
@@ -114,6 +120,16 @@ public class WebBottomBar extends BaseWebBottomBar implements View.OnClickListen
             case R.id.web_num_iv:
                 if (null != onWebBottomBarWebNumClickListener) {
                     onWebBottomBarWebNumClickListener.onWebNumClick();
+                }
+                break;
+            case R.id.subtract_tag_iv:
+                if (null != onWebBottomBarClickListener) {
+                    onWebBottomBarClickListener.onDeleteTagClick();
+                }
+                break;
+            case R.id.add_tag_iv:
+                if (null != onWebBottomBarClickListener) {
+                    onWebBottomBarClickListener.onNewTagClick();
                 }
                 break;
             case R.id.options_iv:

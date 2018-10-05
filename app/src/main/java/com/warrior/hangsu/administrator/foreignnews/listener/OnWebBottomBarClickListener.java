@@ -12,4 +12,8 @@ public interface OnWebBottomBarClickListener {
     void onRefreshClick();
 
     void onTextOnlyClick();
+
+    void onNewTagClick();
+
+    void onDeleteTagClick();
 }

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/bottom_layout"
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:background="@color/white"
-    android:orientation="vertical">
+                android:id="@+id/bottom_layout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/white"
+                android:orientation="vertical">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/white" />
+        android:background="@color/white"/>
 
     <RelativeLayout
         android:id="@+id/bottom_bar_rl"
@@ -20,13 +20,23 @@
         android:visibility="visible">
 
         <ImageView
+            android:id="@+id/subtract_tag_iv"
+            android:layout_width="@dimen/bottombar_button"
+            android:layout_height="@dimen/bottombar_button"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:layout_marginRight="@dimen/bottombar_button_margin"
+            android:layout_toLeftOf="@+id/backward_iv"
+            android:src="@drawable/subtract_icon"/>
+
+        <ImageView
             android:id="@+id/backward_iv"
             android:layout_width="@dimen/bottombar_button"
             android:layout_height="@dimen/bottombar_button"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/bottombar_button_margin"
             android:layout_toLeftOf="@+id/forward_iv"
-            android:src="@drawable/backward" />
+            android:src="@drawable/backward"/>
 
 
         <ImageView
@@ -36,14 +46,14 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/bottombar_button_margin"
             android:layout_toLeftOf="@+id/home_iv"
-            android:src="@drawable/forward" />
+            android:src="@drawable/forward"/>
 
         <ImageView
             android:id="@+id/home_iv"
             android:layout_width="@dimen/bottombar_button"
             android:layout_height="@dimen/bottombar_button"
             android:layout_centerInParent="true"
-            android:src="@drawable/home" />
+            android:src="@drawable/home"/>
 
         <ImageView
             android:id="@+id/text_only_iv"
@@ -52,7 +62,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/bottombar_button_margin"
             android:layout_toRightOf="@+id/home_iv"
-            android:src="@drawable/text_only_icon" />
+            android:src="@drawable/text_only_icon"/>
 
         <TextView
             android:id="@+id/web_num_iv"
@@ -66,7 +76,7 @@
             android:text="1"
             android:textColor="@color/english_browser"
             android:textSize="18sp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/options_iv"
@@ -75,7 +85,17 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/bottombar_button_margin"
             android:layout_toRightOf="@+id/text_only_iv"
-            android:src="@drawable/options" />
+            android:src="@drawable/options"/>
+
+        <ImageView
+            android:id="@+id/add_tag_iv"
+            android:layout_width="@dimen/bottombar_button"
+            android:layout_height="@dimen/bottombar_button"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/bottombar_button_margin"
+            android:layout_toRightOf="@+id/options_iv"
+            android:visibility="gone"
+            android:src="@drawable/add_icon"/>
     </RelativeLayout>
 
 </RelativeLayout>
