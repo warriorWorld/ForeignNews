@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/divide">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/divide">
 
     <ScrollView
         android:id="@+id/user_scrollview"
@@ -21,7 +21,7 @@
                 android:layout_height="80dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
-                android:src="@drawable/english_browser_icon512" />
+                android:src="@drawable/english_browser_icon512"/>
 
             <TextView
                 android:id="@+id/version_tv"
@@ -32,7 +32,7 @@
                 android:layout_marginTop="5dp"
                 android:text="1.0"
                 android:textColor="@color/main_text_color"
-                android:textSize="@dimen/main_text_size" />
+                android:textSize="@dimen/main_text_size"/>
 
             <RelativeLayout
                 android:id="@+id/check_update_rl"
@@ -51,7 +51,7 @@
                     android:gravity="center_vertical"
                     android:text="检查更新"
                     android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/main_text_size" />
+                    android:textSize="@dimen/main_text_size"/>
 
 
                 <ImageView
@@ -59,14 +59,14 @@
                     android:layout_height="10dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/forward" />
+                    android:src="@drawable/forward"/>
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/divide_line"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
             <RelativeLayout
                 android:id="@+id/close_translate_rl"
@@ -86,7 +86,7 @@
                     android:gravity="center_vertical"
                     android:text="关闭应用内自带的翻译"
                     android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/main_text_size" />
+                    android:textSize="@dimen/main_text_size"/>
 
 
                 <CheckBox
@@ -94,14 +94,49 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" />
+                    android:layout_centerVertical="true"/>
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/divide_line"
-                android:visibility="visible" />
+                android:visibility="visible"/>
+
+            <RelativeLayout
+                android:id="@+id/close_tts_rl"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/user_item_h"
+                android:background="@color/white"
+                android:paddingLeft="@dimen/item_padding_horizontal"
+                android:paddingRight="@dimen/item_padding_horizontal"
+                android:visibility="visible">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="关闭应用内自带的发音"
+                    android:textColor="@color/main_text_color"
+                    android:textSize="@dimen/main_text_size"/>
+
+
+                <CheckBox
+                    android:id="@+id/close_tts_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/divide_line"
+                android:visibility="visible"/>
 
             <RelativeLayout
                 android:id="@+id/close_tutorial_rl"
@@ -120,7 +155,7 @@
                     android:gravity="center_vertical"
                     android:text="关闭教程"
                     android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/main_text_size" />
+                    android:textSize="@dimen/main_text_size"/>
 
 
                 <CheckBox
@@ -129,14 +164,14 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:checked="false" />
+                    android:checked="false"/>
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/divide_line"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
             <RelativeLayout
                 android:id="@+id/set_main_url_rl"
@@ -155,7 +190,7 @@
                     android:gravity="center_vertical"
                     android:text="设置主页"
                     android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/main_text_size" />
+                    android:textSize="@dimen/main_text_size"/>
 
 
                 <ImageView
@@ -163,14 +198,14 @@
                     android:layout_height="10dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/forward" />
+                    android:src="@drawable/forward"/>
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/divide_line"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
             <RelativeLayout
                 android:id="@+id/author_rl"
@@ -189,7 +224,7 @@
                     android:gravity="center_vertical"
                     android:text="联系作者"
                     android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/main_text_size" />
+                    android:textSize="@dimen/main_text_size"/>
 
 
                 <ImageView
@@ -197,14 +232,14 @@
                     android:layout_height="10dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/forward" />
+                    android:src="@drawable/forward"/>
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/divide_line"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
             <RelativeLayout
                 android:id="@+id/feedback_rl"
@@ -223,7 +258,7 @@
                     android:gravity="center_vertical"
                     android:text="意见反馈"
                     android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/main_text_size" />
+                    android:textSize="@dimen/main_text_size"/>
 
 
                 <ImageView
@@ -231,7 +266,7 @@
                     android:layout_height="10dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/forward" />
+                    android:src="@drawable/forward"/>
             </RelativeLayout>
 
             <TextView
@@ -244,7 +279,7 @@
                 android:gravity="center"
                 android:text="退出登录"
                 android:textColor="@color/english_browser"
-                android:textSize="@dimen/main_text_size" />
+                android:textSize="@dimen/main_text_size"/>
         </LinearLayout>
     </ScrollView>
 

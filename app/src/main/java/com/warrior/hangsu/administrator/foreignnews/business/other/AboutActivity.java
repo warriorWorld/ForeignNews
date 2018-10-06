@@ -49,6 +49,7 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
     private TextView versionTv;
     private RelativeLayout checkUpdateRl;
     private CheckBox closeTranslateCb;
+    private CheckBox closeTtsCb;
     private CheckBox closeTutorialCb;
     private RelativeLayout setMainUrlRl;
     private RelativeLayout authorRl;
@@ -89,6 +90,14 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
                         (AboutActivity.this, ShareKeys.CLOSE_TRANSLATE, isChecked);
             }
         });
+        closeTtsCb = (CheckBox) findViewById(R.id.close_tts_cb);
+        closeTtsCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferencesUtils.setSharedPreferencesData
+                        (AboutActivity.this, ShareKeys.CLOSE_TTS, isChecked);
+            }
+        });
         closeTutorialCb = (CheckBox) findViewById(R.id.close_tutorial_cb);
         closeTutorialCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -105,6 +114,9 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
         closeTranslateCb.setChecked
                 (SharedPreferencesUtils.getBooleanSharedPreferencesData(AboutActivity.this,
                         ShareKeys.CLOSE_TRANSLATE, false));
+        closeTtsCb.setChecked
+                (SharedPreferencesUtils.getBooleanSharedPreferencesData(AboutActivity.this,
+                        ShareKeys.CLOSE_TTS, false));
         closeTutorialCb.setChecked
                 (SharedPreferencesUtils.getBooleanSharedPreferencesData(AboutActivity.this,
                         ShareKeys.CLOSE_TUTORIAL, true));

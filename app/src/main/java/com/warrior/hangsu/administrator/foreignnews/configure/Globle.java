@@ -6,7 +6,7 @@ import android.os.Environment;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 public class Globle {
-    public static final boolean IS_TEST=true;
+    public static final boolean IS_TEST=false;
     /**
      * API key：1447394905
      * keyfrom：foreignnews

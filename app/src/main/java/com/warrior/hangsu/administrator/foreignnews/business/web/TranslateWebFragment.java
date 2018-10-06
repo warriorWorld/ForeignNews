@@ -122,7 +122,10 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
 
     public void translation(final String word) {
         clip.setText(word);
-        text2Speech(word);
+        if (!SharedPreferencesUtils.getBooleanSharedPreferencesData
+                (getActivity(), ShareKeys.CLOSE_TTS, false)) {
+            text2Speech(word);
+        }
         //记录查过的单词
         if (SharedPreferencesUtils.getBooleanSharedPreferencesData
                 (getActivity(), ShareKeys.CLOSE_TRANSLATE, false)) {
@@ -153,7 +156,7 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
 
             @Override
             public void loadFailed(VolleyError error) {
-                MangaDialog dialog=new MangaDialog(getActivity());
+                MangaDialog dialog = new MangaDialog(getActivity());
                 dialog.show();
                 dialog.setTitle(error.toString());
             }
