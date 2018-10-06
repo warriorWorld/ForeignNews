@@ -17,7 +17,9 @@ import android.view.WindowManager;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.eventbus.EventBusEvent;
+import com.warrior.hangsu.administrator.foreignnews.service.CopyBoardService;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
+import com.warrior.hangsu.administrator.foreignnews.utils.ServiceUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.TopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.toast.EasyToast;
@@ -135,6 +137,11 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        if (!ServiceUtil.isServiceWork(this,
+                "com.warrior.hangsu.administrator.foreignnews.service.CopyBoardService")) {
+            Intent intent = new Intent(this, CopyBoardService.class);
+            startService(intent);
+        }
     }
 
     @Override
