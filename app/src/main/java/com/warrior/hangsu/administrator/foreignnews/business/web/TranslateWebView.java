@@ -179,12 +179,19 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((keyCode == KeyEvent.KEYCODE_BACK) && canGoBack()) {
-                    goBack(); // goBack()表示返回WebView的上一页面
-                    return true;
-                } else {
-                    return false;
+                //因为DOWN和UP都算回车 所以这样写 避免调用两次
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_BACK:
+                            if ((keyCode == KeyEvent.KEYCODE_BACK) && canGoBack()) {
+                                goBack(); // goBack()表示返回WebView的上一页面
+                                return true;
+                            } else {
+                                return false;
+                            }
+                    }
                 }
+                return false;
             }
         });
         setWebChromeClient(new MyWebChromeClient());
