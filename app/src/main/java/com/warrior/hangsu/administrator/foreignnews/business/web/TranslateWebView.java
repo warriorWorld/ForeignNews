@@ -81,6 +81,20 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
             onWebViewLongClickListener.onImgLongClick(result.getExtra());
             return true;
         }
+        if(type==HitTestResult.SRC_ANCHOR_TYPE){
+            WebView webView=new WebView(mContext) ;
+            webView.loadUrl(result.getExtra());
+            webView.setWebChromeClient(new WebChromeClient(){
+                @Override
+                public void onReceivedTitle(WebView view, String title) {
+                    super.onReceivedTitle(view, title);
+                    if (null!=mSelectionListener){
+                        mSelectionListener.seletedWord(title);
+                    }
+                }
+            });
+            return true;
+        }
         if (type == HitTestResult.UNKNOWN_TYPE) {
             if (!currentInjectedUrl.equals(getUrl())) {
                 JSinject();
