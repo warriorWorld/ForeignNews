@@ -23,6 +23,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -46,6 +47,9 @@ import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.toast.EasyToast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Webview subclass that hijacks web content selection.
@@ -98,9 +102,23 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
                                 (mContext, ShareKeys.CLOSE_TRANSLATE, false)) {
                             mSelectionListener.seletedWord(title);
                         } else {
-                            String res = StringUtils.replaceAllSpecialCharacterTo(title, "分隔符");
-                            String[] reses = res.split("分隔符");
-                            mSelectionListener.selectedWord(reses);
+                            try {
+                                String res = StringUtils.replaceAllSpecialCharacterTo(title, "分隔符");
+                                String[] reses = res.split("分隔符");
+                                ArrayList<String> list = new ArrayList<>();
+                                for (String item : reses) {
+                                    if (!TextUtils.isEmpty(item.replaceAll(" ", ""))&&!item.equals("9GAG")) {
+                                        list.add(item.replaceAll(" ", ""));
+                                    }
+                                }
+                                String[] finalRes = new String[list.size()];
+                                for (int i = 0; i < list.size(); i++) {
+                                    finalRes[i] = list.get(i);
+                                }
+                                mSelectionListener.selectedWord(finalRes);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }

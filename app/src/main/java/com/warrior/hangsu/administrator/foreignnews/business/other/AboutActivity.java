@@ -85,30 +85,9 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
         versionTv = (TextView) findViewById(R.id.version_tv);
         checkUpdateRl = (RelativeLayout) findViewById(R.id.check_update_rl);
         closeTranslateCb = (CheckBox) findViewById(R.id.close_translate_cb);
-        closeTranslateCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferencesUtils.setSharedPreferencesData
-                        (AboutActivity.this, ShareKeys.CLOSE_TRANSLATE, isChecked);
-                youdaoAPP();
-            }
-        });
         closeTtsCb = (CheckBox) findViewById(R.id.close_tts_cb);
-        closeTtsCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferencesUtils.setSharedPreferencesData
-                        (AboutActivity.this, ShareKeys.CLOSE_TTS, isChecked);
-            }
-        });
         closeTutorialCb = (CheckBox) findViewById(R.id.close_tutorial_cb);
-        closeTutorialCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferencesUtils.setSharedPreferencesData
-                        (AboutActivity.this, ShareKeys.CLOSE_TUTORIAL, isChecked);
-            }
-        });
+
         setMainUrlRl = (RelativeLayout) findViewById(R.id.set_main_url_rl);
         authorRl = (RelativeLayout) findViewById(R.id.author_rl);
         feedbackRl = (RelativeLayout) findViewById(R.id.feedback_rl);
@@ -123,7 +102,28 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
         closeTutorialCb.setChecked
                 (SharedPreferencesUtils.getBooleanSharedPreferencesData(AboutActivity.this,
                         ShareKeys.CLOSE_TUTORIAL, true));
-
+        closeTranslateCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferencesUtils.setSharedPreferencesData
+                        (AboutActivity.this, ShareKeys.CLOSE_TRANSLATE, isChecked);
+                youdaoAPP();
+            }
+        });
+        closeTutorialCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferencesUtils.setSharedPreferencesData
+                        (AboutActivity.this, ShareKeys.CLOSE_TUTORIAL, isChecked);
+            }
+        });
+        closeTtsCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferencesUtils.setSharedPreferencesData
+                        (AboutActivity.this, ShareKeys.CLOSE_TTS, isChecked);
+            }
+        });
         checkUpdateRl.setOnClickListener(this);
         setMainUrlRl.setOnClickListener(this);
         authorRl.setOnClickListener(this);
