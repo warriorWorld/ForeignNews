@@ -27,4 +27,6 @@ public interface TextSelectionListener {
      * Informs the listener that there was a javascript error.
      */
     void seletedWord(String word);
+
+    void selectedWord(String[] words);
 }

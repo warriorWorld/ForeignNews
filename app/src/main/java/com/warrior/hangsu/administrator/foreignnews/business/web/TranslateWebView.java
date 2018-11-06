@@ -91,9 +91,6 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
                 public void onReceivedTitle(WebView view, String title) {
                     super.onReceivedTitle(view, title);
                     if (null != mSelectionListener) {
-                        if (checkPackInfo("com.youdao.dict")){
-
-                        }
                         mSelectionListener.seletedWord(title);
                     }
                 }
@@ -113,22 +110,6 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
             handler.postDelayed(updateThread, 0);
         }
         return false;
-    }
-
-    /**
-     * 检查包是否存在
-     *
-     * @param packname
-     * @return
-     */
-    private boolean checkPackInfo(String packname) {
-        PackageInfo packageInfo = null;
-        try {
-            packageInfo = mContext.getPackageManager().getPackageInfo(packname, 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return packageInfo != null;
     }
 
     @Override
@@ -198,6 +179,13 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
             public void seletedWord(String word) {
                 if (null != mSelectionListener) {
                     mSelectionListener.seletedWord(word);
+                }
+            }
+
+            @Override
+            public void selectedWord(String[] words) {
+                if (null != mSelectionListener) {
+                    mSelectionListener.selectedWord(words);
                 }
             }
         });

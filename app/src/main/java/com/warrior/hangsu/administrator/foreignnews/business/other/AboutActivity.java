@@ -2,6 +2,8 @@ package com.warrior.hangsu.administrator.foreignnews.business.other;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -88,6 +90,7 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferencesUtils.setSharedPreferencesData
                         (AboutActivity.this, ShareKeys.CLOSE_TRANSLATE, isChecked);
+                youdaoAPP();
             }
         });
         closeTtsCb = (CheckBox) findViewById(R.id.close_tts_cb);
@@ -132,6 +135,38 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
     @Override
     protected int getLayoutId() {
         return R.layout.activity_about;
+    }
+
+    private void youdaoAPP() {
+        if (checkPackInfo("com.youdao.dict") &&
+                SharedPreferencesUtils.getBooleanSharedPreferencesData
+                        (this, ShareKeys.CLOSE_TRANSLATE, false)) {
+            openApp("com.youdao.dict");
+        }
+    }
+
+    /**
+     * 检查包是否存在
+     *
+     * @param packname
+     * @return
+     */
+    private boolean checkPackInfo(String packname) {
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = getPackageManager().getPackageInfo(packname, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return packageInfo != null;
+    }
+
+    private void openApp(String packname) {
+        PackageManager packageManager = getPackageManager();
+        if (checkPackInfo(packname)) {
+            Intent intent = packageManager.getLaunchIntentForPackage(packname);
+            startActivity(intent);
+        }
     }
 
     private void refreshUI() {

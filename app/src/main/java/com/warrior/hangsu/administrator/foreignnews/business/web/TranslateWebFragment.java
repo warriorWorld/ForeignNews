@@ -93,6 +93,11 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
                 }, 150);//n秒后执行Runnable中的run方法
                 translation(word);
             }
+
+            @Override
+            public void selectedWord(String[] words) {
+
+            }
         });
         myWebView.setOnWebViewLongClickListener(new TranslateWebView.OnWebViewLongClickListener() {
             @Override
