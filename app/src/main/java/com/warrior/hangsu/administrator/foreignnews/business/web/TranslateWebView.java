@@ -35,10 +35,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.warrior.hangsu.administrator.foreignnews.business.read.ReadTextOnlyActivity;
+import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnReceivedWebInfoListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
+import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
+import com.warrior.hangsu.administrator.foreignnews.utils.StringUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.BaseWebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
@@ -91,7 +94,14 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
                 public void onReceivedTitle(WebView view, String title) {
                     super.onReceivedTitle(view, title);
                     if (null != mSelectionListener) {
-                        mSelectionListener.seletedWord(title);
+                        if (SharedPreferencesUtils.getBooleanSharedPreferencesData
+                                (mContext, ShareKeys.CLOSE_TRANSLATE, false)) {
+                            mSelectionListener.seletedWord(title);
+                        } else {
+                            String res = StringUtils.replaceAllSpecialCharacterTo(title, "分隔符");
+                            String[] reses = res.split("分隔符");
+                            mSelectionListener.selectedWord(reses);
+                        }
                     }
                 }
             });

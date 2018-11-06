@@ -27,6 +27,7 @@ import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnCopyClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnReceivedWebInfoListener;
+import com.warrior.hangsu.administrator.foreignnews.listener.OnSevenFourteenListDialogListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnSpeakClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarHomeClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarLogoutClickListener;
@@ -42,6 +43,7 @@ import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebSubTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.ListDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.QrDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
@@ -96,7 +98,7 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
 
             @Override
             public void selectedWord(String[] words) {
-
+                showListDialog(words);
             }
         });
         myWebView.setOnWebViewLongClickListener(new TranslateWebView.OnWebViewLongClickListener() {
@@ -156,6 +158,28 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
         VolleyTool.getInstance(getActivity()).requestData(Request.Method.GET,
                 getActivity(), url, params,
                 YoudaoResponse.class, callback);
+    }
+
+    private void showListDialog(String[] list) {
+        ListDialog listDialog = new ListDialog(getActivity());
+        listDialog.setOnSevenFourteenListDialogListener(new OnSevenFourteenListDialogListener() {
+            @Override
+            public void onItemClick(String selectedRes, String selectedCodeRes) {
+
+            }
+
+            @Override
+            public void onItemClick(String selectedRes) {
+                translation(selectedRes);
+            }
+
+            @Override
+            public void onItemClick(int position) {
+
+            }
+        });
+        listDialog.show();
+        listDialog.setOptionsList(list);
     }
 
     private void text2Speech(String text) {
