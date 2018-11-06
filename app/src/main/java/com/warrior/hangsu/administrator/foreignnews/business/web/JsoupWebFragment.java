@@ -29,7 +29,7 @@ public class JsoupWebFragment extends TranslateWebFragment {
                 if (url.contains("9gag") && url.contains("comment")) {
                     Intent intent = new Intent(getActivity(), WebActivity.class);
                     intent.putExtra("url", url);
-                    intent.putExtra("title","评论");
+                    intent.putExtra("title","Comment");
                     startActivity(intent);
                     myWebView.goBack();
                 }
