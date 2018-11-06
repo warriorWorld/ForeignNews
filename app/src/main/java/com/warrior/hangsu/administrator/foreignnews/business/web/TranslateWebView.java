@@ -77,7 +77,7 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
     public boolean onLongClick(View v) {
         WebView.HitTestResult result = ((WebView) v).getHitTestResult();
         int type = result.getType();
-        if (type == WebView.HitTestResult.IMAGE_TYPE) {
+        if (type == WebView.HitTestResult.IMAGE_TYPE || type == HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
             onWebViewLongClickListener.onImgLongClick(result.getExtra());
             return true;
         }
