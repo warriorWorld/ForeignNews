@@ -1,6 +1,8 @@
 package com.warrior.hangsu.administrator.foreignnews.business.web;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
@@ -91,21 +93,6 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
                 }, 150);//n秒后执行Runnable中的run方法
                 translation(word);
             }
-
-            @Override
-            public void clickWord(String word) {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        /**
-                         *要执行的操作
-                         */
-                        myWebView.clearFocus();
-                    }
-                }, 50);//n秒后执行Runnable中的run方法
-                translation(word);
-            }
         });
         myWebView.setOnWebViewLongClickListener(new TranslateWebView.OnWebViewLongClickListener() {
             @Override
@@ -153,7 +140,7 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
 
             @Override
             public void loadFailed(VolleyError error) {
-                MangaDialog dialog=new MangaDialog(getActivity());
+                MangaDialog dialog = new MangaDialog(getActivity());
                 dialog.show();
                 dialog.setTitle(error.toString());
             }

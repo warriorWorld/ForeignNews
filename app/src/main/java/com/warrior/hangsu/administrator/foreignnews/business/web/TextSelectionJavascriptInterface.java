@@ -79,7 +79,7 @@ public class TextSelectionJavascriptInterface {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    textSelectionListener.clickWord(msg);
+                    textSelectionListener.seletedWord(msg);
                 }
             });
         }

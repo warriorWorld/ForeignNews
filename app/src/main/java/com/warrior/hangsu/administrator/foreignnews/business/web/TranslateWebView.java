@@ -19,6 +19,8 @@ package com.warrior.hangsu.administrator.foreignnews.business.web;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -81,14 +83,17 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
             onWebViewLongClickListener.onImgLongClick(result.getExtra());
             return true;
         }
-        if(type==HitTestResult.SRC_ANCHOR_TYPE){
-            WebView webView=new WebView(mContext) ;
+        if (type == HitTestResult.SRC_ANCHOR_TYPE) {
+            WebView webView = new WebView(mContext);
             webView.loadUrl(result.getExtra());
-            webView.setWebChromeClient(new WebChromeClient(){
+            webView.setWebChromeClient(new WebChromeClient() {
                 @Override
                 public void onReceivedTitle(WebView view, String title) {
                     super.onReceivedTitle(view, title);
-                    if (null!=mSelectionListener){
+                    if (null != mSelectionListener) {
+                        if (checkPackInfo("com.youdao.dict")){
+
+                        }
                         mSelectionListener.seletedWord(title);
                     }
                 }
@@ -108,6 +113,22 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
             handler.postDelayed(updateThread, 0);
         }
         return false;
+    }
+
+    /**
+     * 检查包是否存在
+     *
+     * @param packname
+     * @return
+     */
+    private boolean checkPackInfo(String packname) {
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = mContext.getPackageManager().getPackageInfo(packname, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return packageInfo != null;
     }
 
     @Override
@@ -175,13 +196,6 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         mTextSelectionJSInterface = new TextSelectionJavascriptInterface(mContext, new TextSelectionListener() {
             @Override
             public void seletedWord(String word) {
-                if (null != mSelectionListener) {
-                    mSelectionListener.seletedWord(word);
-                }
-            }
-
-            @Override
-            public void clickWord(String word) {
                 if (null != mSelectionListener) {
                     mSelectionListener.seletedWord(word);
                 }
