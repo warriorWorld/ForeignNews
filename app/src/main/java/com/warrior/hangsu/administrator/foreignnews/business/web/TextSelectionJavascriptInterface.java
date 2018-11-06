@@ -73,18 +73,6 @@ public class TextSelectionJavascriptInterface {
         }
     }
 
-    @JavascriptInterface
-    public void clickWord(final String msg) {
-        if (this.textSelectionListener != null) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    textSelectionListener.seletedWord(msg);
-                }
-            });
-        }
-    }
-
     /**
      * Gets the interface name
      *

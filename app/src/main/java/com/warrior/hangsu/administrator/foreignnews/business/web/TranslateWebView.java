@@ -229,20 +229,20 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
         currentInjectedUrl = getUrl();
     }
 
-    private void clickJsInject() {
-        //以下是JavaScript注入的代码 目前是以直接注入text的方式注入的 也就是说是直接把方法以字符串的方式注入进去的,所以assets里的文件没用
-        String js = "var newscript = document.createElement(\"script\");";
-//                js += "newscript.src=\"file:///android_asset/android.selection.js\";";
-//                js += "newscript.onload=function(){android.selection.longTouch();};";  //xxx()代表js中某方法
-        js += "newscript.text =  function clickSelected(){  " +
-//                "var str=window.getSelection().toString();     \nif(document.selection){\n" +
-//                "                        str=document.selection.createRange().text;// IE\n" +
-//                "                    }"+
-                "\twindow.TextSelection.clickWord(document.selection.createTextRange().text);};";
-        js += "document.body.appendChild(newscript);";
-        loadUrl("javascript:" + js);
-//        ToastUtil.tipShort(mContext, "注入完成");
-    }
+//    private void clickJsInject() {
+//        //以下是JavaScript注入的代码 目前是以直接注入text的方式注入的 也就是说是直接把方法以字符串的方式注入进去的,所以assets里的文件没用
+//        String js = "var newscript = document.createElement(\"script\");";
+////                js += "newscript.src=\"file:///android_asset/android.selection.js\";";
+////                js += "newscript.onload=function(){android.selection.longTouch();};";  //xxx()代表js中某方法
+//        js += "newscript.text =  function clickSelected(){  " +
+////                "var str=window.getSelection().toString();     \nif(document.selection){\n" +
+////                "                        str=document.selection.createRange().text;// IE\n" +
+////                "                    }"+
+//                "\twindow.TextSelection.clickWord(document.selection.createTextRange().text);};";
+//        js += "document.body.appendChild(newscript);";
+//        loadUrl("javascript:" + js);
+////        ToastUtil.tipShort(mContext, "注入完成");
+//    }
 
     private void refresh() {
         reload();
