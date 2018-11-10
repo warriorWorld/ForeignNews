@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.warrior.hangsu.administrator.foreignnews"
@@ -31,29 +31,33 @@ android {
             keyPassword "123456"
         }
     }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.0.+'
-    compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.android.support:design:25.0.+'
-    compile files('libs/volley.jar')
-    compile files('libs/SocialSDK_QQZone_3.jar')
-    compile files('libs/SocialSDK_umengqq.jar')
-    compile files('libs/SocialSDK_umengwx.jar')
-    compile files('libs/SocialSDK_WeiXin_2.jar')
-    compile files('libs/umeng_social_apiv6.0.0.jar')
-    compile files('libs/umeng_social_netv6.0.0.jar')
-    compile files('libs/umeng_social_viewv6.0.0.jar')
-    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:25.3.1'
+    implementation 'com.android.support:recyclerview-v7:25.0.+'
+    implementation 'com.google.code.gson:gson:2.3.1'
+    implementation 'com.android.support:design:25.0.+'
+    implementation files('libs/volley.jar')
+    implementation files('libs/SocialSDK_QQZone_3.jar')
+    implementation files('libs/SocialSDK_umengqq.jar')
+    implementation files('libs/SocialSDK_umengwx.jar')
+    implementation files('libs/SocialSDK_WeiXin_2.jar')
+    implementation files('libs/umeng_social_apiv6.0.0.jar')
+    implementation files('libs/umeng_social_netv6.0.0.jar')
+    implementation files('libs/umeng_social_viewv6.0.0.jar')
+    implementation 'org.greenrobot:eventbus:3.0.0'
     implementation files('libs/universal-image-loader-1.9.5.jar')
     // LeanCloud 基础包
-    compile 'cn.leancloud.android:avoscloud-sdk:v4.4.3'
-    compile 'pub.devrel:easypermissions:0.4.2'
+    implementation 'cn.leancloud.android:avoscloud-sdk:v4.4.3'
+    implementation 'pub.devrel:easypermissions:0.4.2'
     // jsoup HTML parser library @ https://jsoup.org/
-    compile 'org.jsoup:jsoup:1.10.3'
+    implementation 'org.jsoup:jsoup:1.10.3'
     implementation files('libs/afinal-0.3.32-bin.jar')
 }
