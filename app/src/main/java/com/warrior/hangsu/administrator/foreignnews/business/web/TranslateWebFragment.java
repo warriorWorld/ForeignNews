@@ -38,6 +38,7 @@ import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
+import com.warrior.hangsu.administrator.foreignnews.utils.VolumeUtil;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
@@ -188,6 +189,15 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
             HashMap<String, String> myHashAlarm = new HashMap();
             myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
                     String.valueOf(AudioManager.STREAM_ALARM));
+            myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_VOLUME,
+                    VolumeUtil.getMusicVolumeRate(getActivity()) + "");
+
+            if (VolumeUtil.getHeadPhoneStatus(getActivity())) {
+                AudioManager mAudioManager = (AudioManager) getActivity().getSystemService(getActivity().AUDIO_SERVICE);
+//            mAudioManager.setStreamMute(AudioManager.STREAM_ALARM, true);
+                mAudioManager.adjustStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_MUTE, 0);
+                mAudioManager.startBluetoothSco();
+            }
             tts.speak(text,
                     TextToSpeech.QUEUE_FLUSH, myHashAlarm);
         }

@@ -3,6 +3,7 @@ package com.warrior.hangsu.administrator.foreignnews.business.read;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
@@ -33,6 +34,7 @@ import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.utils.StringUtils;
 import com.warrior.hangsu.administrator.foreignnews.utils.ToastUtil;
+import com.warrior.hangsu.administrator.foreignnews.utils.VolumeUtil;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyTool;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.ListDialog;
@@ -215,11 +217,27 @@ public class ReadTextOnlyActivity extends BaseFragmentActivity implements
     }
 
     private void text2Speech(String text) {
-        if (tts != null && !tts.isSpeaking()) {
-            tts.setPitch(0.0f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
-            tts.speak(text,
-                    TextToSpeech.QUEUE_FLUSH, null);
+        if (tts == null) {
+            return;
         }
+        if (tts.isSpeaking()) {
+            return;
+        }
+        tts.setPitch(0.0f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
+        HashMap<String, String> myHashAlarm = new HashMap();
+        myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+                String.valueOf(AudioManager.STREAM_ALARM));
+        myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_VOLUME,
+                VolumeUtil.getMusicVolumeRate(this) + "");
+
+        if (VolumeUtil.getHeadPhoneStatus(this)) {
+            AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+//            mAudioManager.setStreamMute(AudioManager.STREAM_ALARM, true);
+            mAudioManager.adjustStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_MUTE, 0);
+            mAudioManager.startBluetoothSco();
+        }
+        tts.speak(text,
+                TextToSpeech.QUEUE_FLUSH, myHashAlarm);
     }
 
     private void showOnlyOkDialog(String title, String msg) {
