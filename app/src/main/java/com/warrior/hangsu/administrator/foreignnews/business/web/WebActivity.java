@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.insightsurfface.stylelibrary.keyboard.KeyBoardDialog;
+import com.insightsurfface.stylelibrary.listener.OnKeyboardChangeListener;
+import com.insightsurfface.stylelibrary.listener.OnKeyboardListener;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseFragment;
 import com.warrior.hangsu.administrator.foreignnews.base.FragmentContainerActivity;
@@ -22,7 +25,7 @@ public class WebActivity extends FragmentContainerActivity {
     private TranslateWebFragment mWebFragment;
     private String title = "";
     private ImageView translateIv;
-    private OnlyEditDialog searchDialog;
+    private KeyBoardDialog searchDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,22 +78,32 @@ public class WebActivity extends FragmentContainerActivity {
 
     private void showTranslateDialog() {
         if (null == searchDialog) {
-            searchDialog = new OnlyEditDialog(this);
-            searchDialog.setOnEditResultListener(new OnEditResultListener() {
+            searchDialog = new KeyBoardDialog(this);
+            searchDialog.setOnKeyboardListener(new OnKeyboardListener() {
                 @Override
-                public void onResult(String text) {
-                    mWebFragment.translation(text);
+                public void onOptionsClick() {
+                    baseToast.showToast("未实现");
                 }
 
                 @Override
-                public void onCancelClick() {
-
+                public void onQuestionClick() {
+                    baseToast.showToast("点按后滑动输入");
                 }
             });
-            searchDialog.setCancelable(true);
+            searchDialog.setOnKeyboardChangeListener(new OnKeyboardChangeListener() {
+                @Override
+                public void onChange(String res) {
+
+                }
+
+                @Override
+                public void onFinish(String res) {
+                    searchDialog.dismiss();
+                    mWebFragment.translation(res);
+                }
+            });
         }
         searchDialog.show();
-        searchDialog.clearEdit();
     }
 
     @Override

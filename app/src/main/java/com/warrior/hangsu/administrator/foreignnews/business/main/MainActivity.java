@@ -21,6 +21,9 @@ import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.GetDataCallback;
 import com.avos.avoscloud.ProgressCallback;
 import com.avos.avoscloud.SaveCallback;
+import com.insightsurfface.stylelibrary.keyboard.KeyBoardDialog;
+import com.insightsurfface.stylelibrary.listener.OnKeyboardChangeListener;
+import com.insightsurfface.stylelibrary.listener.OnKeyboardListener;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseMultiTabActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
@@ -30,7 +33,6 @@ import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity
 import com.warrior.hangsu.administrator.foreignnews.business.other.AboutActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.read.ReadTextOnlyActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.web.JsoupWebFragment;
-import com.warrior.hangsu.administrator.foreignnews.business.web.TranslateWebFragment;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.eventbus.EventBusEvent;
@@ -56,7 +58,6 @@ import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.DownloadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
-import com.warrior.hangsu.administrator.foreignnews.widget.dialog.OnlyEditDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.QrDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
@@ -89,7 +90,7 @@ public class MainActivity extends BaseMultiTabActivity
     private DownloadDialog downloadDialog;
     private String qrFilePath;
     private ImageView tranlateIv;
-    private OnlyEditDialog searchDialog;
+    private KeyBoardDialog searchDialog;
     private ArrayList<JsoupWebFragment> webfragmentList = new ArrayList<>();
 
     @Override
@@ -673,22 +674,32 @@ public class MainActivity extends BaseMultiTabActivity
 
     private void showTranslateDialog() {
         if (null == searchDialog) {
-            searchDialog = new OnlyEditDialog(this);
-            searchDialog.setOnEditResultListener(new OnEditResultListener() {
+            searchDialog = new KeyBoardDialog(this);
+            searchDialog.setOnKeyboardListener(new OnKeyboardListener() {
                 @Override
-                public void onResult(String text) {
-                    currentWebFragment.translation(text);
+                public void onOptionsClick() {
+                    baseToast.showToast("未实现");
                 }
 
                 @Override
-                public void onCancelClick() {
-
+                public void onQuestionClick() {
+                    baseToast.showToast("点按后滑动输入");
                 }
             });
-            searchDialog.setCancelable(true);
+            searchDialog.setOnKeyboardChangeListener(new OnKeyboardChangeListener() {
+                @Override
+                public void onChange(String res) {
+
+                }
+
+                @Override
+                public void onFinish(String res) {
+                    searchDialog.dismiss();
+                    currentWebFragment.translation(res);
+                }
+            });
         }
         searchDialog.show();
-        searchDialog.clearEdit();
     }
 
     @Override
