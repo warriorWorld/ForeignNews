@@ -13,4 +13,4 @@ ForeignNews是一个用于浏览外国网站的浏览器
 
 内置词典（有道）
 
-![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/read.jpg)
+![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/translate.jpg)
