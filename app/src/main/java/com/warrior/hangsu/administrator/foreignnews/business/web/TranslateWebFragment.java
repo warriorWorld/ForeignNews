@@ -1,10 +1,14 @@
 package com.warrior.hangsu.administrator.foreignnews.business.web;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.view.ViewGroup;
@@ -15,6 +19,10 @@ import com.android.volley.VolleyError;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.SaveCallback;
+import com.insightsurfface.myword.ITranslateAidlInterface;
+import com.insightsurfface.myword.aidl.ITranslateCallback;
+import com.insightsurfface.myword.aidl.TranslateCallback;
+import com.insightsurfface.myword.aidl.TranslateWraper;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
 import com.warrior.hangsu.administrator.foreignnews.bean.YoudaoResponse;
@@ -37,6 +45,7 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopClickListen
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
+import com.warrior.hangsu.administrator.foreignnews.utils.Logger;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.utils.VolumeUtil;
 import com.warrior.hangsu.administrator.foreignnews.volley.VolleyCallBack;
@@ -61,11 +70,32 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
     private TextToSpeech tts;
     private TranslateDialog translateResultDialog;
     private OnReceivedWebInfoListener mOnReceivedWebInfoListener;
+    private ITranslateAidlInterface mTranslateAidlInterface;
 
     @Override
     protected void onCreateAfterInitUI() {
         super.onCreateAfterInitUI();
         initTTS();
+        bindAidlService();
+    }
+
+    private void bindAidlService() {
+        Intent intent = new Intent("android.intent.action.TranslateService");
+        // 注意在 Android 5.0以后，不能通过隐式 Intent 启动 service，必须制定包名
+        intent.setPackage("com.insightsurfface.myword");
+        ServiceConnection connection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Logger.d("onServiceConnected");
+                mTranslateAidlInterface = ITranslateAidlInterface.Stub.asInterface(service);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mTranslateAidlInterface = null;
+            }
+        };
+        getActivity().bindService(intent, connection, getActivity().BIND_AUTO_CREATE);
     }
 
     @Override
@@ -94,7 +124,8 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
                         myWebView.clearFocus();
                     }
                 }, 150);//n秒后执行Runnable中的run方法
-                translation(word);
+//                translation(word);
+                translate(word);
             }
 
             @Override
@@ -113,6 +144,25 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
                 (SharedPreferencesUtils.getSharedPreferencesData
                         (getActivity(), ShareKeys.MAIN_URL, Globle.DEFAULT_MAIN_URL));
         myWebView.setOnReceivedWebInfoListener(mOnReceivedWebInfoListener);
+    }
+
+    public void translate(String word) {
+        try {
+            TranslateCallback callback = new TranslateCallback() {
+                @Override
+                public void onResponse(TranslateWraper translate) {
+                    baseToast.showToast(translate.getTranslate());
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            };
+            mTranslateAidlInterface.translate(word, callback.getCallback());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void translation(final String word) {
