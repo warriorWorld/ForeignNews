@@ -43,6 +43,7 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarOptio
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarWebNumClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopClickListener;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
+import com.warrior.hangsu.administrator.foreignnews.utils.AudioMgr;
 import com.warrior.hangsu.administrator.foreignnews.utils.DownLoadUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.Logger;
@@ -58,6 +59,7 @@ import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.QrDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.TranslateDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.TranslateResultDialog;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -124,8 +126,7 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
                         myWebView.clearFocus();
                     }
                 }, 150);//n秒后执行Runnable中的run方法
-//                translation(word);
-                translate(word);
+                translation(word);
             }
 
             @Override
@@ -146,17 +147,43 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
         myWebView.setOnReceivedWebInfoListener(mOnReceivedWebInfoListener);
     }
 
-    public void translate(String word) {
+    public void translation(final String word) {
+        clip.setText(word);
+        //记录查过的单词
+        if (SharedPreferencesUtils.getBooleanSharedPreferencesData
+                (getActivity(), ShareKeys.CLOSE_TRANSLATE, false)) {
+            return;
+        }
         try {
             TranslateCallback callback = new TranslateCallback() {
                 @Override
-                public void onResponse(TranslateWraper translate) {
-                    baseToast.showToast(translate.getTranslate());
+                public void onResponse(final TranslateWraper translate) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showTranslateResultDialog(translate);
+                            if (!SharedPreferencesUtils.getBooleanSharedPreferencesData
+                                    (getActivity(), ShareKeys.CLOSE_TTS, false)) {
+                                if (!TextUtils.isEmpty(translate.getUSSpeakUrl())) {
+                                    playVoice(translate.getUKSpeakUrl());
+                                } else {
+                                    text2Speech(word);
+                                }
+                            }
+                        }
+                    });
                 }
 
                 @Override
-                public void onFailure(String message) {
-
+                public void onFailure(final String message) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MangaDialog dialog = new MangaDialog(getActivity());
+                            dialog.show();
+                            dialog.setTitle(message);
+                        }
+                    });
                 }
             };
             mTranslateAidlInterface.translate(word, callback.getCallback());
@@ -165,50 +192,18 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
         }
     }
 
-    public void translation(final String word) {
-        clip.setText(word);
-        if (!SharedPreferencesUtils.getBooleanSharedPreferencesData
-                (getActivity(), ShareKeys.CLOSE_TTS, false)) {
-            text2Speech(word);
-        }
-        //记录查过的单词
-        if (SharedPreferencesUtils.getBooleanSharedPreferencesData
-                (getActivity(), ShareKeys.CLOSE_TRANSLATE, false)) {
-            return;
-        }
-        String url = Globle.YOUDAO + word;
-        HashMap<String, String> params = new HashMap<String, String>();
-        VolleyCallBack<YoudaoResponse> callback = new VolleyCallBack<YoudaoResponse>() {
-
-            @Override
-            public void loadSucceed(YoudaoResponse result) {
-                if (null != result && result.getErrorCode() == 0) {
-                    YoudaoResponse.BasicBean item = result.getBasic();
-                    String t = "";
-                    if (null != item) {
-                        for (int i = 0; i < item.getExplains().size(); i++) {
-                            t = t + item.getExplains().get(i) + ";";
-                        }
-                        showTranslateResultDialog(word, result.getQuery() + " [" + item.getPhonetic() +
-                                "]: " + "\n" + t);
-                    } else {
-                        baseToast.showToast("没查到该词");
-                    }
-                } else {
-                    baseToast.showToast("网络连接失败");
+    private synchronized void playVoice(String speakUrl) {
+        if (!TextUtils.isEmpty(speakUrl) && speakUrl.startsWith("http")) {
+            AudioMgr.startPlayVoice(speakUrl, new AudioMgr.SuccessListener() {
+                @Override
+                public void success() {
                 }
-            }
 
-            @Override
-            public void loadFailed(VolleyError error) {
-                MangaDialog dialog = new MangaDialog(getActivity());
-                dialog.show();
-                dialog.setTitle(error.toString());
-            }
-        };
-        VolleyTool.getInstance(getActivity()).requestData(Request.Method.GET,
-                getActivity(), url, params,
-                YoudaoResponse.class, callback);
+                @Override
+                public void playover() {
+                }
+            });
+        }
     }
 
     private void showListDialog(String[] list) {
@@ -251,6 +246,18 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
             tts.speak(text,
                     TextToSpeech.QUEUE_FLUSH, myHashAlarm);
         }
+    }
+
+    private void showTranslateResultDialog(TranslateWraper translateWraper) {
+        TranslateResultDialog dialog = new TranslateResultDialog(getActivity());
+        dialog.setOnSpeakClickListener(new OnSpeakClickListener() {
+            @Override
+            public void onSpeakClick(String word) {
+                text2Speech(word);
+            }
+        });
+        dialog.show();
+        dialog.setTranslate(translateWraper);
     }
 
     private void showTranslateResultDialog(final String title, String msg) {

@@ -61,4 +61,5 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.10.3'
     implementation files('libs/afinal-0.3.32-bin.jar')
     implementation 'com.github.warriorWorld:StyleLibrary:1.0.6'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }
