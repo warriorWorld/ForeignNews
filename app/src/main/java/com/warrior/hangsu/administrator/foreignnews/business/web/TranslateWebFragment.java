@@ -158,20 +158,7 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
             TranslateCallback callback = new TranslateCallback() {
                 @Override
                 public void onResponse(final TranslateWraper translate) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            showTranslateResultDialog(translate);
-                            if (!SharedPreferencesUtils.getBooleanSharedPreferencesData
-                                    (getActivity(), ShareKeys.CLOSE_TTS, false)) {
-                                if (!TextUtils.isEmpty(translate.getUSSpeakUrl())) {
-                                    playVoice(translate.getUKSpeakUrl());
-                                } else {
-                                    text2Speech(word);
-                                }
-                            }
-                        }
-                    });
+                    //弹窗现在由myword处理
                 }
 
                 @Override
@@ -186,7 +173,7 @@ public class TranslateWebFragment extends WebFragment implements TextToSpeech.On
                     });
                 }
             };
-            mTranslateAidlInterface.translate(word, callback.getCallback());
+            mTranslateAidlInterface.translate(word,true, callback.getCallback());
         } catch (RemoteException e) {
             e.printStackTrace();
         }

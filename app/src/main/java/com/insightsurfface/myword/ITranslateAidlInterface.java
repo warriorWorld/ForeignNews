@@ -49,9 +49,11 @@ case TRANSACTION_translate:
 data.enforceInterface(descriptor);
 java.lang.String _arg0;
 _arg0 = data.readString();
-com.insightsurfface.myword.aidl.ITranslateCallback _arg1;
-_arg1 = com.insightsurfface.myword.aidl.ITranslateCallback.Stub.asInterface(data.readStrongBinder());
-this.translate(_arg0, _arg1);
+boolean _arg1;
+_arg1 = (0!=data.readInt());
+com.insightsurfface.myword.aidl.ITranslateCallback _arg2;
+_arg2 = com.insightsurfface.myword.aidl.ITranslateCallback.Stub.asInterface(data.readStrongBinder());
+this.translate(_arg0, _arg1, _arg2);
 reply.writeNoException();
 return true;
 }
@@ -82,13 +84,14 @@ return DESCRIPTOR;
      * and return values in AIDL.
      */
 @Override
-public void translate(java.lang.String word, com.insightsurfface.myword.aidl.ITranslateCallback callback) throws android.os.RemoteException
+public void translate(java.lang.String word, boolean showResultDialog, com.insightsurfface.myword.aidl.ITranslateCallback callback) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
 try {
 _data.writeInterfaceToken(DESCRIPTOR);
 _data.writeString(word);
+_data.writeInt(((showResultDialog)?(1):(0)));
 _data.writeStrongBinder((((callback!=null))?(callback.asBinder()):(null)));
 mRemote.transact(Stub.TRANSACTION_translate, _data, _reply, 0);
 _reply.readException();
@@ -105,5 +108,5 @@ static final int TRANSACTION_translate = (android.os.IBinder.FIRST_CALL_TRANSACT
      * Demonstrates some basic types that you can use as parameters
      * and return values in AIDL.
      */
-public void translate(java.lang.String word, com.insightsurfface.myword.aidl.ITranslateCallback callback) throws android.os.RemoteException;
+public void translate(java.lang.String word, boolean showResultDialog, com.insightsurfface.myword.aidl.ITranslateCallback callback) throws android.os.RemoteException;
 }
