@@ -337,7 +337,11 @@ public class WebFragment extends BaseRefreshFragment implements
             myWebView.loadUrl(url);
         }
     }
-
+    public void loadData(String data) {
+        if (null != myWebView) {
+            myWebView.loadData(data,"text/html","utf-8");
+        }
+    }
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_webview;

@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -252,7 +253,14 @@ public class TranslateWebView extends MyWebView implements OnLongClickListener, 
                 "           \t\t  window.TextSelection.seletedWord(document.selection.createRange().text());\n" +
                 "            }};";
         js += "document.body.appendChild(newscript);";
-        loadUrl("javascript:" + js);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            evaluateJavascript("javascript:" + js, null);
+            Log.i(TAG, "evaluateJavascript-javascript");
+        } else {
+            loadUrl("javascript:" + js);
+            Log.i(TAG, "loadUrl-javascript");
+        }
+
 //        ToastUtil.tipShort(mContext, "注入完成");
         currentInjectedUrl = getUrl();
     }

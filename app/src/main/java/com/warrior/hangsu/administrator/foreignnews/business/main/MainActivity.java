@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -47,6 +48,8 @@ import com.warrior.hangsu.administrator.foreignnews.listener.OnWebBottomBarWebNu
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarRefreshClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopBarSkipToURLListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnWebTopClickListener;
+import com.warrior.hangsu.administrator.foreignnews.okhttp.HttpService;
+import com.warrior.hangsu.administrator.foreignnews.okhttp.RetrofitUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
 import com.warrior.hangsu.administrator.foreignnews.utils.BaseParameterUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.FileUtil;
@@ -70,6 +73,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -191,9 +199,9 @@ public class MainActivity extends BaseMultiTabActivity
     protected void initUI() {
         super.initUI();
         hideBaseTopBar();
-        if (webfragmentList.size()<2) {
+        if (webfragmentList.size() < 2) {
             tabLayout.setVisibility(View.GONE);
-        }else {
+        } else {
             tabLayout.setVisibility(View.VISIBLE);
         }
         tranlateIv = (ImageView) findViewById(R.id.translate_iv);
@@ -282,8 +290,54 @@ public class MainActivity extends BaseMultiTabActivity
 
             @Override
             public void onMangaClick() {
-                Intent intent = new Intent(MainActivity.this, AdvertisingActivity.class);
-                startActivity(intent);
+                DisposableObserver<ResponseBody> observer = new DisposableObserver<ResponseBody>() {
+                    @Override
+                    public void onNext(ResponseBody result) {
+                        try {
+                            String data = result.string();
+                            File file = new File(Globle.CACHE_PATH);
+                            if (!file.exists()) {
+                                file.mkdirs();
+                            }
+                            try {
+                                FileWriter fw = new FileWriter(Globle.CACHE_PATH + "test.html", true);
+                                fw.write(data);
+                                fw.close();
+                                baseToast.showToast("保存成功!\n已保存至" + Globle.CACHE_PATH + "文件夹");
+
+                            } catch (IOException e) {
+                                baseToast.showToast(e + "");
+                            }
+                           new Handler(getMainLooper()).postDelayed(new Runnable() {
+                               @Override
+                               public void run() {
+                                   currentWebFragment.loadUrl("file://" + Globle.CACHE_PATH + "test.html");
+                               }
+                           },1000);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                };
+
+                RetrofitUtil.getInstance(MainActivity.this)
+                        .newBuilder()
+                        .baseUrl("http://jandan.net/top-4h/")
+                        .build()
+                        .create(HttpService.class)
+                        .getJandan()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(observer);
             }
 
             @Override

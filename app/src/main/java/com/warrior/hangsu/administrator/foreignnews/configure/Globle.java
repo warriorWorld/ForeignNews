@@ -5,6 +5,8 @@ import android.os.Environment;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
+import java.io.File;
+
 public class Globle {
     public static final boolean IS_TEST=false;
     /**
@@ -18,6 +20,7 @@ public class Globle {
             "94905&type=data&doctype=json&version=1.1&q=";
     final public static String DOWNLOAD_PATH = Environment
             .getExternalStorageDirectory().getAbsolutePath() + "/" + "english_browser";
+    final public static String CACHE_PATH = DOWNLOAD_PATH+ File.separator+"cache"+File.separator;
     final public static DisplayImageOptions normalImageOptions = new DisplayImageOptions.Builder()
             .cacheInMemory(true)
             .cacheOnDisk(true)
