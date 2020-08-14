@@ -14,14 +14,17 @@ import android.widget.AdapterView;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.adapter.OnlyTextAdapter;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseFragmentActivity;
+import com.warrior.hangsu.administrator.foreignnews.business.main.MainActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnRecycleItemClickListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnRecycleItemLongClickListener;
+import com.warrior.hangsu.administrator.foreignnews.utils.ActivityPoor;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 
+import java.io.File;
 import java.util.List;
 
-public class WatchLaterActivity extends BaseFragmentActivity
-        implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class WatchLaterActivity extends BaseFragmentActivity {
     private RecyclerView urlRcv;
     private WatchLaterViewModel mWatchLaterViewModel;
     private OnlyTextAdapter mAdapter;
@@ -69,7 +72,7 @@ public class WatchLaterActivity extends BaseFragmentActivity
                 mAdapter.setOnRecycleItemLongClickListener(new OnRecycleItemLongClickListener() {
                     @Override
                     public void onItemClick(int position) {
-
+                        showDeleteDialog(Globle.CACHE_PATH + list.get(position));
                     }
                 });
                 urlRcv.setAdapter(mAdapter);
@@ -80,6 +83,31 @@ public class WatchLaterActivity extends BaseFragmentActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void showDeleteDialog(final String file) {
+        MangaDialog logoutDialog = new MangaDialog(this);
+        logoutDialog.setOnPeanutDialogClickListener(new MangaDialog.OnPeanutDialogClickListener() {
+            @Override
+            public void onOkClick() {
+                File f = new File(file);
+                if (f.exists()) {
+                    f.delete();
+                }
+                mWatchLaterViewModel.getWatchLater();
+            }
+
+            @Override
+            public void onCancelClick() {
+
+            }
+        });
+        logoutDialog.show();
+
+        logoutDialog.setTitle("确定删除?");
+        logoutDialog.setOkText("确定");
+        logoutDialog.setCancelText("取消");
+        logoutDialog.setCancelable(true);
     }
 
     @Override
@@ -103,15 +131,5 @@ public class WatchLaterActivity extends BaseFragmentActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        return true;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        this.finish();
     }
 }

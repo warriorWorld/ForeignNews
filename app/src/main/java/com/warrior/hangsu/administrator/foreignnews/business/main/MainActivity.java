@@ -56,6 +56,7 @@ import com.warrior.hangsu.administrator.foreignnews.utils.BaseParameterUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.FileUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.LeanCloundUtil;
 import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
+import com.warrior.hangsu.administrator.foreignnews.utils.StringUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebBottomBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebSubTopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.WebTopBar;
@@ -304,7 +305,7 @@ public class MainActivity extends BaseMultiTabActivity
                             }
                             try {
                                 FileWriter fw = new FileWriter(Globle.CACHE_PATH +
-                                        currentWebFragment.getTitle() + ".html", true);
+                                        StringUtils.replaceAllSpecialCharacterTo(currentWebFragment.getTitle()," ") + ".html", true);
                                 fw.write(data);
                                 fw.close();
                                 baseToast.showToast("保存成功!");
