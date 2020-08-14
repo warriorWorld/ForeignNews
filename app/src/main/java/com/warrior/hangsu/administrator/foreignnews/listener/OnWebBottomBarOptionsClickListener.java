@@ -15,7 +15,9 @@ public interface OnWebBottomBarOptionsClickListener {
 
     void onOptionsClick();
 
-    void onMangaClick();
+    void onWatchLaterClick();
+
+    void onWatchLaterLongClick();
 
     void onShareAppClick();
 }

@@ -33,6 +33,7 @@ import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedAc
 import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.other.AboutActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.read.ReadTextOnlyActivity;
+import com.warrior.hangsu.administrator.foreignnews.business.watchlater.WatchLaterActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.web.JsoupWebFragment;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
 import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
@@ -74,6 +75,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
@@ -100,6 +102,7 @@ public class MainActivity extends BaseMultiTabActivity
     private ImageView tranlateIv;
     private KeyBoardDialog searchDialog;
     private ArrayList<JsoupWebFragment> webfragmentList = new ArrayList<>();
+    public CompositeDisposable mObserver = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -289,7 +292,7 @@ public class MainActivity extends BaseMultiTabActivity
             }
 
             @Override
-            public void onMangaClick() {
+            public void onWatchLaterClick() {
                 DisposableObserver<ResponseBody> observer = new DisposableObserver<ResponseBody>() {
                     @Override
                     public void onNext(ResponseBody result) {
@@ -300,20 +303,14 @@ public class MainActivity extends BaseMultiTabActivity
                                 file.mkdirs();
                             }
                             try {
-                                FileWriter fw = new FileWriter(Globle.CACHE_PATH + "test.html", true);
+                                FileWriter fw = new FileWriter(Globle.CACHE_PATH +
+                                        currentWebFragment.getTitle() + ".html", true);
                                 fw.write(data);
                                 fw.close();
-                                baseToast.showToast("保存成功!\n已保存至" + Globle.CACHE_PATH + "文件夹");
-
+                                baseToast.showToast("保存成功!");
                             } catch (IOException e) {
                                 baseToast.showToast(e + "");
                             }
-                           new Handler(getMainLooper()).postDelayed(new Runnable() {
-                               @Override
-                               public void run() {
-                                   currentWebFragment.loadUrl("file://" + Globle.CACHE_PATH + "test.html");
-                               }
-                           },1000);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -328,16 +325,19 @@ public class MainActivity extends BaseMultiTabActivity
                     public void onComplete() {
                     }
                 };
-
+                mObserver.add(observer);
                 RetrofitUtil.getInstance(MainActivity.this)
-                        .newBuilder()
-                        .baseUrl("http://jandan.net/top-4h/")
-                        .build()
                         .create(HttpService.class)
-                        .getJandan()
+                        .getHtml(currentWebFragment.getUrl())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(observer);
+            }
+
+            @Override
+            public void onWatchLaterLongClick() {
+                Intent intent = new Intent(MainActivity.this, WatchLaterActivity.class);
+                startActivityForResult(intent, 33);
             }
 
             @Override
@@ -798,6 +798,12 @@ public class MainActivity extends BaseMultiTabActivity
             webTopBar.toggleEditAndShow(false);
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mObserver.dispose();
     }
 
     @Override

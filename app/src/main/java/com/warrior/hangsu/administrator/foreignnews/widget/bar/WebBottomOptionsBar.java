@@ -81,6 +81,16 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
         closeDwonArrowRl = (RelativeLayout) findViewById(R.id.close_dialog_rl);
         shareAppLl = (LinearLayout) findViewById(R.id.share_app_ll);
 
+        mangaLl.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (null!=onWebBottomBarOptionsClickListener){
+                    onWebBottomBarOptionsClickListener.onWatchLaterLongClick();
+                }
+                dismiss();
+                return true;
+            }
+        });
         shareAppLl.setOnClickListener(this);
         closeDwonArrowRl.setOnClickListener(this);
         addCollectLl.setOnClickListener(this);
@@ -130,7 +140,7 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
                 break;
             case R.id.manga_ll:
                 if (null != onWebBottomBarOptionsClickListener) {
-                    onWebBottomBarOptionsClickListener.onMangaClick();
+                    onWebBottomBarOptionsClickListener.onWatchLaterClick();
                 }
                 break;
             case R.id.head_ll:

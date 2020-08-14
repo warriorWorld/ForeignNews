@@ -48,6 +48,9 @@
             android:name=".business.collect.CollectedActivity"
             android:launchMode="standard"></activity>
         <activity
+            android:name=".business.watchlater.WatchLaterActivity"
+            android:launchMode="standard"></activity>
+        <activity
             android:name=".business.web.WebActivity"
             android:launchMode="standard"></activity>
         <activity

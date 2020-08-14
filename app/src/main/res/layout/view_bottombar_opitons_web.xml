@@ -139,7 +139,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="更多英语学习App"
+                android:text="稍后浏览"
                 android:textSize="12sp" />
         </LinearLayout>
 
