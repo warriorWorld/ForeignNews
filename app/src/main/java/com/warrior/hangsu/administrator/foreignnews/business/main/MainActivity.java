@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -28,7 +27,6 @@ import com.insightsurfface.stylelibrary.listener.OnKeyboardListener;
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseMultiTabActivity;
 import com.warrior.hangsu.administrator.foreignnews.bean.LoginBean;
-import com.warrior.hangsu.administrator.foreignnews.business.ad.AdvertisingActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.collect.CollectedActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.login.LoginActivity;
 import com.warrior.hangsu.administrator.foreignnews.business.other.AboutActivity;
@@ -79,7 +77,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -273,10 +270,6 @@ public class MainActivity extends BaseMultiTabActivity
             }
 
             @Override
-            public void onShareClick() {
-            }
-
-            @Override
             public void onLoginClick() {
                 if (TextUtils.isEmpty(LoginBean.getInstance().getUserName())) {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -294,6 +287,12 @@ public class MainActivity extends BaseMultiTabActivity
 
             @Override
             public void onWatchLaterClick() {
+                Intent intent = new Intent(MainActivity.this, WatchLaterActivity.class);
+                startActivityForResult(intent, 33);
+            }
+
+            @Override
+            public void onAddWatchLaterClick() {
                 DisposableObserver<ResponseBody> observer = new DisposableObserver<ResponseBody>() {
                     @Override
                     public void onNext(ResponseBody result) {
@@ -305,7 +304,7 @@ public class MainActivity extends BaseMultiTabActivity
                             }
                             try {
                                 FileWriter fw = new FileWriter(Globle.CACHE_PATH +
-                                        StringUtils.replaceAllSpecialCharacterTo(currentWebFragment.getTitle()," ") + ".html", true);
+                                        StringUtils.replaceAllSpecialCharacterTo(currentWebFragment.getTitle(), " ") + ".html", true);
                                 fw.write(data);
                                 fw.close();
                                 baseToast.showToast("保存成功!");
@@ -333,17 +332,6 @@ public class MainActivity extends BaseMultiTabActivity
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(observer);
-            }
-
-            @Override
-            public void onWatchLaterLongClick() {
-                Intent intent = new Intent(MainActivity.this, WatchLaterActivity.class);
-                startActivityForResult(intent, 33);
-            }
-
-            @Override
-            public void onShareAppClick() {
-                showQrDialog();
             }
         });
         webBottomBar.setOnWebBottomBarClickListener(new OnWebBottomBarClickListener() {
@@ -590,14 +578,6 @@ public class MainActivity extends BaseMultiTabActivity
                     222, perms);
         }
     }
-
-
-    private void showQrDialog() {
-        QrDialog qrDialog = new QrDialog(this);
-        qrDialog.show();
-        qrDialog.setImg("file://" + qrFilePath);
-    }
-
 
     private void showWebSubTopBar() {
         WebSubTopBar webSubTopBar = new WebSubTopBar(this);

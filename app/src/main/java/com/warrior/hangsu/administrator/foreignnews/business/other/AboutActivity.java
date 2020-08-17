@@ -36,6 +36,7 @@ import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.DownloadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaEditDialog;
+import com.warrior.hangsu.administrator.foreignnews.widget.dialog.QrDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.SingleLoadBarUtil;
 
 import java.io.File;
@@ -56,6 +57,7 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
     private RelativeLayout setMainUrlRl;
     private RelativeLayout authorRl;
     private RelativeLayout feedbackRl;
+    private RelativeLayout shareAppRl;
     private TextView logoutTv;
     //版本更新
     private String versionName, msg;
@@ -87,7 +89,7 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
         closeTranslateCb = (CheckBox) findViewById(R.id.close_translate_cb);
         closeTtsCb = (CheckBox) findViewById(R.id.close_tts_cb);
         closeTutorialCb = (CheckBox) findViewById(R.id.close_tutorial_cb);
-
+        shareAppRl = findViewById(R.id.share_app_rl);
         setMainUrlRl = (RelativeLayout) findViewById(R.id.set_main_url_rl);
         authorRl = (RelativeLayout) findViewById(R.id.author_rl);
         feedbackRl = (RelativeLayout) findViewById(R.id.feedback_rl);
@@ -124,6 +126,7 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
                         (AboutActivity.this, ShareKeys.CLOSE_TTS, isChecked);
             }
         });
+        shareAppRl.setOnClickListener(this);
         checkUpdateRl.setOnClickListener(this);
         setMainUrlRl.setOnClickListener(this);
         authorRl.setOnClickListener(this);
@@ -360,10 +363,21 @@ public class AboutActivity extends BaseFragmentActivity implements View.OnClickL
             case R.id.logout_tv:
                 showLogoutDialog();
                 break;
+            case R.id.share_app_rl:
+                showQrDialog();
+                break;
         }
         if (null != intent) {
             startActivity(intent);
         }
+    }
+
+    private void showQrDialog() {
+        String qrFileName = "QR" + versionName + ".png";
+        String qrFilePath = Globle.DOWNLOAD_PATH + "/" + qrFileName;
+        QrDialog qrDialog = new QrDialog(this);
+        qrDialog.show();
+        qrDialog.setImg("file://" + qrFilePath);
     }
 
     @Override

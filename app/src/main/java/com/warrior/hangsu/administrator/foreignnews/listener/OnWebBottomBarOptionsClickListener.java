@@ -9,15 +9,11 @@ public interface OnWebBottomBarOptionsClickListener {
 
     void onCollectedClick();
 
-    void onShareClick();
-
     void onLoginClick();
 
     void onOptionsClick();
 
     void onWatchLaterClick();
 
-    void onWatchLaterLongClick();
-
-    void onShareAppClick();
+    void onAddWatchLaterClick();
 }

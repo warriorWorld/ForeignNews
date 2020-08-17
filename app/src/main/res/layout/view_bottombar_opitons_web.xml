@@ -93,12 +93,12 @@
         android:background="@color/white"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingBottom="15dp"
         android:paddingTop="20dp"
+        android:paddingBottom="15dp"
         android:visibility="visible">
 
         <LinearLayout
-            android:id="@+id/options_ll"
+            android:id="@+id/add_watch_later_ll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -110,13 +110,13 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/options_icon" />
+                android:src="@drawable/qr_code_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="设置"
+                android:text="加入稍后浏览"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -171,8 +171,8 @@
         android:id="@+id/head_ll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-20dp"
         android:layout_marginLeft="30dp"
+        android:layout_marginBottom="-20dp"
         android:background="@color/transparency"
         android:orientation="horizontal">
 
@@ -194,29 +194,28 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/share_app_ll"
+        android:id="@+id/options_ll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="-20dp"
         android:layout_marginRight="30dp"
+        android:layout_marginBottom="-20dp"
         android:background="@color/transparency"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
             android:layout_marginTop="3dp"
-            android:text="分享App"
+            android:layout_marginRight="5dp"
+            android:text="设置"
             android:textColor="@color/white"
             android:textSize="11sp" />
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/qr_code_icon" />
-
+            android:src="@drawable/options_icon" />
     </LinearLayout>
 
     <RelativeLayout

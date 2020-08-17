@@ -34,7 +34,7 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
     private LinearLayout mangaLl;
     private LinearLayout exitLl;
     private LinearLayout headLl;
-    private LinearLayout shareAppLl;
+    private LinearLayout addWatchLaterLl;
     private ImageView userHeadIv;
     private TextView userNameTv;
     private RelativeLayout closeDwonArrowRl;
@@ -79,19 +79,9 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
         userHeadIv = (ImageView) findViewById(R.id.user_head_iv);
         userNameTv = (TextView) findViewById(R.id.user_name_tv);
         closeDwonArrowRl = (RelativeLayout) findViewById(R.id.close_dialog_rl);
-        shareAppLl = (LinearLayout) findViewById(R.id.share_app_ll);
+        addWatchLaterLl = (LinearLayout) findViewById(R.id.add_watch_later_ll);
 
-        mangaLl.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (null!=onWebBottomBarOptionsClickListener){
-                    onWebBottomBarOptionsClickListener.onWatchLaterLongClick();
-                }
-                dismiss();
-                return true;
-            }
-        });
-        shareAppLl.setOnClickListener(this);
+        addWatchLaterLl.setOnClickListener(this);
         closeDwonArrowRl.setOnClickListener(this);
         addCollectLl.setOnClickListener(this);
         addCollectedLl.setOnClickListener(this);
@@ -148,9 +138,9 @@ public class WebBottomOptionsBar extends Dialog implements View.OnClickListener 
                     onWebBottomBarOptionsClickListener.onLoginClick();
                 }
                 break;
-            case R.id.share_app_ll:
+            case R.id.add_watch_later_ll:
                 if (null != onWebBottomBarOptionsClickListener) {
-                    onWebBottomBarOptionsClickListener.onShareAppClick();
+                    onWebBottomBarOptionsClickListener.onAddWatchLaterClick();
                 }
                 break;
             case R.id.close_dialog_rl:
