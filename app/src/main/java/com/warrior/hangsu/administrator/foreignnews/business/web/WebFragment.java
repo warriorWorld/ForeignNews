@@ -3,8 +3,11 @@ package com.warrior.hangsu.administrator.foreignnews.business.web;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -13,12 +16,13 @@ import android.webkit.DownloadListener;
 
 import com.warrior.hangsu.administrator.foreignnews.R;
 import com.warrior.hangsu.administrator.foreignnews.base.BaseRefreshFragment;
-import com.warrior.hangsu.administrator.foreignnews.business.main.MainActivity;
 import com.warrior.hangsu.administrator.foreignnews.configure.Globle;
+import com.warrior.hangsu.administrator.foreignnews.configure.ShareKeys;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnAllVersionScrollChangeListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnEditResultListener;
 import com.warrior.hangsu.administrator.foreignnews.listener.OnUrlChangeListener;
-import com.warrior.hangsu.administrator.foreignnews.utils.MatchStringUtil;
+import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtil;
+import com.warrior.hangsu.administrator.foreignnews.utils.SharedPreferencesUtils;
 import com.warrior.hangsu.administrator.foreignnews.widget.bar.TopBar;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.DownloadDialog;
 import com.warrior.hangsu.administrator.foreignnews.widget.dialog.MangaDialog;
@@ -44,6 +48,7 @@ public class WebFragment extends BaseRefreshFragment implements
     private DownloadDialog downloadDialog;
     private String noRefreshUrl = "";
     private boolean hideTopLeft = false;
+    private Handler mh = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreateAfterInitUI() {
@@ -96,6 +101,15 @@ public class WebFragment extends BaseRefreshFragment implements
             public void onUrlChange(String url) {
                 if (!url.equals(noRefreshUrl)) {
                     baseSwipeLayout.setEnabled(true);
+                }
+                if (isLocalUrl()) {
+                    mh.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            myWebView.scrollTo(0, SharedPreferencesUtils.
+                                    getIntSharedPreferencesData(getActivity(), getUrl() + ShareKeys.READ_PROGRESS));
+                        }
+                    }, 500);
                 }
             }
         });
@@ -205,6 +219,24 @@ public class WebFragment extends BaseRefreshFragment implements
         hideLoadMore();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveProgress();
+        mh.removeCallbacksAndMessages(null);
+    }
+
+    private void saveProgress() {
+        if (isLocalUrl()) {
+            SharedPreferencesUtils.setSharedPreferencesData
+                    (getActivity(), getUrl() + ShareKeys.READ_PROGRESS, myWebView.getScrollY());
+        }
+    }
+
+    private boolean isLocalUrl() {
+        return getUrl().contains("file://");
+    }
+
     private String downloadUrl = "";
 
     @AfterPermissionGranted(333)
@@ -302,10 +334,12 @@ public class WebFragment extends BaseRefreshFragment implements
     }
 
     public void goBack() {
+        saveProgress();
         myWebView.goBack();
     }
 
     public void goForward() {
+        saveProgress();
         myWebView.goForward();
     }
 
@@ -337,11 +371,13 @@ public class WebFragment extends BaseRefreshFragment implements
             myWebView.loadUrl(url);
         }
     }
+
     public void loadData(String data) {
         if (null != myWebView) {
-            myWebView.loadData(data,"text/html","utf-8");
+            myWebView.loadData(data, "text/html", "utf-8");
         }
     }
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_webview;
