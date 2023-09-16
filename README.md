@@ -5,9 +5,7 @@ You could download it [here](https://github.com/warriorWorld/ForeignNews/raw/mas
 
 This is a browser, just a browser, except you can translate a single word instead of the entire article. I also used this to learn English, you know, if you translated the entire article for yourself, it will not help you to improve your vocabulary.
 
-![ss](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/main1.jpg) ![ss](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/translate.jpg) ![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/main.jpg)
-
-![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/detail.jpg)
+![ss](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/main1.jpg) ![ss](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/translate.jpg) ![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/detail.jpg)
 
 ---
 ##### Technical detail(if you are not interested, just ignore this part)
