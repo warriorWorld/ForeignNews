@@ -1,16 +1,14 @@
 # ForeignNews
-ForeignNews是一个用于浏览外国网站的浏览器
+This is a browser.
 
-[点击下载](https://github.com/warriorWorld/ForeignNews/raw/master/app/release/app-release.apk "Android apk 安装包")
+You could download it [here](https://github.com/warriorWorld/ForeignNews/raw/master/app/release/app-release.apk "Android apk 安装包")
 
-一个内置词典的浏览器
+This is a browser, just a browser, except you can translate a single word instead of the entire article. I also used this to learn English, you know, if you translated the entire article for yourself, it will not help you to improve your vocabulary.
 
-![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/main.jpg)
-
-![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/main1.jpg)
+![ss](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/main1.jpg) ![ss](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/translate.jpg) ![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/main.jpg)
 
 ![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/detail.jpg)
 
-内置词典（有道）
-
-![github](https://github.com/warriorWorld/ForeignNews/blob/master/app/screenshot/translate.jpg)
+---
+##### Technical detail(if you are not interested, just ignore this part)
+I used JS injection to get the word that users clicked.
